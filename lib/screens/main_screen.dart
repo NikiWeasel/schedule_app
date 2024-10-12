@@ -81,6 +81,7 @@ class _MainScreenState extends State<MainScreen> {
                           appointment.client,
                           appointment.startTime,
                           appointment.duration),
+                      onHold: () {},
                     ),
                   const Padding(padding: EdgeInsets.only(left: 8)),
                 ],

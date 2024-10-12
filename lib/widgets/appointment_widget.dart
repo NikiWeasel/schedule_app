@@ -3,19 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:schedule_app/widgets/schedule_table.dart';
 import 'package:schedule_app/models/appointment.dart';
 
-
 class AppointmentWidget extends StatelessWidget {
   const AppointmentWidget(
-      {super.key, required this.height, required this.appointment});
+      {super.key,
+      required this.height,
+      required this.appointment,
+      required this.onHold});
 
   final double height;
   final Appointment appointment;
+  final void Function() onHold;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(5),
-      onLongPress: () {},
+      onLongPress: onHold,
       child: Container(
         margin: const EdgeInsets.all(4.0),
         height: height,

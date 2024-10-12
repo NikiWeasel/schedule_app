@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:schedule_app/widgets/appointment_dialog/on_hold_dialog.dart';
 import 'package:schedule_app/widgets/appointment_widget.dart';
 import 'package:schedule_app/widgets/person_header_widget.dart';
 import 'package:schedule_app/models/appointment.dart';
+import 'package:schedule_app/widgets/appointment_dialog/editing_dialog.dart';
 
 class ScheduleTable extends StatefulWidget {
   const ScheduleTable({super.key});
@@ -21,6 +23,11 @@ class _ScheduleTableState extends State<ScheduleTable> {
     Appointment('Мастер 2', 'Клиент 2', TimeOfDay(hour: 10, minute: 30),
         Duration(minutes: 90)),
   ];
+
+  void openEditingDialog() {
+    showModalBottomSheet(
+        context: context, builder: (ctx) => const OnHoldDialog());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +176,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
           child: AppointmentWidget(
             height: height - 8,
             appointment: appointment,
+            onHold: openEditingDialog,
           ));
     }).toList();
   }

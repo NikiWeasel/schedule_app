@@ -6,21 +6,15 @@ final theme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
     brightness: Brightness.light,
-    seedColor: const Color.fromARGB(255, 0, 165, 115),
+    seedColor: const Color.fromARGB(255, 154, 0, 165),
   ),
   textTheme: GoogleFonts.rubikTextTheme(),
-
 );
 
-
 void main() {
-  Widget currentScreen = const LoginScreen();
+  Widget currentScreen = LoginScreen();
 
   WidgetsFlutterBinding.ensureInitialized();
 
-
-  runApp(MaterialApp(
-      theme: theme,
-      home: currentScreen));
+  runApp(MaterialApp(theme: theme, home: currentScreen));
 }
-

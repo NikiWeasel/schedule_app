@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schedule_app/widgets/appointment_widget.dart';
+import 'package:schedule_app/widgets/person_header_widget.dart';
+import 'package:schedule_app/models/appointment.dart';
 
-class ScheduleTable extends StatefulWidget{
+class ScheduleTable extends StatefulWidget {
   const ScheduleTable({super.key});
 
   @override
@@ -11,10 +13,13 @@ class ScheduleTable extends StatefulWidget{
 
 class _ScheduleTableState extends State<ScheduleTable> {
   final List<String> masters = ['Мастер 1', 'Мастер 2', 'Мастер 3'];
-  final double timeSlotHeight = 60.0; // Высота одного временного интервала (30 минут)
+  final double timeSlotHeight =
+      60.0; // Высота одного временного интервала (30 минут)
   final List<Appointment> appointments = [
-    Appointment('Мастер 1', 'Клиент 1', TimeOfDay(hour: 9, minute: 0), Duration(minutes: 45)),
-    Appointment('Мастер 2', 'Клиент 2', TimeOfDay(hour: 10, minute: 30), Duration(minutes: 90)),
+    Appointment('Мастер 1', 'Клиент 1', TimeOfDay(hour: 9, minute: 0),
+        Duration(minutes: 45)),
+    Appointment('Мастер 2', 'Клиент 2', TimeOfDay(hour: 10, minute: 30),
+        Duration(minutes: 90)),
   ];
 
   @override
@@ -22,7 +27,6 @@ class _ScheduleTableState extends State<ScheduleTable> {
     return Column(
       children: [
         IntrinsicWidth(child: _buildHeader()),
-
         Expanded(
           child: Row(
             children: [
@@ -52,19 +56,23 @@ class _ScheduleTableState extends State<ScheduleTable> {
           child: Row(
             children: masters.map((master) {
               return Container(
-                width: 200, // Ширина колонки для каждого мастера
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  border: Border(
-                    right: BorderSide(color: Colors.grey[300]!),
+                  width: 200,
+                  // Ширина колонки для каждого мастера
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      right: BorderSide(color: Colors.grey[300]!),
+                    ),
                   ),
-                ),
-                child: Text(
-                  master,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              );
+                  child: MasterHeaderWidget(
+                      child: Icon(Icons.person), title: master)
+
+                  // Text(
+                  //   master,
+                  //   style: TextStyle(fontWeight: FontWeight.bold),
+                  // ),
+                  );
             }).toList(),
           ),
         ),
@@ -75,12 +83,22 @@ class _ScheduleTableState extends State<ScheduleTable> {
   Widget _buildTimeColumn() {
     return Column(
       children: List.generate(19, (index) {
-        final time = TimeOfDay(hour: 9 + (index ~/ 2), minute: (index % 2) * 30);
+        final time =
+            TimeOfDay(hour: 9 + (index ~/ 2), minute: (index % 2) * 30);
         return Container(
           width: 80,
           height: timeSlotHeight,
           alignment: Alignment.center,
-          child: Text(time.format(context)),
+          child: Text(
+            time.format(context),
+            style: index % 2 == 0
+                ? Theme.of(context).textTheme.bodyMedium
+                : Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.5)),
+          ),
         );
       }),
     );
@@ -88,7 +106,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
 
   // Колонка для мастера с записями
   Widget _buildMasterColumn(String master) {
-    return Container(
+    return SizedBox(
       width: 200,
       child: Stack(
         children: [
@@ -103,7 +121,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
   List<Widget> _buildTimeSlots() {
     return List.generate(19, (index) {
       return Positioned(
-        top: index * timeSlotHeight,
+        top: index * timeSlotHeight - timeSlotHeight / 2,
         left: 0,
         right: 0,
         child: Container(
@@ -111,6 +129,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(color: Colors.grey[300]!),
+              right: BorderSide(color: Colors.grey[300]!),
             ),
           ),
         ),
@@ -123,27 +142,21 @@ class _ScheduleTableState extends State<ScheduleTable> {
     return appointments
         .where((appointment) => appointment.master == master)
         .map((appointment) {
-      final startMinutes = (appointment.startTime.hour - 9) * 60 + appointment.startTime.minute;
+      final startMinutes = (appointment.startTime.hour - 9) * 60 +
+          appointment.startTime.minute +
+          15;
       final topOffset = startMinutes / 30 * timeSlotHeight;
       final height = appointment.duration.inMinutes / 30 * timeSlotHeight;
 
       return Positioned(
-        top: topOffset,
-        left: 0,
-        right: 0,
-        child: AppointmentWidget(height: height, appointment: appointment,
-          
-        )
-      );
+          top: topOffset,
+          left: 0,
+          right: 0,
+          child: AppointmentWidget(
+            height: height - 8,
+            appointment: appointment,
+          ));
     }).toList();
   }
 }
 
-class Appointment {
-  final String master;
-  final String client;
-  final TimeOfDay startTime;
-  final Duration duration;
-
-  Appointment(this.master, this.client, this.startTime, this.duration);
-}

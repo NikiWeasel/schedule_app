@@ -24,17 +24,30 @@ class _ScheduleTableState extends State<ScheduleTable> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Row(
       children: [
-        IntrinsicWidth(child: _buildHeader()),
+        Row(
+          children: [
+            _buildTimeColumn(),
+            // ...masters.map((master) => _buildMasterColumn(master)),
+          ],
+        ),
         Expanded(
-          child: Row(
+            child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Column(
             children: [
-              _buildTimeColumn(),
-              ...masters.map((master) => _buildMasterColumn(master)),
+              IntrinsicWidth(child: _buildHeader()),
+              Expanded(
+                child: Row(
+                  children: [
+                    ...masters.map((master) => _buildMasterColumn(master)),
+                  ],
+                ),
+              ),
             ],
           ),
-        ),
+        ))
       ],
     );
   }
@@ -42,39 +55,21 @@ class _ScheduleTableState extends State<ScheduleTable> {
   Widget _buildHeader() {
     return Row(
       children: [
-        Container(
-          alignment: Alignment.center,
-
-          width: 80, // Ширина для колонки времени
-          child: Text(
-            'Время',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          color: Colors.white, // Фиксированный фон
-        ),
-        Expanded(
-          child: Row(
-            children: masters.map((master) {
-              return Container(
-                  width: 200,
-                  // Ширина колонки для каждого мастера
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      right: BorderSide(color: Colors.grey[300]!),
-                    ),
+        Row(
+          children: masters.map((master) {
+            return Container(
+                width: 200,
+                // Ширина колонки для каждого мастера
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  border: Border(
+                    right: BorderSide(color: Colors.grey[300]!),
                   ),
-                  child: MasterHeaderWidget(
-                      child: Icon(Icons.person), title: master)
-
-                  // Text(
-                  //   master,
-                  //   style: TextStyle(fontWeight: FontWeight.bold),
-                  // ),
-                  );
-            }).toList(),
-          ),
+                ),
+                child: MasterHeaderWidget(
+                    child: Icon(Icons.person), title: master));
+          }).toList(),
         ),
       ],
     );
@@ -82,25 +77,44 @@ class _ScheduleTableState extends State<ScheduleTable> {
 
   Widget _buildTimeColumn() {
     return Column(
-      children: List.generate(19, (index) {
-        final time =
-            TimeOfDay(hour: 9 + (index ~/ 2), minute: (index % 2) * 30);
-        return Container(
-          width: 80,
-          height: timeSlotHeight,
+      children: [
+        const SizedBox(
+          height: 24,
+        ),
+        Container(
           alignment: Alignment.center,
-          child: Text(
-            time.format(context),
-            style: index % 2 == 0
-                ? Theme.of(context).textTheme.bodyMedium
-                : Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.5)),
-          ),
-        );
-      }),
+          width: 80,
+          color: Colors.white, // Ширина для колонки времени
+          child: const Text(
+            'Время',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ), // Фиксированный фон
+        ),
+        const SizedBox(
+          height: 28,
+        ),
+        Column(
+          children: List.generate(19, (index) {
+            final time =
+                TimeOfDay(hour: 9 + (index ~/ 2), minute: (index % 2) * 30);
+            return Container(
+              width: 80,
+              height: timeSlotHeight,
+              alignment: Alignment.center,
+              child: Text(
+                time.format(context),
+                style: index % 2 == 0
+                    ? Theme.of(context).textTheme.bodyMedium
+                    : Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.5)),
+              ),
+            );
+          }),
+        ),
+      ],
     );
   }
 
@@ -159,4 +173,3 @@ class _ScheduleTableState extends State<ScheduleTable> {
     }).toList();
   }
 }
-

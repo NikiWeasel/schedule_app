@@ -26,9 +26,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         onPressed: () {},
       ),
       body: const SingleChildScrollView(
-        child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: IntrinsicHeight(child: ScheduleTable())),
+        child: IntrinsicHeight(child: ScheduleTable()),
       ),
     );
   }

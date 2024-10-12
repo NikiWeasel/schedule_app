@@ -15,9 +15,17 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   bool isChecked = false;
 
+  bool isPasswordObsecure = true;
+
   void toggleCheckBox() {
     setState(() {
       isChecked = !isChecked;
+    });
+  }
+
+  void togglePasswordObsec() {
+    setState(() {
+      isPasswordObsecure = !isPasswordObsecure;
     });
   }
 
@@ -63,19 +71,43 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(
                           height: 8,
                         ),
-                        TextFormField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                              hintText: 'Пароль',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              )),
-                          validator: (value) {
-                            if (value == null || value == '') {
-                              return 'Некорректный пароль';
-                            }
-                            return null;
-                          },
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: Colors.black)),
+                          child: Row(
+                            // mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: 165,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 8.0,
+                                    right: 8.0,
+                                    top: 4.0,
+                                    bottom: 4.0,
+                                  ),
+                                  child: TextFormField(
+                                    obscureText: isPasswordObsecure,
+                                    decoration: const InputDecoration(
+                                        hintText: 'Пароль',
+                                        border: InputBorder.none),
+                                    validator: (value) {
+                                      if (value == null || value == '') {
+                                        return 'Некорректный пароль';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                  onPressed: togglePasswordObsec,
+                                  icon: isPasswordObsecure
+                                      ? Icon(Icons.visibility)
+                                      : Icon(Icons.visibility_off))
+                            ],
+                          ),
                         ),
                         const SizedBox(
                           height: 8,

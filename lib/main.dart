@@ -10,9 +10,11 @@ final theme = ThemeData(
   ),
   textTheme: GoogleFonts.rubikTextTheme(),
   // elevatedButtonTheme: ElevatedButtonThemeData(
-  //     style: ButtonStyle(
-  //   backgroundColor: WidgetStateProperty.all<Color>(Color(0xffFF8702)),
-  // ))
+  //   style: ButtonStyle(
+  //       backgroundColor: WidgetStateProperty.all<Color>(
+  //           Color.fromARGB(255, 236, 200, 200)),
+  //       foregroundColor: WidgetStateProperty.all<Color>(Colors.white)),
+  // )
 );
 
 void main() {

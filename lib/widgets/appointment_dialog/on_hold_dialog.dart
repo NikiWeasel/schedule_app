@@ -9,12 +9,31 @@ class OnHoldDialog extends StatelessWidget {
     Navigator.pop(context);
     showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (ctx) => const EditingDialog(
               isEditing: true,
             ));
   }
 
-  void onDelete() {}
+  void onDelete(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: Text(
+                'Отменить запись?',
+                style: Theme.of(context).textTheme.titleLarge!,
+              ),
+              content: Text(
+                'Запись будет удалена навсегда.',
+                style: Theme.of(context).textTheme.titleMedium!,
+              ),
+              actionsAlignment: MainAxisAlignment.start,
+              actions: [
+                ElevatedButton(onPressed: () {}, child: Text('Подтвердить')),
+                TextButton(onPressed: () {}, child: Text('Отмена'))
+              ],
+            ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,19 +50,22 @@ class OnHoldDialog extends StatelessWidget {
               },
               child: Text(
                 'Редактировать запись',
-                style: Theme.of(context).textTheme.titleLarge!,
+                style: Theme.of(context).textTheme.titleMedium!,
               ),
+              // style: ElevatedButtonTheme.of(context).style!.copyWith(backgroundColor: Theme.of(context).colorScheme.primaryContainer),
             ),
           ),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: onDelete,
+              onPressed: () {
+                onDelete(context);
+              },
               child: Text(
                 'Отменить запись',
                 style: Theme.of(context)
                     .textTheme
-                    .titleLarge!
+                    .titleMedium!
                     .copyWith(color: Theme.of(context).colorScheme.error),
               ),
             ),

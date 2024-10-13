@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:schedule_app/screens/schedule_screen.dart';
 import 'package:schedule_app/widgets/appointment_widget.dart';
 import 'package:schedule_app/widgets/circular_avatar_button.dart';
+import 'package:schedule_app/widgets/main_screen_drawer.dart';
 import 'package:schedule_app/widgets/person_header_widget.dart';
 import 'package:schedule_app/widgets/schedule_table.dart';
 import 'package:schedule_app/models/appointment.dart';
@@ -36,14 +37,6 @@ class _MainScreenState extends State<MainScreen> {
         appBar: AppBar(
           title: const Text('ScheduleApp'),
           actions: [
-            const SizedBox(
-              width: 8,
-            ),
-            MasterHeaderWidget(
-              title: 'Мастер 1',
-              child: Icon(Icons.person),
-            ),
-            const Spacer(),
             IconButton(
                 onPressed: () {},
                 icon: Icon(Icons.notifications_none_outlined)),
@@ -52,6 +45,7 @@ class _MainScreenState extends State<MainScreen> {
             )
           ],
         ),
+        drawer: MainScreenDrawer(),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

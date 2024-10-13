@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:schedule_app/screens/notifications_screen.dart';
 import 'package:schedule_app/screens/schedule_screen.dart';
 import 'package:schedule_app/widgets/appointment_widget.dart';
 import 'package:schedule_app/widgets/circular_avatar_button.dart';
@@ -38,14 +39,25 @@ class _MainScreenState extends State<MainScreen> {
           title: const Text('ScheduleApp'),
           actions: [
             IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.notifications_none_outlined)),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => const NotificationsScreen()));
+                },
+                icon: Badge(
+                  label: Text(
+                    '12',
+                    style: Theme.of(context).textTheme.bodySmall!,
+                  ),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.primaryContainer,
+                  child: const Icon(Icons.notifications_none_outlined),
+                )),
             const SizedBox(
               width: 8,
             )
           ],
         ),
-        drawer: MainScreenDrawer(),
+        drawer: const MainScreenDrawer(),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -85,8 +97,8 @@ class _MainScreenState extends State<MainScreen> {
               alignment: Alignment.topRight,
               child: TextButton(
                   onPressed: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (ctx) => ScheduleScreen()));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => const ScheduleScreen()));
                   },
                   child: const Text('Полное расписание')),
             )

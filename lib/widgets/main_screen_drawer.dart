@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:schedule_app/screens/settings_screen.dart';
 import 'package:schedule_app/widgets/person_header_widget.dart';
 
 class MainScreenDrawer extends StatelessWidget {
@@ -53,10 +54,23 @@ class MainScreenDrawer extends StatelessWidget {
                     top: BorderSide(
               color: Theme.of(context).colorScheme.primary,
             ))),
-            child: TextButton.icon(
-              onPressed: () {},
-              label: const Text('Выйти из аккаунта'),
-              icon: const Icon(Icons.logout),
+            child: Row(
+              children: [
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => const SettingsScreen()));
+                  },
+                  label: const Text('Настройки'),
+                  icon: const Icon(Icons.settings),
+                ),
+                const Spacer(),
+                TextButton.icon(
+                  onPressed: () {},
+                  label: const Text('Выйти'),
+                  icon: const Icon(Icons.logout),
+                ),
+              ],
             ),
           )
         ],

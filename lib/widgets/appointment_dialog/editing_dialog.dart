@@ -74,14 +74,30 @@ class _EditingDialogState extends State<EditingDialog> {
                 ),
               ),
               const SizedBox(
-                height: 15,
+                height: 5,
               ),
-              Text(
-                widget.isEditing ? 'Изменить запись' : 'Добавить запись',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge!
-                    .copyWith(fontWeight: FontWeight.bold),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  children: [
+                    Text(
+                      widget.isEditing ? 'Изменить запись' : 'Добавить запись',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const Spacer(),
+                    Transform.scale(
+                      scale: 1.3,
+                      child: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.close)),
+                    )
+                  ],
+                ),
               ),
               const SizedBox(
                 height: 8,
@@ -183,13 +199,7 @@ class _EditingDialogState extends State<EditingDialog> {
               const SizedBox(
                 height: 16,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  ElevatedButton(onPressed: () {}, child: Text('Подтвердить')),
-                  TextButton(onPressed: () {}, child: Text('Отмена')),
-                ],
-              ),
+              ElevatedButton(onPressed: () {}, child: Text('Подтвердить')),
             ]));
   }
 }

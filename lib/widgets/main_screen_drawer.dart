@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -66,7 +67,9 @@ class MainScreenDrawer extends StatelessWidget {
                 ),
                 const Spacer(),
                 TextButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                  },
                   label: const Text('Выйти'),
                   icon: const Icon(Icons.logout),
                 ),

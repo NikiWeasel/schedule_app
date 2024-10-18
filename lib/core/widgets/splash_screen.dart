@@ -10,7 +10,9 @@ class SplashScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('SheduleApp'),
       ),
-      body: const Column(children: [
+      body:
+          const Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text('SPLAH SCREEN'),
         Center(child: CircularProgressIndicator()),
       ]),
     );

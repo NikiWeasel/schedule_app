@@ -6,37 +6,40 @@ import 'package:flutter/rendering.dart';
 import 'package:schedule_app/features/settings/view/settings_screen.dart';
 import 'package:schedule_app/core/widgets/person_header_progress_indicator.dart';
 import 'package:schedule_app/core/widgets/person_header_widget.dart';
+import 'package:schedule_app/models/employee.dart';
 
 class HomeScreenDrawer extends StatefulWidget {
-  const HomeScreenDrawer({super.key});
+  const HomeScreenDrawer({super.key, required this.employee});
+
+  final Employee employee;
 
   @override
   State<HomeScreenDrawer> createState() => _HomeScreenDrawerState();
 }
 
 class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
-  User? user;
-  var userData;
-  bool _isLoading = true;
+  // User? user;
+  // var userData;
+  // bool _isLoading = true;
 
-  void firebaseInit() async {
-    user = FirebaseAuth.instance.currentUser;
-    userData = await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user!.uid)
-        .get();
-    print(userData.data().toString() + '!!!!!!!!!!!!!!');
+  // void firebaseInit() async {
+  //   user = FirebaseAuth.instance.currentUser;
+  //   userData = await FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(user!.uid)
+  //       .get();
+  //   print(userData.data().toString() + '!!!!!!!!!!!!!!');
+  //
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
 
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    firebaseInit();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   firebaseInit();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -53,14 +56,14 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                     padding: EdgeInsets.all(2),
                     child: Align(
                       alignment: Alignment.topLeft,
-                      child: userData == null && _isLoading == true
+                      child: 2 == null && false == true
                           ? const PersonHeaderProgressIndicator()
                           : MasterHeaderWidget(
-                              title: userData.data()['name'] ?? '',
-                              subtitle: userData.data()['email'] ?? '',
+                              title: widget.employee.name,
+                              subtitle: widget.employee.email,
                               onTap: () {},
-                              imageProvider: NetworkImage(
-                                  userData.data()['image_url'] ?? ''),
+                              imageProvider:
+                                  NetworkImage(widget.employee.imageUrl),
                             ),
                     ),
                   ),

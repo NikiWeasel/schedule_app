@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart';
 import 'package:schedule_app/core/widgets/appointment_widget.dart';
-import 'package:schedule_app/widgets/person_header_widget.dart';
+
+// import 'package:schedule_app/widgets/person_header_widget.dart';
 import 'package:schedule_app/models/appointment.dart';
 import 'package:schedule_app/features/schedule/view/widgets/editing_dialog.dart';
+import 'package:schedule_app/core/widgets/person_header_widget.dart';
 
 class ScheduleTable extends StatefulWidget {
   const ScheduleTable({super.key});
@@ -16,7 +18,7 @@ class ScheduleTable extends StatefulWidget {
 class _ScheduleTableState extends State<ScheduleTable> {
   final List<String> masters = ['Мастер 1', 'Мастер 2', 'Мастер 3'];
   final double timeSlotHeight =
-  60.0; // Высота одного временного интервала (30 минут)
+      60.0; // Высота одного временного интервала (30 минут)
   final List<Appointment> appointments = [
     Appointment('Мастер 1', 'Клиент 1', TimeOfDay(hour: 9, minute: 0),
         Duration(minutes: 45)),
@@ -41,20 +43,20 @@ class _ScheduleTableState extends State<ScheduleTable> {
         ),
         Expanded(
             child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Column(
-                children: [
-                  IntrinsicWidth(child: _buildHeader()),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        ...masters.map((master) => _buildMasterColumn(master)),
-                      ],
-                    ),
-                  ),
-                ],
+          scrollDirection: Axis.horizontal,
+          child: Column(
+            children: [
+              IntrinsicWidth(child: _buildHeader()),
+              Expanded(
+                child: Row(
+                  children: [
+                    ...masters.map((master) => _buildMasterColumn(master)),
+                  ],
+                ),
               ),
-            ))
+            ],
+          ),
+        ))
       ],
     );
   }
@@ -105,7 +107,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
         Column(
           children: List.generate(19, (index) {
             final time =
-            TimeOfDay(hour: 9 + (index ~/ 2), minute: (index % 2) * 30);
+                TimeOfDay(hour: 9 + (index ~/ 2), minute: (index % 2) * 30);
             return Container(
               width: 80,
               height: timeSlotHeight,
@@ -113,20 +115,12 @@ class _ScheduleTableState extends State<ScheduleTable> {
               child: Text(
                 time.format(context),
                 style: index % 2 == 0
-                    ? Theme
-                    .of(context)
-                    .textTheme
-                    .bodyMedium
-                    : Theme
-                    .of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(
-                    color: Theme
-                        .of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.5)),
+                    ? Theme.of(context).textTheme.bodyMedium
+                    : Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.5)),
               ),
             );
           }),

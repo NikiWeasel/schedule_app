@@ -1,0 +1,20 @@
+part of 'user_bloc.dart';
+
+@immutable
+sealed class UserState {}
+
+final class UserInitial extends UserState {}
+
+class UserLoading extends UserState {}
+
+class UserLoaded extends UserState {
+  final Employee user;
+
+  UserLoaded({required this.user});
+}
+
+class UserError extends UserState {
+  final String errorMessage;
+
+  UserError({required this.errorMessage});
+}

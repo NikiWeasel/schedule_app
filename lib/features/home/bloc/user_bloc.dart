@@ -1,0 +1,54 @@
+import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:meta/meta.dart';
+
+import 'package:schedule_app/models/employee.dart';
+
+part 'user_event.dart';
+
+part 'user_state.dart';
+
+class UserBloc extends Bloc<UserEvent, UserState> {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  UserBloc() : super(UserInitial()) {
+    on<FetchUserData>(_onFetchUserData);
+  }
+
+  Future<void> _onFetchUserData(
+      FetchUserData event, Emitter<UserState> emit) async {
+    emit(UserLoading());
+    try {
+      // Получаем текущего пользователя
+      final user = _firebaseAuth.currentUser;
+      if (user == null) {
+        emit(UserError(errorMessage: 'Пользователь не авторизован'));
+        return;
+      }
+
+      // Запрашиваем данные пользователя из Firestore
+      final userData = await _firestore.collection('users').doc(user.uid).get();
+      final data = userData.data();
+
+      if (data == null) {
+        emit(UserError(errorMessage: 'Данные пользователя не найдены'));
+        return;
+      }
+
+      // Создаем экземпляр класса User
+      final fetchedUser = Employee(
+        data['name'],
+        data['surname'],
+        data['description'],
+        data['email'],
+        data['image_url'],
+      );
+
+      emit(UserLoaded(user: fetchedUser));
+    } catch (e) {
+      emit(UserError(errorMessage: e.toString()));
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schedule_app/widgets/schedule_table.dart';
+import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
 import 'package:schedule_app/models/appointment.dart';
 
 class AppointmentWidget extends StatelessWidget {

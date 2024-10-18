@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schedule_app/widgets/appointment_dialog/on_hold_dialog.dart';
-import 'package:schedule_app/widgets/appointment_widget.dart';
+import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart';
+import 'package:schedule_app/core/widgets/appointment_widget.dart';
 import 'package:schedule_app/widgets/person_header_widget.dart';
 import 'package:schedule_app/models/appointment.dart';
-import 'package:schedule_app/widgets/appointment_dialog/editing_dialog.dart';
+import 'package:schedule_app/features/schedule/view/widgets/editing_dialog.dart';
 
 class ScheduleTable extends StatefulWidget {
   const ScheduleTable({super.key});

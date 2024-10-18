@@ -1,22 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schedule_app/screens/notifications_screen.dart';
-import 'package:schedule_app/screens/schedule_screen.dart';
-import 'package:schedule_app/widgets/appointment_widget.dart';
-import 'package:schedule_app/widgets/circular_avatar_button.dart';
-import 'package:schedule_app/widgets/main_screen_drawer.dart';
-import 'package:schedule_app/widgets/person_header_widget.dart';
-import 'package:schedule_app/widgets/schedule_table.dart';
+import 'package:schedule_app/features/notifications/view/notifications_screen.dart';
+import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
+import 'package:schedule_app/core/widgets/appointment_widget.dart';
+import 'package:schedule_app/features/home/view/widgets/main_screen_drawer.dart';
+import 'package:schedule_app/core/widgets/person_header_widget.dart';
+import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
 import 'package:schedule_app/models/appointment.dart';
 
-class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   final List<Appointment> appointments = [
     Appointment('Мастер 1', 'Клиент 1', TimeOfDay(hour: 9, minute: 0),
         Duration(minutes: 45)),
@@ -57,7 +56,7 @@ class _MainScreenState extends State<MainScreen> {
             )
           ],
         ),
-        drawer: const MainScreenDrawer(),
+        drawer: const HomeScreenDrawer(),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

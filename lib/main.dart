@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:schedule_app/screens/login_screen.dart';
+import 'package:schedule_app/features/authentication/view/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:schedule_app/screens/main_screen.dart';
-import 'package:schedule_app/screens/splash_screen.dart';
+import 'package:schedule_app/features/home/view/home_screen.dart';
+import 'package:schedule_app/features/authentication/view/splash_screen.dart';
 import 'firebase_options.dart';
 
 final theme = ThemeData(
@@ -27,7 +27,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  Widget currentScreen = const LoginScreen();
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -41,7 +40,7 @@ void main() async {
         }
 
         if (snapshot.hasData) {
-          return const MainScreen();
+          return const HomeScreen();
         }
         return const LoginScreen();
       },

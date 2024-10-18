@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schedule_app/widgets/appointment_dialog/editing_dialog.dart';
+import 'package:schedule_app/features/schedule/view/widgets/editing_dialog.dart';
 
 class OnHoldDialog extends StatelessWidget {
   const OnHoldDialog({super.key});

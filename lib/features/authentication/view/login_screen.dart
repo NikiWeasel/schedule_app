@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schedule_app/screens/main_screen.dart';
+import 'package:schedule_app/features/home/view/home_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:schedule_app/widgets/user_image_picker.dart';
+import 'package:schedule_app/features/authentication/view/widgets/user_image_picker.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -107,11 +107,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
+    var width = MediaQuery
+        .of(context)
+        .size
+        .width;
     if (width > 450) {
       width = 400;
     }
-    var cardColor = Theme.of(context).cardTheme.color;
+    var cardColor = Theme
+        .of(context)
+        .cardTheme
+        .color;
 
     return Scaffold(
       body: Form(
@@ -149,8 +155,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               validator: (value) {
                                 if (value == null ||
                                     value.isEmpty ||
-                                    value.trim().length < 2 ||
-                                    value.trim().length > 12) {
+                                    value
+                                        .trim()
+                                        .length < 2 ||
+                                    value
+                                        .trim()
+                                        .length > 12) {
                                   return 'Некорректное имя';
                                 }
                                 return null;
@@ -174,8 +184,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               validator: (value) {
                                 if (value == null ||
                                     value.isEmpty ||
-                                    value.trim().length < 2 ||
-                                    value.trim().length > 12) {
+                                    value
+                                        .trim()
+                                        .length < 2 ||
+                                    value
+                                        .trim()
+                                        .length > 12) {
                                   return 'Некорректная фамилия';
                                 }
                                 return null;

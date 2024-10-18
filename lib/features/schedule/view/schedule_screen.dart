@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:schedule_app/widgets/circular_avatar_button.dart';
-import 'package:schedule_app/widgets/schedule_table.dart';
-import 'package:schedule_app/widgets/appointment_dialog/editing_dialog.dart';
+import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
+import 'package:schedule_app/features/schedule/view/widgets/editing_dialog.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:schedule_app/data/saloon_services.dart';
+import 'package:schedule_app/core/constants/saloon_services.dart';
 
 class EditingDialog extends StatefulWidget {
   const EditingDialog({super.key, required this.isEditing});

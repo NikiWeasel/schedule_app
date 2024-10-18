@@ -3,18 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:schedule_app/screens/settings_screen.dart';
-import 'package:schedule_app/widgets/person_header_progress_indicator.dart';
-import 'package:schedule_app/widgets/person_header_widget.dart';
+import 'package:schedule_app/features/settings/view/settings_screen.dart';
+import 'package:schedule_app/core/widgets/person_header_progress_indicator.dart';
+import 'package:schedule_app/core/widgets/person_header_widget.dart';
 
-class MainScreenDrawer extends StatefulWidget {
-  const MainScreenDrawer({super.key});
+class HomeScreenDrawer extends StatefulWidget {
+  const HomeScreenDrawer({super.key});
 
   @override
-  State<MainScreenDrawer> createState() => _MainScreenDrawerState();
+  State<HomeScreenDrawer> createState() => _HomeScreenDrawerState();
 }
 
-class _MainScreenDrawerState extends State<MainScreenDrawer> {
+class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
   User? user;
   var userData;
   bool _isLoading = true;

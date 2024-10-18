@@ -24,15 +24,16 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Расписание'),
-
-        // actions: [
-        //   CircularAvatarButton(onTap: (){}),
-        //   SizedBox(width: 8,)
-        // ],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.autorenew),
+            onPressed: () {},
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
         onPressed: openCreateNewDialog,
+        child: const Icon(Icons.add),
       ),
       body: const SingleChildScrollView(
         child: IntrinsicHeight(child: ScheduleTable()),

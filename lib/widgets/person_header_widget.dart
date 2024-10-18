@@ -3,10 +3,17 @@ import 'package:flutter/material.dart';
 
 class MasterHeaderWidget extends StatelessWidget {
   const MasterHeaderWidget(
-      {super.key, required this.child, required this.title});
+      {super.key,
+      required this.title,
+      this.subtitle,
+      required this.onTap,
+      this.imageProvider});
 
-  final Widget child;
+  final ImageProvider<Object>? imageProvider;
   final String title;
+  final String? subtitle;
+
+  final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -20,17 +27,31 @@ class MasterHeaderWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             CircleAvatar(
-              child: child,
+              foregroundImage: imageProvider,
+              child: const Icon(Icons.person),
             ),
             const SizedBox(
               width: 8,
             ),
-            Text(
-              title,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(fontWeight: FontWeight.bold),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                subtitle == null
+                    ? const SizedBox()
+                    : Text(
+                        subtitle!,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface),
+                      ),
+              ],
             )
           ],
         ),

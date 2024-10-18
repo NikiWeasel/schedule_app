@@ -20,8 +20,7 @@ class App extends StatelessWidget {
 
         if (snapshot.hasData) {
           return BlocProvider(
-              create: (context) =>
-                  UserBloc()..add(FetchUserData()), // Запускаем событие тут
+              create: (context) => UserBloc()..add(FetchUserData()),
               child: const HomeScreen());
         }
         return const LoginScreen();

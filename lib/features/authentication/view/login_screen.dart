@@ -20,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String _enteredName = '';
   String _enteredSurname = '';
   String _enteredEmail = '';
+  String _enteredNumber = '';
   String _enteredPassword = '';
   final _formKey = GlobalKey<FormState>();
   bool _doRemember = true;
@@ -85,6 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
           'name': _enteredName,
           'surname': _enteredSurname,
           'email': _enteredEmail,
+          'number': _enteredNumber,
           'image_url': imageUrl,
           'description': '',
         });
@@ -94,10 +96,10 @@ class _LoginScreenState extends State<LoginScreen> {
       if (error.code == 'email-already-in-use') {
         //...
       }
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(error.message ??
-              'Что-то пошло не так...\nAuthentification failed.')));
+      // ScaffoldMessenger.of(context).clearSnackBars();
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //     content: Text(error.message ??
+      //         'Что-то пошло не так...\nAuthentification failed.')));
 
       setState(() {
         _isAuthing = false;
@@ -107,17 +109,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery
-        .of(context)
-        .size
-        .width;
+    var width = MediaQuery.of(context).size.width;
     if (width > 450) {
       width = 400;
     }
-    var cardColor = Theme
-        .of(context)
-        .cardTheme
-        .color;
+    var cardColor = Theme.of(context).cardTheme.color;
 
     return Scaffold(
       body: Form(
@@ -155,12 +151,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               validator: (value) {
                                 if (value == null ||
                                     value.isEmpty ||
-                                    value
-                                        .trim()
-                                        .length < 2 ||
-                                    value
-                                        .trim()
-                                        .length > 12) {
+                                    value.trim().length < 2 ||
+                                    value.trim().length > 12) {
                                   return 'Некорректное имя';
                                 }
                                 return null;
@@ -184,12 +176,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               validator: (value) {
                                 if (value == null ||
                                     value.isEmpty ||
-                                    value
-                                        .trim()
-                                        .length < 2 ||
-                                    value
-                                        .trim()
-                                        .length > 12) {
+                                    value.trim().length < 2 ||
+                                    value.trim().length > 12) {
                                   return 'Некорректная фамилия';
                                 }
                                 return null;
@@ -212,7 +200,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             maxLines: 1,
                             validator: (value) {
                               RegExp regex = RegExp(r'''''');
-                              if (value != null && regex.hasMatch(value)) {
+                              if (value != null &&
+                                  regex.hasMatch(value) &&
+                                  value != '') {
                                 return null;
                               }
                               return 'Некорректная эл. почта';
@@ -224,6 +214,32 @@ class _LoginScreenState extends State<LoginScreen> {
                           const SizedBox(
                             height: 8,
                           ),
+                          if (!_isLogin)
+                            TextFormField(
+                              decoration: InputDecoration(
+                                  labelText: 'Номер телефона',
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  )),
+                              keyboardType: TextInputType.phone,
+                              maxLines: 1,
+                              validator: (value) {
+                                RegExp regex = RegExp(r'''''');
+                                if (value != null &&
+                                    regex.hasMatch(value) &&
+                                    value != '') {
+                                  return null;
+                                }
+                                return 'Некорректный номер телефона';
+                              },
+                              onSaved: (value) {
+                                _enteredNumber = value!;
+                              },
+                            ),
+                          if (!_isLogin)
+                            const SizedBox(
+                              height: 8,
+                            ),
                           Stack(children: [
                             TextFormField(
                               obscureText: isPasswordObsecure,
@@ -277,7 +293,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   setState(() {
                                     _isLogin = !_isLogin;
                                   });
-                                  print(_isLogin);
                                 },
                                 child: Text(_isLogin
                                     ? 'Создать аккаунт'

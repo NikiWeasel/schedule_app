@@ -1,15 +1,17 @@
 class Employee {
-  const Employee(
-    this.name,
-    this.surname,
-    this.description,
-    this.email,
-    this.imageUrl,
-  );
+  const Employee({
+    required this.name,
+    required this.surname,
+    required this.description,
+    required this.email,
+    required this.number,
+    required this.imageUrl,
+  });
 
   final String name;
   final String surname;
   final String description;
   final String email;
+  final String number;
   final String imageUrl;
 }

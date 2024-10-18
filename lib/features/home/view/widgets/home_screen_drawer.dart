@@ -18,29 +18,6 @@ class HomeScreenDrawer extends StatefulWidget {
 }
 
 class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
-  // User? user;
-  // var userData;
-  // bool _isLoading = true;
-
-  // void firebaseInit() async {
-  //   user = FirebaseAuth.instance.currentUser;
-  //   userData = await FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(user!.uid)
-  //       .get();
-  //   print(userData.data().toString() + '!!!!!!!!!!!!!!');
-  //
-  //   setState(() {
-  //     _isLoading = false;
-  //   });
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   firebaseInit();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -56,15 +33,12 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                     padding: EdgeInsets.all(2),
                     child: Align(
                       alignment: Alignment.topLeft,
-                      child: 2 == null && false == true
-                          ? const PersonHeaderProgressIndicator()
-                          : MasterHeaderWidget(
-                              title: widget.employee.name,
-                              subtitle: widget.employee.email,
-                              onTap: () {},
-                              imageProvider:
-                                  NetworkImage(widget.employee.imageUrl),
-                            ),
+                      child: MasterHeaderWidget(
+                        title: widget.employee.name,
+                        subtitle: widget.employee.number,
+                        onTap: () {},
+                        imageProvider: NetworkImage(widget.employee.imageUrl),
+                      ),
                     ),
                   ),
                 ),
@@ -96,19 +70,24 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
             child: Row(
               children: [
                 TextButton.icon(
+                  onPressed: () {},
+                  label: const Text('Проверить\nобновления'),
+                  icon: const Icon(Icons.upload),
+                ),
+                const Spacer(),
+                IconButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (ctx) => const SettingsScreen()));
                   },
-                  label: const Text('Настройки'),
+                  // label: const Text('Настройки'),
                   icon: const Icon(Icons.settings),
                 ),
-                const Spacer(),
-                TextButton.icon(
+                IconButton(
                   onPressed: () {
                     FirebaseAuth.instance.signOut();
                   },
-                  label: const Text('Выйти'),
+                  // label: const Text('Выйти'),
                   icon: const Icon(Icons.logout),
                 ),
               ],

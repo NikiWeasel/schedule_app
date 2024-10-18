@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:schedule_app/core/widgets/loading_skeleton.dart';
 import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'package:schedule_app/features/notifications/view/notifications_screen.dart';
 import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
@@ -38,8 +39,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
-        if (state is UserLoading) return const SplashScreen();
+        print(state);
+        if (state is UserError) {
+          // ScaffoldMessenger.of(context).clearSnackBars();
+          // ScaffoldMessenger.of(context)
+          //     .showSnackBar(SnackBar(content: Text(state.errorMessage)));
+          print(state.errorMessage);
 
+          return const SplashScreen();
+        }
         if (state is UserLoaded) {
           return Scaffold(
               appBar: AppBar(
@@ -110,13 +118,22 @@ class _HomeScreenState extends State<HomeScreen> {
                               builder: (ctx) => const ScheduleScreen()));
                         },
                         child: const Text('Полное расписание')),
-                  )
+                  ),
+                  // LoadingSkeleton(
+                  //   child: AppointmentWidget(
+                  //     height: 100,
+                  //     appointment: Appointment(
+                  //         appointments[0].master,
+                  //         appointments[0].client,
+                  //         appointments[0].startTime,
+                  //         appointments[0].duration),
+                  //     onHold: () {},
+                  //   ),
+                  // ),
                 ],
               ));
         }
-        return const Center(
-          child: Text('Нет данных'),
-        );
+        return const SplashScreen();
       },
     );
   }

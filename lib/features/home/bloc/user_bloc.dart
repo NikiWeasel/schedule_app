@@ -39,11 +39,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
       // Создаем экземпляр класса User
       final fetchedUser = Employee(
-        data['name'],
-        data['surname'],
-        data['description'],
-        data['email'],
-        data['image_url'],
+        name: data['name'],
+        surname: data['surname'],
+        description: data['description'],
+        email: data['email'],
+        number: data['number'],
+        imageUrl: data['image_url'],
       );
 
       emit(UserLoaded(user: fetchedUser));

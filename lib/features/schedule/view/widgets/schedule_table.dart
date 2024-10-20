@@ -4,9 +4,10 @@ import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart'
 import 'package:schedule_app/core/widgets/appointment_widget.dart';
 
 // import 'package:schedule_app/widgets/person_header_widget.dart';
-import 'package:schedule_app/models/appointment.dart';
+import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/schedule/view/widgets/editing_dialog.dart';
 import 'package:schedule_app/core/widgets/person_header_widget.dart';
+import 'package:schedule_app/core/models/appointment.dart';
 
 class ScheduleTable extends StatefulWidget {
   const ScheduleTable({super.key});
@@ -20,10 +21,10 @@ class _ScheduleTableState extends State<ScheduleTable> {
   final double timeSlotHeight =
       60.0; // Высота одного временного интервала (30 минут)
   final List<Appointment> appointments = [
-    Appointment('Мастер 1', 'Клиент 1', TimeOfDay(hour: 9, minute: 0),
-        Duration(minutes: 45)),
-    Appointment('Мастер 2', 'Клиент 2', TimeOfDay(hour: 10, minute: 30),
-        Duration(minutes: 90)),
+    Appointment(
+        master: 'Мастер 1', client: 'Клиент 1', startTime: 540, duration: 45),
+    Appointment(
+        master: 'Мастер 2', client: 'Клиент 2', startTime: 540, duration: 45),
   ];
 
   void openEditingDialog() {
@@ -167,11 +168,11 @@ class _ScheduleTableState extends State<ScheduleTable> {
     return appointments
         .where((appointment) => appointment.master == master)
         .map((appointment) {
-      final startMinutes = (appointment.startTime.hour - 9) * 60 +
-          appointment.startTime.minute +
+      final startMinutes = (appointment.getStartTimeHours() - 9) * 60 +
+          appointment.getStartTimeMinutes() +
           15;
       final topOffset = startMinutes / 30 * timeSlotHeight;
-      final height = appointment.duration.inMinutes / 30 * timeSlotHeight;
+      final height = appointment.duration / 30 * timeSlotHeight;
 
       return Positioned(
           top: topOffset,

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
-import 'package:schedule_app/models/appointment.dart';
+import 'package:schedule_app/core/models/appointment.dart';
 
 class AppointmentWidget extends StatelessWidget {
   const AppointmentWidget(
@@ -33,7 +33,7 @@ class AppointmentWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                  '${appointment.duration.inMinutes} мин -- ${appointment.startTime.format(context)}-${appointment.startTime.hour + appointment.duration.inHours}'),
+                  '${appointment.getFormattedStartTime()} -- ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}'),
               Text('${appointment.client}'),
             ],
           ),

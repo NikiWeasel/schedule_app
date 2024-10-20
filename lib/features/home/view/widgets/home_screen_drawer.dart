@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:schedule_app/features/settings/view/settings_screen.dart';
 import 'package:schedule_app/core/widgets/person_header_progress_indicator.dart';
 import 'package:schedule_app/core/widgets/person_header_widget.dart';
-import 'package:schedule_app/models/employee.dart';
+import 'package:schedule_app/core/models/employee.dart';
 
 class HomeScreenDrawer extends StatefulWidget {
   const HomeScreenDrawer({super.key, required this.employee});

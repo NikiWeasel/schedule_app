@@ -1,5 +1,6 @@
 class Employee {
   const Employee({
+    required this.employeeId,
     required this.name,
     required this.surname,
     required this.description,
@@ -8,6 +9,7 @@ class Employee {
     required this.imageUrl,
   });
 
+  final String employeeId;
   final String name;
   final String surname;
   final String description;

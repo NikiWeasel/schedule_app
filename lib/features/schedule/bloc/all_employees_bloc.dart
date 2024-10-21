@@ -11,9 +11,7 @@ class AllEmployeesBloc extends Bloc<AllEmployeesEvent, AllEmployeesState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   AllEmployeesBloc() : super(AllEmployeesInitial()) {
-    on<AllEmployeesEvent>((event, emit) {
-      on<FetchAllEmployeesData>(_onFetchAllEmployeesData);
-    });
+    on<FetchAllEmployeesData>(_onFetchAllEmployeesData);
   }
 
   Future<void> _onFetchAllEmployeesData(
@@ -31,6 +29,7 @@ class AllEmployeesBloc extends Bloc<AllEmployeesEvent, AllEmployeesState> {
           email: data['email'],
           number: data['number'],
           imageUrl: data['image_url'],
+          employeeId: doc.id,
         );
       }).toList();
 

@@ -1,14 +1,21 @@
 class Appointment {
-  Appointment(
-      {required this.master,
-      required this.client,
-      required this.startTime,
-      required this.duration});
+  Appointment({
+    required this.appointmentId,
+    required this.masterId,
+    required this.client,
+    required this.serviceName,
+    required this.startTime,
+    required this.duration,
+    required this.date,
+  });
 
-  final String master;
+  final String appointmentId;
+  final String masterId;
   final String client; //TODO: сделать мапу (number, name)
+  final String serviceName;
   final int startTime;
   final int duration;
+  final DateTime date;
 
   int getStartTimeMinutes() {
     double time = startTime / 60;

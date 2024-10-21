@@ -44,6 +44,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         email: data['email'],
         number: data['number'],
         imageUrl: data['image_url'],
+        employeeId: user.uid,
       );
 
       emit(UserLoaded(user: fetchedUser));

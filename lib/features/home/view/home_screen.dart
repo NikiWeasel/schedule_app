@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schedule_app/core/bloc/appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/widgets/loading_skeleton.dart';
 import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'package:schedule_app/features/home/view/widgets/home_appointments.dart';
@@ -22,50 +22,50 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<Appointment> appointments = [
-    Appointment(
-      master: 'Мастер 1',
-      client: 'Клиент 1',
-      startTime: 540,
-      duration: 45,
-    ),
-    Appointment(
-      master: 'Мастер 1',
-      client: 'Клиент 1',
-      startTime: 540,
-      duration: 45,
-    ),
-    Appointment(
-      master: 'Мастер 1',
-      client: 'Клиент 1',
-      startTime: 540,
-      duration: 45,
-    ),
-    Appointment(
-      master: 'Мастер 1',
-      client: 'Клиент 1',
-      startTime: 540,
-      duration: 45,
-    ),
-    Appointment(
-      master: 'Мастер 1',
-      client: 'Клиент 1',
-      startTime: 540,
-      duration: 45,
-    ),
-    Appointment(
-      master: 'Мастер 1',
-      client: 'Клиент 1',
-      startTime: 540,
-      duration: 45,
-    ),
-    Appointment(
-      master: 'Мастер 1',
-      client: 'Клиент 1',
-      startTime: 540,
-      duration: 45,
-    ),
-  ];
+  // final List<Appointment> appointments = [
+  //   Appointment(
+  //     master: 'Мастер 1',
+  //     client: 'Клиент 1',
+  //     startTime: 540,
+  //     duration: 45,
+  //   ),
+  //   Appointment(
+  //     master: 'Мастер 1',
+  //     client: 'Клиент 1',
+  //     startTime: 540,
+  //     duration: 45,
+  //   ),
+  //   Appointment(
+  //     master: 'Мастер 1',
+  //     client: 'Клиент 1',
+  //     startTime: 540,
+  //     duration: 45,
+  //   ),
+  //   Appointment(
+  //     master: 'Мастер 1',
+  //     client: 'Клиент 1',
+  //     startTime: 540,
+  //     duration: 45,
+  //   ),
+  //   Appointment(
+  //     master: 'Мастер 1',
+  //     client: 'Клиент 1',
+  //     startTime: 540,
+  //     duration: 45,
+  //   ),
+  //   Appointment(
+  //     master: 'Мастер 1',
+  //     client: 'Клиент 1',
+  //     startTime: 540,
+  //     duration: 45,
+  //   ),
+  //   Appointment(
+  //     master: 'Мастер 1',
+  //     client: 'Клиент 1',
+  //     startTime: 540,
+  //     duration: 45,
+  //   ),
+  // ];
 
   @override
   Widget build(BuildContext context) {

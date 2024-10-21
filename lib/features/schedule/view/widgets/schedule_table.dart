@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
+import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
 import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart';
 import 'package:schedule_app/core/widgets/appointment_widget.dart';
-
-// import 'package:schedule_app/widgets/person_header_widget.dart';
 import 'package:schedule_app/core/models/appointment.dart';
-import 'package:schedule_app/features/schedule/view/widgets/editing_dialog.dart';
 import 'package:schedule_app/core/widgets/person_header_widget.dart';
 import 'package:schedule_app/core/models/appointment.dart';
+import 'package:schedule_app/core/models/employee.dart';
 
 class ScheduleTable extends StatefulWidget {
   const ScheduleTable({super.key});
@@ -17,15 +18,27 @@ class ScheduleTable extends StatefulWidget {
 }
 
 class _ScheduleTableState extends State<ScheduleTable> {
-  final List<String> masters = ['Мастер 1', 'Мастер 2', 'Мастер 3'];
+  // final List<String> masters = ['Мастер 1', 'Мастер 2', 'Мастер 3'];
   final double timeSlotHeight =
       60.0; // Высота одного временного интервала (30 минут)
-  final List<Appointment> appointments = [
-    Appointment(
-        master: 'Мастер 1', client: 'Клиент 1', startTime: 540, duration: 45),
-    Appointment(
-        master: 'Мастер 2', client: 'Клиент 2', startTime: 540, duration: 45),
-  ];
+
+  // final List<Appointment> appointments = [
+  //   Appointment(
+  //       masterId: 'Мастер 1',
+  //       client: 'Клиент 1',
+  //       startTime: 540,
+  //       duration: 45,
+  //       appointmentId: '',
+  //       serviceName: '',
+  //       date: DateFormat('dd.MM.yyyy').format(DateTime(now.year, now.month, now.day, time.hour, time.minute))),
+  //   Appointment(
+  //       masterId: 'Мастер 2',
+  //       client: 'Клиент 2',
+  //       startTime: 540,
+  //       duration: 45,
+  //       appointmentId: '',
+  //       serviceName: ''),
+  // ];
 
   void openEditingDialog() {
     showModalBottomSheet(
@@ -34,35 +47,105 @@ class _ScheduleTableState extends State<ScheduleTable> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Row(
-          children: [
-            _buildTimeColumn(),
-            // ...masters.map((master) => _buildMasterColumn(master)),
-          ],
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AllEmployeesBloc>(
+          create: (context) => AllEmployeesBloc()..add(FetchAllEmployeesData()),
         ),
-        Expanded(
-            child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Column(
-            children: [
-              IntrinsicWidth(child: _buildHeader()),
-              Expanded(
-                child: Row(
-                  children: [
-                    ...masters.map((master) => _buildMasterColumn(master)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ))
+        BlocProvider<FetchAppointmentsBloc>(
+          create: (context) =>
+              FetchAppointmentsBloc()..add(FetchAppointmentsData()),
+        ),
       ],
+      child: BlocBuilder<AllEmployeesBloc, AllEmployeesState>(
+        builder: (context, allEmployeesState) {
+          return BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
+            builder: (context, allAppontmentsState) {
+              if (allEmployeesState is AllEmployeesLoaded &&
+                  allAppontmentsState is FetchAppointmentsLoaded) {
+                var masters = allEmployeesState.employees;
+                var appointments = allAppontmentsState.appointments;
+
+                return Row(
+                  children: [
+                    Row(
+                      children: [
+                        _buildTimeColumn(),
+                        // ...masters.map((master) => _buildMasterColumn(master)),
+                      ],
+                    ),
+                    Expanded(
+                        child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Column(
+                        children: [
+                          IntrinsicWidth(child: _buildHeader(masters)),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                ...masters.map((masterName) =>
+                                    _buildMasterColumn(
+                                        masterName.name, appointments)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ))
+                  ],
+                );
+              }
+              if (allEmployeesState is AllEmployeesLoaded) {
+                var masters = allEmployeesState.employees;
+
+                return Row(
+                  children: [
+                    Row(
+                      children: [
+                        _buildTimeColumn(),
+                        // ...masters.map((master) => _buildMasterColumn(master)),
+                      ],
+                    ),
+                    Expanded(
+                        child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Column(
+                        children: [
+                          IntrinsicWidth(child: _buildHeader(masters)),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                ...masters.map((masterName) =>
+                                    _buildMasterColumn(masterName.name, [])),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ))
+                  ],
+                );
+              }
+              if (allEmployeesState is AllEmployeesError) {
+                print(allEmployeesState.errorMessage);
+              }
+              if (allAppontmentsState is FetchAppointmentsError) {
+                print(allAppontmentsState.errorMessage);
+              }
+              print(allEmployeesState);
+              print(allAppontmentsState);
+
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(List<Employee> masters) {
     return Row(
       children: [
         Row(
@@ -78,7 +161,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
                   ),
                 ),
                 child: MasterHeaderWidget(
-                  title: master,
+                  title: master.name,
                   onTap: () {},
                 ));
           }).toList(),
@@ -131,13 +214,13 @@ class _ScheduleTableState extends State<ScheduleTable> {
   }
 
   // Колонка для мастера с записями
-  Widget _buildMasterColumn(String master) {
+  Widget _buildMasterColumn(String master, List<Appointment> appointments) {
     return SizedBox(
       width: 200,
       child: Stack(
         children: [
           ..._buildTimeSlots(),
-          ..._buildAppointmentsForMaster(master),
+          ..._buildAppointmentsForMaster(master, appointments),
         ],
       ),
     );
@@ -164,9 +247,10 @@ class _ScheduleTableState extends State<ScheduleTable> {
   }
 
   // Записи для конкретного мастера
-  List<Widget> _buildAppointmentsForMaster(String master) {
+  List<Widget> _buildAppointmentsForMaster(
+      String masterId, List<Appointment> appointments) {
     return appointments
-        .where((appointment) => appointment.master == master)
+        .where((appointment) => appointment.masterId == masterId)
         .map((appointment) {
       final startMinutes = (appointment.getStartTimeHours() - 9) * 60 +
           appointment.getStartTimeMinutes() +

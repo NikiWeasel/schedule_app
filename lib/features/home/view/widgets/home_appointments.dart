@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:schedule_app/core/bloc/appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/widgets/appointment_widget.dart';
 
@@ -16,13 +16,13 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AppointmentsBloc(),
-      child: BlocBuilder<AppointmentsBloc, AppointmentsState>(
+      create: (context) => FetchAppointmentsBloc(),
+      child: BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
         builder: (ctx, state) {
-          if (state is AppointmentsLoading) {
+          if (state is FetchAppointmentsLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state is AppointmentsError) {
+          if (state is FetchAppointmentsError) {
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Center(
@@ -36,7 +36,7 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
             );
           }
 
-          if (state is AppointmentsLoaded) {
+          if (state is FetchAppointmentsLoaded) {
             var appointments = state.appointments;
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -47,10 +47,13 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
                     AppointmentWidget(
                       height: 100,
                       appointment: Appointment(
-                          master: appointment.master,
                           client: appointment.client,
                           startTime: appointment.startTime,
-                          duration: appointment.duration),
+                          duration: appointment.duration,
+                          masterId: appointment.masterId,
+                          appointmentId: appointment.appointmentId,
+                          serviceName: appointment.serviceName,
+                          date: appointment.date),
                       onHold: () {},
                     ),
                   const Padding(padding: EdgeInsets.only(left: 8)),

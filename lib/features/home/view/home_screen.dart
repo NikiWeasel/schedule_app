@@ -22,51 +22,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // final List<Appointment> appointments = [
-  //   Appointment(
-  //     master: 'Мастер 1',
-  //     client: 'Клиент 1',
-  //     startTime: 540,
-  //     duration: 45,
-  //   ),
-  //   Appointment(
-  //     master: 'Мастер 1',
-  //     client: 'Клиент 1',
-  //     startTime: 540,
-  //     duration: 45,
-  //   ),
-  //   Appointment(
-  //     master: 'Мастер 1',
-  //     client: 'Клиент 1',
-  //     startTime: 540,
-  //     duration: 45,
-  //   ),
-  //   Appointment(
-  //     master: 'Мастер 1',
-  //     client: 'Клиент 1',
-  //     startTime: 540,
-  //     duration: 45,
-  //   ),
-  //   Appointment(
-  //     master: 'Мастер 1',
-  //     client: 'Клиент 1',
-  //     startTime: 540,
-  //     duration: 45,
-  //   ),
-  //   Appointment(
-  //     master: 'Мастер 1',
-  //     client: 'Клиент 1',
-  //     startTime: 540,
-  //     duration: 45,
-  //   ),
-  //   Appointment(
-  //     master: 'Мастер 1',
-  //     client: 'Клиент 1',
-  //     startTime: 540,
-  //     duration: 45,
-  //   ),
-  // ];
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<UserBloc, UserState>(
@@ -75,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // ScaffoldMessenger.of(context).clearSnackBars();
           // ScaffoldMessenger.of(context)
           //     .showSnackBar(SnackBar(content: Text(state.errorMessage)));
-          print(state.errorMessage);
+          debugPrint(state.errorMessage);
 
           return const SplashScreen();
         }

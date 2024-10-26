@@ -33,8 +33,10 @@ class AppointmentWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                  '${appointment.getFormattedStartTime()} -- ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}'),
-              Text('${appointment.client}'),
+                  '${appointment.getFormattedStartTime()} — ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}'),
+              Text(appointment.clientName),
+              Text(appointment.clientNumber),
+              Text(appointment.serviceName),
             ],
           ),
         ),

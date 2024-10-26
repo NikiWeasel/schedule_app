@@ -1,17 +1,19 @@
 class Appointment {
   Appointment({
-    required this.appointmentId,
+    this.appointmentId,
     required this.masterId,
-    required this.client,
+    required this.clientName,
+    required this.clientNumber,
     required this.serviceName,
     required this.startTime,
     required this.duration,
     required this.date,
   });
 
-  final String appointmentId;
+  String? appointmentId;
   final String masterId;
-  final String client; //TODO: сделать мапу (number, name)
+  final String clientName;
+  final String clientNumber;
   final String serviceName;
   final int startTime;
   final int duration;
@@ -20,7 +22,7 @@ class Appointment {
   int getStartTimeMinutes() {
     double time = startTime / 60;
     int hours = time.toInt();
-    int minutes = ((time - hours) * 10).round();
+    int minutes = ((time - hours) * 60).round();
     return minutes;
   }
 
@@ -37,7 +39,7 @@ class Appointment {
     }
 
     int hours = time.toInt();
-    int minutes = ((time - hours) * 10).round();
+    int minutes = ((time - hours) * 60).toInt();
 
     String formattedHours = hours.toString();
     String formattedMinutes = minutes.toString();
@@ -57,7 +59,7 @@ class Appointment {
     }
 
     int hours = time.toInt();
-    int minutes = ((time - hours).toDouble() * 60).toInt();
+    int minutes = ((time - hours) * 60).toInt();
 
     String formattedHours = hours.toString();
     String formattedMinutes = minutes.toString();
@@ -80,7 +82,7 @@ class Appointment {
     }
 
     int hours = time.toInt();
-    int minutes = ((time - hours).toDouble() * 60).toInt();
+    int minutes = ((time - hours) * 60).toInt();
 
     String formattedDuration = '';
     if (hours == 0) {

@@ -47,7 +47,8 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
                     AppointmentWidget(
                       height: 100,
                       appointment: Appointment(
-                          client: appointment.client,
+                          clientName: appointment.clientName,
+                          clientNumber: appointment.clientNumber,
                           startTime: appointment.startTime,
                           duration: appointment.duration,
                           masterId: appointment.masterId,

@@ -28,13 +28,15 @@ class FetchAppointmentsBloc
 
       final List<Appointment> allEmployees = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
+
         return Appointment(
             masterId: data['masterId'],
-            client: data['client'],
+            clientName: data['clientName'],
+            clientNumber: data['clientNumber'],
             serviceName: data['serviceName'],
             startTime: data['startTime'],
             duration: data['duration'],
-            date: format.parse(data['date']),
+            date: data['date'].toDate(),
             appointmentId: doc.id);
       }).toList();
 

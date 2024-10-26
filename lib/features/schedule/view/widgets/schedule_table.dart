@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:schedule_app/app.dart';
 import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
 import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
 import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart';
@@ -22,23 +23,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
   final double timeSlotHeight =
       60.0; // Высота одного временного интервала (30 минут)
 
-  // final List<Appointment> appointments = [
-  //   Appointment(
-  //       masterId: 'Мастер 1',
-  //       client: 'Клиент 1',
-  //       startTime: 540,
-  //       duration: 45,
-  //       appointmentId: '',
-  //       serviceName: '',
-  //       date: DateFormat('dd.MM.yyyy').format(DateTime(now.year, now.month, now.day, time.hour, time.minute))),
-  //   Appointment(
-  //       masterId: 'Мастер 2',
-  //       client: 'Клиент 2',
-  //       startTime: 540,
-  //       duration: 45,
-  //       appointmentId: '',
-  //       serviceName: ''),
-  // ];
+  final double timeSlotWidth = 210;
 
   void openEditingDialog() {
     showModalBottomSheet(
@@ -61,76 +46,61 @@ class _ScheduleTableState extends State<ScheduleTable> {
         builder: (context, allEmployeesState) {
           return BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
             builder: (context, allAppontmentsState) {
-              if (allEmployeesState is AllEmployeesLoaded &&
-                  allAppontmentsState is FetchAppointmentsLoaded) {
+              if ((allEmployeesState is AllEmployeesLoaded &&
+                      allAppontmentsState is FetchAppointmentsLoaded) ||
+                  (allEmployeesState is AllEmployeesLoaded)) {
                 var masters = allEmployeesState.employees;
-                var appointments = allAppontmentsState.appointments;
+                List<Appointment> appointments = [];
+                // print(allEmployeesState);
+                // print(allAppontmentsState);
+                if (allAppontmentsState is FetchAppointmentsError) {
+                  debugPrint(allAppontmentsState.errorMessage);
+                }
 
-                return Row(
-                  children: [
-                    Row(
+                if (allAppontmentsState is FetchAppointmentsLoaded) {
+                  appointments = allAppontmentsState.appointments;
+                }
+
+                // print(appointments);
+                return SingleChildScrollView(
+                  child: IntrinsicHeight(
+                    child: Row(
                       children: [
-                        _buildTimeColumn(),
-                        // ...masters.map((master) => _buildMasterColumn(master)),
+                        Row(
+                          children: [
+                            _buildTimeColumn(),
+                            // ...masters.map((master) => _buildMasterColumn(master)),
+                          ],
+                        ),
+                        Expanded(
+                            child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Column(
+                            children: [
+                              IntrinsicWidth(child: _buildHeader(masters)),
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    ...masters.map((masterName) =>
+                                        _buildMasterColumn(
+                                            masterName.employeeId,
+                                            appointments)),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ))
                       ],
                     ),
-                    Expanded(
-                        child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Column(
-                        children: [
-                          IntrinsicWidth(child: _buildHeader(masters)),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                ...masters.map((masterName) =>
-                                    _buildMasterColumn(
-                                        masterName.name, appointments)),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ))
-                  ],
-                );
-              }
-              if (allEmployeesState is AllEmployeesLoaded) {
-                var masters = allEmployeesState.employees;
-
-                return Row(
-                  children: [
-                    Row(
-                      children: [
-                        _buildTimeColumn(),
-                        // ...masters.map((master) => _buildMasterColumn(master)),
-                      ],
-                    ),
-                    Expanded(
-                        child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Column(
-                        children: [
-                          IntrinsicWidth(child: _buildHeader(masters)),
-                          Expanded(
-                            child: Row(
-                              children: [
-                                ...masters.map((masterName) =>
-                                    _buildMasterColumn(masterName.name, [])),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ))
-                  ],
+                  ),
                 );
               }
               if (allEmployeesState is AllEmployeesError) {
-                print(allEmployeesState.errorMessage);
+                debugPrint(allEmployeesState.errorMessage);
               }
               if (allAppontmentsState is FetchAppointmentsError) {
-                print(allAppontmentsState.errorMessage);
+                debugPrint(allAppontmentsState.errorMessage);
               }
               print(allEmployeesState);
               print(allAppontmentsState);
@@ -151,7 +121,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
         Row(
           children: masters.map((master) {
             return Container(
-                width: 200,
+                width: timeSlotWidth,
                 // Ширина колонки для каждого мастера
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(8.0),
@@ -161,7 +131,8 @@ class _ScheduleTableState extends State<ScheduleTable> {
                   ),
                 ),
                 child: MasterHeaderWidget(
-                  title: master.name,
+                  title: '${master.name} ${master.surname}',
+                  imageProvider: NetworkImage(master.imageUrl),
                   onTap: () {},
                 ));
           }).toList(),
@@ -178,8 +149,10 @@ class _ScheduleTableState extends State<ScheduleTable> {
         ),
         Container(
           alignment: Alignment.center,
-          width: 80,
-          color: Colors.white, // Ширина для колонки времени
+          width: 65,
+          color: Theme.of(context)
+              .colorScheme
+              .surface, // Ширина для колонки времени
           child: const Text(
             'Время',
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -193,7 +166,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
             final time =
                 TimeOfDay(hour: 9 + (index ~/ 2), minute: (index % 2) * 30);
             return Container(
-              width: 80,
+              width: 65,
               height: timeSlotHeight,
               alignment: Alignment.center,
               child: Text(
@@ -216,7 +189,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
   // Колонка для мастера с записями
   Widget _buildMasterColumn(String master, List<Appointment> appointments) {
     return SizedBox(
-      width: 200,
+      width: timeSlotWidth,
       child: Stack(
         children: [
           ..._buildTimeSlots(),

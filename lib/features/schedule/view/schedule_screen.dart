@@ -1,6 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:schedule_app/core/bloc/add_delete/actions_appointment_bloc.dart';
 import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
 import 'package:schedule_app/features/schedule/view/widgets/editing_dialog.dart';
+
+import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
+import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key});
@@ -10,9 +16,12 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
   void openCreateNewDialog() {
     showModalBottomSheet(
         context: context,
+        isScrollControlled: true,
         builder: (ctx) => const EditingDialog(
               isEditing: false,
             ));
@@ -24,9 +33,26 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       appBar: AppBar(
         title: const Text('Расписание'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.autorenew),
-            onPressed: () {},
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<AllEmployeesBloc>(
+                create: (context) => AllEmployeesBloc(),
+              ),
+              BlocProvider<FetchAppointmentsBloc>(
+                create: (context) => FetchAppointmentsBloc(),
+              ),
+            ],
+            child: Builder(builder: (context) {
+              return IconButton(
+                icon: const Icon(Icons.autorenew),
+                onPressed: () {
+                  context.read<AllEmployeesBloc>().add(FetchAllEmployeesData());
+                  context
+                      .read<FetchAppointmentsBloc>()
+                      .add(FetchAppointmentsData());
+                },
+              );
+            }),
           ),
         ],
       ),
@@ -34,9 +60,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         onPressed: openCreateNewDialog,
         child: const Icon(Icons.add),
       ),
-      body: const SingleChildScrollView(
-        child: IntrinsicHeight(child: ScheduleTable()),
-      ),
+      body: const ScheduleTable(),
     );
   }
 }

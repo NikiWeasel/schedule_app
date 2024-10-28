@@ -77,7 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(
                     height: 8,
                   ),
-                  const HomeAppointments(),
+                  HomeAppointments(
+                    emlpoyeeId: state.user.employeeId,
+                  ),
                   Align(
                     alignment: Alignment.topRight,
                     child: TextButton(

@@ -28,15 +28,25 @@ class AppointmentWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(5),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(6.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                   '${appointment.getFormattedStartTime()} — ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}'),
-              Text(appointment.clientName),
-              Text(appointment.clientNumber),
-              Text(appointment.serviceName),
+              height >= 60
+                  ? Text(
+                      '${appointment.clientName} ${appointment.clientNumber} \n${appointment.serviceName}',
+                      overflow: TextOverflow.fade,
+                      // maxLines: 1,
+                    )
+                  : Text(
+                      '${appointment.clientName} ${appointment.clientNumber} ${appointment.serviceName}',
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                    ),
+              // Text(appointment.clientNumber, overflow: TextOverflow.fade),
+              // Text(appointment.serviceName, overflow: TextOverflow.fade),
             ],
           ),
         ),

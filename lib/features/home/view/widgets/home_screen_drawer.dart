@@ -18,6 +18,35 @@ class HomeScreenDrawer extends StatefulWidget {
 }
 
 class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
+  void onLogout() {
+    showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: Text(
+                'Выйти?',
+                style: Theme.of(context).textTheme.titleLarge!,
+              ),
+              content: Text(
+                'Вас выкинет на экран входа.',
+                style: Theme.of(context).textTheme.titleMedium!,
+              ),
+              actionsAlignment: MainAxisAlignment.start,
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Подтвердить')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Отмена'))
+              ],
+            ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -30,7 +59,7 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                 SizedBox(
                   height: 80,
                   child: DrawerHeader(
-                    padding: EdgeInsets.all(2),
+                    padding: const EdgeInsets.all(2),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: MasterHeaderWidget(
@@ -84,9 +113,7 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                   icon: const Icon(Icons.settings),
                 ),
                 IconButton(
-                  onPressed: () {
-                    FirebaseAuth.instance.signOut();
-                  },
+                  onPressed: onLogout,
                   // label: const Text('Выйти'),
                   icon: const Icon(Icons.logout),
                 ),

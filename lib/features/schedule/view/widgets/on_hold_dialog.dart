@@ -29,8 +29,9 @@ class OnHoldDialog extends StatelessWidget {
               ),
               actionsAlignment: MainAxisAlignment.start,
               actions: [
-                ElevatedButton(onPressed: () {}, child: Text('Подтвердить')),
-                TextButton(onPressed: () {}, child: Text('Отмена'))
+                ElevatedButton(
+                    onPressed: () {}, child: const Text('Подтвердить')),
+                TextButton(onPressed: () {}, child: const Text('Отмена'))
               ],
             ));
   }

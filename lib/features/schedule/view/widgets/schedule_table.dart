@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:schedule_app/app.dart';
 import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/widgets/employee_profile_widget.dart';
 import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
 import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart';
 import 'package:schedule_app/core/widgets/appointment_widget.dart';
@@ -133,7 +134,14 @@ class _ScheduleTableState extends State<ScheduleTable> {
                 child: MasterHeaderWidget(
                   title: '${master.name} ${master.surname}',
                   imageProvider: NetworkImage(master.imageUrl),
-                  onTap: () {},
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (ctx) => EmployeeProfileWidget(
+                              employee: master,
+                              isAlwaysReadOnly: true,
+                            ));
+                  },
                 ));
           }).toList(),
         ),

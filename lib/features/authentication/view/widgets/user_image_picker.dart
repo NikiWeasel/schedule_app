@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class UserImagePicker extends StatefulWidget {
-  const UserImagePicker({super.key, required this.onPickedImage});
+  UserImagePicker({super.key, required this.onPickedImage, this.child});
 
   final void Function(File pickedImage) onPickedImage;
+  ImageProvider? child;
 
   @override
   State<UserImagePicker> createState() {
@@ -60,7 +62,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
           radius: 40,
           // backgroundColor: Colors.grey,
           foregroundImage:
-          _pickedImage != null ? FileImage(_pickedImage!) : null,
+              _pickedImage != null ? FileImage(_pickedImage!) : widget.child,
           child: Transform.scale(scale: 1.7, child: const Icon(Icons.person)),
         ),
         Column(
@@ -70,10 +72,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                 label: Text(
                   'Сделать фото',
                   style: TextStyle(
-                    color: Theme
-                        .of(context)
-                        .colorScheme
-                        .primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 icon: const Icon(Icons.camera_alt)),
@@ -82,10 +81,7 @@ class _UserImagePickerState extends State<UserImagePicker> {
                 label: Text(
                   'Выбрать фото',
                   style: TextStyle(
-                    color: Theme
-                        .of(context)
-                        .colorScheme
-                        .primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
                 icon: const Icon(Icons.image)),

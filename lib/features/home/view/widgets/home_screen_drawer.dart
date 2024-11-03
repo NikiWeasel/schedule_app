@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:schedule_app/core/widgets/employee_profile_widget.dart';
 import 'package:schedule_app/features/settings/view/settings_screen.dart';
 import 'package:schedule_app/core/widgets/person_header_progress_indicator.dart';
 import 'package:schedule_app/core/widgets/person_header_widget.dart';
@@ -65,7 +66,12 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                       child: MasterHeaderWidget(
                         title: widget.employee.name,
                         subtitle: widget.employee.number,
-                        onTap: () {},
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (ctx) => EmployeeProfileWidget(
+                                  employee: widget.employee));
+                        },
                         imageProvider: NetworkImage(widget.employee.imageUrl),
                       ),
                     ),

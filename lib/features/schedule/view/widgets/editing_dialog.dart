@@ -11,9 +11,10 @@ import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/schedule/view/widgets/service_button.dart';
 
 class EditingDialog extends StatefulWidget {
-  const EditingDialog({super.key, required this.isEditing});
+  EditingDialog({super.key, this.appointment});
 
-  final bool isEditing;
+  // final bool isEditing;
+  Appointment? appointment;
 
   @override
   State<EditingDialog> createState() => _EditingDialogState();
@@ -29,6 +30,9 @@ class _EditingDialogState extends State<EditingDialog> {
   List<int> selectedServicesDuration = [];
   int timeCounter = 0;
 
+  late TextEditingController numberController;
+  late TextEditingController nameController;
+
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   String enteredNumber = '';
@@ -38,6 +42,39 @@ class _EditingDialogState extends State<EditingDialog> {
 
   void patchAppointment() {
     //TODO: implement
+  }
+
+  @override
+  void initState() {
+    nameController = TextEditingController();
+    numberController = TextEditingController();
+
+    if (widget.appointment != null) {
+      numberController.text = widget.appointment!.clientNumber;
+      nameController.text = widget.appointment!.clientName;
+      selectedTime = TimeOfDay(
+          hour: widget.appointment!.getStartTimeHours(),
+          minute: widget.appointment!.getStartTimeMinutes());
+      selectedDate = widget.appointment!.date;
+      selectedServices = widget.appointment!.serviceName.split(' + ');
+      int sum = 0;
+      for (var element in selectedServices) {
+        // addService(element);
+        int numToAdd = services[element]!;
+        selectedServicesDuration.add(numToAdd);
+        sum = sum + numToAdd;
+      }
+      if (widget.appointment!.duration > sum) {
+        var time =
+            selectedServicesDuration[0] + (widget.appointment!.duration - sum);
+        selectedServicesDuration[0] = time;
+        timeCounter = time;
+      } else {
+        timeCounter = sum;
+      }
+    }
+
+    super.initState();
   }
 
   bool _submit() {
@@ -151,7 +188,7 @@ class _EditingDialogState extends State<EditingDialog> {
                     child: Row(
                       children: [
                         Text(
-                          widget.isEditing
+                          widget.appointment != null
                               ? 'Изменить запись'
                               : 'Добавить запись',
                           style: Theme.of(context)
@@ -180,6 +217,7 @@ class _EditingDialogState extends State<EditingDialog> {
                       Expanded(
                         child: TextFormField(
                           keyboardType: TextInputType.phone,
+                          controller: numberController,
                           decoration: InputDecoration(
                               label: const Text('Номер'),
                               border: OutlineInputBorder(
@@ -201,6 +239,7 @@ class _EditingDialogState extends State<EditingDialog> {
                       ),
                       Expanded(
                         child: TextFormField(
+                          controller: nameController,
                           decoration: InputDecoration(
                               label: const Text('Имя'),
                               border: OutlineInputBorder(
@@ -342,8 +381,8 @@ class _EditingDialogState extends State<EditingDialog> {
                         onPressed: () {
                           var isOk = _submit();
                           if (isOk) {
-                            print('sent');
                             Appointment appointment = Appointment(
+                              // appointmentId: widget.appointment.appointmentId,
                               masterId: FirebaseAuth.instance.currentUser!.uid,
                               clientName: enteredName,
                               clientNumber: enteredNumber,
@@ -352,12 +391,21 @@ class _EditingDialogState extends State<EditingDialog> {
                               duration: timeCounter,
                               date: selectedDate,
                             );
-
-                            // Now this context refers to the BlocProvider context
-                            BlocProvider.of<ActionsAppointmentBloc>(context)
-                                .add(
-                              CreateAppointmentEvent(appointment: appointment),
-                            );
+                            if (widget.appointment == null) {
+                              BlocProvider.of<ActionsAppointmentBloc>(context)
+                                  .add(
+                                CreateAppointmentEvent(
+                                    appointment: appointment),
+                              );
+                            } else {
+                              appointment.appointmentId =
+                                  widget.appointment!.appointmentId;
+                              BlocProvider.of<ActionsAppointmentBloc>(context)
+                                  .add(
+                                UpdateAppointmentEvent(
+                                    appointment: appointment),
+                              );
+                            }
                           }
                         },
                         child: const Text('Подтвердить'),

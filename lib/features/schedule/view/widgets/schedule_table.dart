@@ -26,9 +26,12 @@ class _ScheduleTableState extends State<ScheduleTable> {
 
   final double timeSlotWidth = 210;
 
-  void openEditingDialog() {
+  void openEditingDialog(Appointment appointment) {
     showModalBottomSheet(
-        context: context, builder: (ctx) => const OnHoldDialog());
+        context: context,
+        builder: (ctx) => OnHoldDialog(
+              appointment: appointment,
+            ));
   }
 
   @override
@@ -246,7 +249,9 @@ class _ScheduleTableState extends State<ScheduleTable> {
           child: AppointmentWidget(
             height: height - 8,
             appointment: appointment,
-            onHold: openEditingDialog,
+            onHold: (holdAppointment) {
+              openEditingDialog(holdAppointment);
+            },
           ));
     }).toList();
   }

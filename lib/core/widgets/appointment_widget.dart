@@ -12,13 +12,15 @@ class AppointmentWidget extends StatelessWidget {
 
   final double height;
   final Appointment appointment;
-  final void Function() onHold;
+  final void Function(Appointment appointment) onHold;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(5),
-      onLongPress: onHold,
+      onLongPress: () {
+        onHold(appointment);
+      },
       child: Container(
         margin: const EdgeInsets.all(4.0),
         height: height,

@@ -22,8 +22,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (ctx) => const EditingDialog(
-              isEditing: false,
+        builder: (ctx) => EditingDialog(
+              appointment: null,
             ));
   }
 

@@ -67,7 +67,7 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
                           appointmentId: appointment.appointmentId,
                           serviceName: appointment.serviceName,
                           date: appointment.date),
-                      onHold: () {},
+                      onHold: (appo) {},
                     ),
                   const Padding(padding: EdgeInsets.only(left: 8)),
                   Container(

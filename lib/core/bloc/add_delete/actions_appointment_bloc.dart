@@ -36,10 +36,20 @@ class ActionsAppointmentBloc
         emit(ActionsAppointmentErrorState(error: e.toString()));
       }
     });
+
+    on<UpdateAppointmentEvent>((event, emit) async {
+      emit(ActionsAppointmentLoadingState());
+      try {
+        await _updateAppointment(event);
+        emit(ActionsAppointmentLoadedState());
+      } catch (e) {
+        emit(ActionsAppointmentErrorState(error: e.toString()));
+      }
+    });
   }
 
   Future<void> _createAppointment(CreateAppointmentEvent event) async {
-    // debugPrint(event.appointment.toString());
+    debugPrint('create');
     await _firebaseFirestore.collection('appointments').add({
       'masterId': event.appointment.masterId,
       'clientName': event.appointment.clientName,
@@ -50,6 +60,28 @@ class ActionsAppointmentBloc
       'date': Timestamp.fromDate(event.appointment.date),
     });
     debugPrint('added appoint');
+  }
+
+  Future<void> _updateAppointment(UpdateAppointmentEvent event) async {
+    debugPrint('update');
+
+    print(event.appointment.appointmentId);
+
+    var id = event.appointment.appointmentId;
+    // _firebaseFirestore.clearPersistence();
+    _firebaseFirestore.collection('appointments').doc(id).update({
+      'masterId': event.appointment.masterId,
+      'clientName': event.appointment.clientName,
+      'clientNumber': event.appointment.clientNumber,
+      'serviceName': event.appointment.serviceName,
+      'startTime': event.appointment.startTime,
+      'duration': event.appointment.duration,
+      'date': Timestamp.fromDate(event.appointment.date),
+    }).then((_) {
+      debugPrint("Document successfully updated!");
+    }).catchError((error) {
+      debugPrint("Error updating document: $error");
+    });
   }
 
   Future<void> _deleteAppointment(DeleteAppointmentEvent event) async {

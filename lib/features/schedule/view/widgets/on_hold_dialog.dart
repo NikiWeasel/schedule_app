@@ -1,21 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:schedule_app/features/schedule/view/widgets/editing_dialog.dart';
+import 'package:schedule_app/core/bloc/add_delete/actions_appointment_bloc.dart';
+import 'package:schedule_app/core/models/appointment.dart';
 
 class OnHoldDialog extends StatelessWidget {
-  const OnHoldDialog({super.key});
+  OnHoldDialog({super.key, required this.appointment});
 
-  void onEdit(BuildContext context) {
+  final Appointment appointment;
+
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
+  void onEdit(BuildContext context, Appointment appointment) {
     Navigator.pop(context);
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        builder: (ctx) => const EditingDialog(
-              isEditing: true,
+        builder: (ctx) => EditingDialog(
+              appointment: appointment,
             ));
   }
 
-  void onDelete(BuildContext context) {
+  void onDelete(BuildContext context, void Function() deleteAppointment) {
     showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
@@ -30,8 +38,18 @@ class OnHoldDialog extends StatelessWidget {
               actionsAlignment: MainAxisAlignment.start,
               actions: [
                 ElevatedButton(
-                    onPressed: () {}, child: const Text('Подтвердить')),
-                TextButton(onPressed: () {}, child: const Text('Отмена'))
+                    onPressed: () {
+                      deleteAppointment();
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Подтвердить')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // Navigator.of(context).pop();
+                    },
+                    child: const Text('Отмена'))
               ],
             ));
   }
@@ -40,38 +58,46 @@ class OnHoldDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                onEdit(context);
-              },
-              child: Text(
-                'Редактировать запись',
-                style: Theme.of(context).textTheme.titleMedium!,
+      child: BlocProvider(
+        create: (context) => ActionsAppointmentBloc(_firebaseFirestore),
+        child: Builder(builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    onEdit(context, appointment);
+                  },
+                  child: Text(
+                    'Редактировать запись',
+                    style: Theme.of(context).textTheme.titleMedium!,
+                  ),
+                  // style: ElevatedButtonTheme.of(context).style!.copyWith(backgroundColor: Theme.of(context).colorScheme.primaryContainer),
+                ),
               ),
-              // style: ElevatedButtonTheme.of(context).style!.copyWith(backgroundColor: Theme.of(context).colorScheme.primaryContainer),
-            ),
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                onDelete(context);
-              },
-              child: Text(
-                'Отменить запись',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(color: Theme.of(context).colorScheme.error),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    onDelete(context, () {
+                      BlocProvider.of<ActionsAppointmentBloc>(context).add(
+                          DeleteAppointmentEvent(appointment: appointment));
+                    });
+                  },
+                  child: Text(
+                    'Отменить запись',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(color: Theme.of(context).colorScheme.error),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ],
+            ],
+          );
+        }),
       ),
     );
   }

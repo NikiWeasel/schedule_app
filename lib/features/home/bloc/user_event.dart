@@ -4,3 +4,9 @@ part of 'user_bloc.dart';
 sealed class UserEvent {}
 
 class FetchUserData extends UserEvent {}
+
+class UpdateUserData extends UserEvent {
+  final Employee employee;
+
+  UpdateUserData({required this.employee});
+}

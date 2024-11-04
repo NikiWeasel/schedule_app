@@ -29,8 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
         if (state is UserError) {
           // ScaffoldMessenger.of(context).clearSnackBars();
           // ScaffoldMessenger.of(context)
-          //     .showSnackBar(SnackBar(content: Text(state.errorMessage)));
-          debugPrint(state.errorMessage);
+          //     .showSnackBar(SnackBar(content: Text(state.erro
+          //     rMessage)));
+          debugPrint(state.error);
 
           return const SplashScreen();
         }
@@ -103,6 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ));
         }
+        print('ALO');
         return const SplashScreen();
       },
     );

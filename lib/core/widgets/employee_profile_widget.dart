@@ -1,9 +1,13 @@
 import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/features/authentication/view/widgets/user_image_picker.dart';
+
+import '../../features/home/bloc/user_bloc.dart';
 
 class EmployeeProfileWidget extends StatefulWidget {
   const EmployeeProfileWidget(
@@ -29,18 +33,43 @@ class _EmployeeProfileWidgetState extends State<EmployeeProfileWidget> {
   String enteredSurname = '';
   String enteredNumber = '';
   String enteredDescription = '';
+  File? _selectedImage;
 
-  void _submit() {
+  void _submit(void Function(Employee employee) editUser) async {
     // await FirebaseAuth.instance.setPersistence(Persistence.NONE);
 
     var isValid = _formKey.currentState!.validate();
 
-    if (nameController.text != enteredName ||
-        surnameController.text != enteredSurname ||
-        numberController.text != enteredNumber ||
-        descriptionController.text != enteredDescription) {
+    if (nameController.text == enteredName &&
+        surnameController.text == enteredSurname &&
+        numberController.text == enteredNumber &&
+        descriptionController.text == enteredDescription &&
+        _selectedImage == null) {
       return;
     }
+
+    String imageUrl = '';
+    if (_selectedImage != null) {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('user_images')
+          .child('${widget.employee.employeeId}.jpg');
+
+      await storageRef.putFile(_selectedImage!);
+
+      imageUrl = await storageRef.getDownloadURL();
+    }
+
+    var employee = Employee(
+        employeeId: widget.employee.employeeId,
+        name: nameController.text,
+        surname: surnameController.text,
+        description: descriptionController.text,
+        email: widget.employee.email,
+        number: numberController.text,
+        imageUrl: imageUrl == '' ? widget.employee.imageUrl : imageUrl);
+
+    editUser(employee);
     setState(() {
       _isReadOnly = true;
     });
@@ -119,13 +148,19 @@ class _EmployeeProfileWidgetState extends State<EmployeeProfileWidget> {
                           if (!_isReadOnly)
                             UserImagePicker(
                               child: NetworkImage(widget.employee.imageUrl),
-                              onPickedImage: (File file) {},
+                              onPickedImage: (File pickedImage) {
+                                _selectedImage = pickedImage;
+                              },
                             )
                           else
                             CircleAvatar(
                               radius: 40,
                               foregroundImage:
                                   NetworkImage(widget.employee.imageUrl),
+                              child: const Icon(
+                                Icons.person,
+                                size: 40,
+                              ),
                             ),
                           const SizedBox(
                             height: 15,
@@ -234,10 +269,33 @@ class _EmployeeProfileWidgetState extends State<EmployeeProfileWidget> {
                           ),
                           if (widget.isAlwaysReadOnly == false)
                             if (!_isReadOnly)
-                              ElevatedButton.icon(
-                                  icon: const Icon(Icons.save),
-                                  onPressed: _submit,
-                                  label: const Text('Сохранить'))
+                              BlocProvider(
+                                create: (context) => UserBloc(),
+                                child: BlocBuilder<UserBloc, UserState>(
+                                  builder: (context, state) {
+                                    return state is UserLoading
+                                        ? ElevatedButton.icon(
+                                            label: const Text('Загрузка'),
+                                            onPressed: null,
+                                            icon:
+                                                const CircularProgressIndicator(),
+                                          )
+                                        : ElevatedButton.icon(
+                                            icon: const Icon(Icons.save),
+                                            onPressed: () {
+                                              _submit((Employee employee) {
+                                                BlocProvider.of<UserBloc>(
+                                                        context)
+                                                    .add(
+                                                  UpdateUserData(
+                                                      employee: employee),
+                                                );
+                                              });
+                                            },
+                                            label: const Text('Сохранить'));
+                                  },
+                                ),
+                              )
                             else
                               ElevatedButton.icon(
                                 icon: const Icon(Icons.edit),

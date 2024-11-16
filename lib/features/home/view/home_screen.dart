@@ -86,7 +86,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: TextButton(
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (ctx) => const ScheduleScreen()));
+                              builder: (ctx) => ScheduleScreen(
+                                    user: state.user,
+                                  )));
                         },
                         child: const Text('Полное расписание')),
                   ),
@@ -104,7 +106,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ));
         }
-        print('ALO');
         return const SplashScreen();
       },
     );

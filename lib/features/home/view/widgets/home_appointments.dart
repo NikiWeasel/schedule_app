@@ -45,7 +45,12 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
           }
 
           if (state is FetchAppointmentsLoaded) {
-            var appointments = state.appointments;
+            DateTime curentDate = DateTime.now();
+            var appointments = state.appointments
+                .where((appo) => (appo.date.year == curentDate.year &&
+                    appo.date.month == curentDate.month &&
+                    appo.date.day == curentDate.day))
+                .toList();
             var sortedAppointments = sortAppointments(appointments);
             if (sortedAppointments.isEmpty) {
               return NoAppointmentsWidget(onTap: () {});

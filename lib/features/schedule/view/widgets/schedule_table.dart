@@ -13,7 +13,11 @@ import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/models/employee.dart';
 
 class ScheduleTable extends StatefulWidget {
-  const ScheduleTable({super.key});
+  const ScheduleTable(
+      {super.key, required this.curentDate, required this.user});
+
+  final DateTime curentDate;
+  final Employee user;
 
   @override
   State<ScheduleTable> createState() => _ScheduleTableState();
@@ -53,7 +57,12 @@ class _ScheduleTableState extends State<ScheduleTable> {
               if ((allEmployeesState is AllEmployeesLoaded &&
                       allAppontmentsState is FetchAppointmentsLoaded) ||
                   (allEmployeesState is AllEmployeesLoaded)) {
-                var masters = allEmployeesState.employees;
+                var allMasters = allEmployeesState.employees;
+                var masters = allMasters
+                    .where((e) => widget.user.employeeId != e.employeeId)
+                    .toList();
+                masters.insert(0, widget.user);
+
                 List<Appointment> appointments = [];
                 // print(allEmployeesState);
                 // print(allAppontmentsState);
@@ -64,6 +73,12 @@ class _ScheduleTableState extends State<ScheduleTable> {
                 if (allAppontmentsState is FetchAppointmentsLoaded) {
                   appointments = allAppontmentsState.appointments;
                 }
+                appointments = appointments
+                    .where((appo) =>
+                        (appo.date.year == widget.curentDate.year &&
+                            appo.date.month == widget.curentDate.month &&
+                            appo.date.day == widget.curentDate.day))
+                    .toList();
 
                 // print(appointments);
                 return SingleChildScrollView(

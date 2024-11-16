@@ -65,10 +65,7 @@ class ActionsAppointmentBloc
   Future<void> _updateAppointment(UpdateAppointmentEvent event) async {
     debugPrint('update');
 
-    print(event.appointment.appointmentId);
-
     var id = event.appointment.appointmentId;
-    // _firebaseFirestore.clearPersistence();
     _firebaseFirestore.collection('appointments').doc(id).update({
       'masterId': event.appointment.masterId,
       'clientName': event.appointment.clientName,

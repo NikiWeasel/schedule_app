@@ -29,6 +29,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         context: context,
         isScrollControlled: true,
         builder: (ctx) => EditingDialog(
+              curentDate: currentDate,
               appointment: null,
             ));
   }

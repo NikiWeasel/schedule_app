@@ -34,6 +34,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
     showModalBottomSheet(
         context: context,
         builder: (ctx) => OnHoldDialog(
+              curentDate: widget.curentDate,
               appointment: appointment,
             ));
   }

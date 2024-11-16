@@ -7,9 +7,11 @@ import 'package:schedule_app/core/bloc/add_delete/actions_appointment_bloc.dart'
 import 'package:schedule_app/core/models/appointment.dart';
 
 class OnHoldDialog extends StatelessWidget {
-  OnHoldDialog({super.key, required this.appointment});
+  OnHoldDialog(
+      {super.key, required this.appointment, required this.curentDate});
 
   final Appointment appointment;
+  final DateTime curentDate;
 
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
@@ -19,6 +21,7 @@ class OnHoldDialog extends StatelessWidget {
         context: context,
         isScrollControlled: true,
         builder: (ctx) => EditingDialog(
+              curentDate: curentDate,
               appointment: appointment,
             ));
   }

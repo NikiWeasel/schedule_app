@@ -11,9 +11,10 @@ import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/schedule/view/widgets/service_button.dart';
 
 class EditingDialog extends StatefulWidget {
-  EditingDialog({super.key, this.appointment});
+  EditingDialog({super.key, this.appointment, required this.curentDate});
 
   // final bool isEditing;
+  final DateTime curentDate;
   Appointment? appointment;
 
   @override
@@ -37,12 +38,6 @@ class _EditingDialogState extends State<EditingDialog> {
 
   String enteredNumber = '';
   String enteredName = '';
-
-  void createAppointment() {}
-
-  void patchAppointment() {
-    //TODO: implement
-  }
 
   @override
   void initState() {
@@ -73,8 +68,55 @@ class _EditingDialogState extends State<EditingDialog> {
         timeCounter = sum;
       }
     }
-
     super.initState();
+  }
+
+  bool isOverlapping(
+      Appointment newAppointment, List<Appointment> appointments) {
+    var newEnd = newAppointment.startTime + newAppointment.duration;
+    var newStart = newAppointment.startTime;
+
+    for (var appo in appointments) {
+      var start = appo.startTime;
+      var end = start + appo.duration;
+      // Проверка на пересечение
+      if ((newStart >= start && newStart <= end) ||
+          (newEnd >= start && newEnd <= end)) {
+        if (appo.appointmentId != newAppointment.appointmentId) {
+          return true; // Пересечение найдено
+        }
+      }
+    }
+    return false; // Нет пересечений
+  }
+
+  void showTopSnackBar(
+    context,
+    String message, {
+    Duration? duration,
+  }) {
+    // print(MediaQuery.of(context).size.height - 100);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        dismissDirection: DismissDirection.horizontal,
+        duration: duration ?? const Duration(milliseconds: 1500),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        margin: EdgeInsets.only(
+            bottom: MediaQuery.of(context).size.height -
+                150 -
+                MediaQuery.of(context).viewInsets.bottom,
+            left: 0,
+            right: 0),
+        behavior: SnackBarBehavior.floating,
+        content: Center(
+          child: Text('$message',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(color: Colors.white)),
+        ),
+      ),
+    );
   }
 
   bool _submit() {
@@ -159,7 +201,8 @@ class _EditingDialogState extends State<EditingDialog> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FetchAppointmentsBloc(),
+      create: (context) =>
+          FetchAppointmentsBloc()..add(FetchAppointmentsData()),
       child: Form(
         key: _formKey,
         child: Padding(
@@ -376,13 +419,27 @@ class _EditingDialogState extends State<EditingDialog> {
                   BlocProvider(
                     create: (context) =>
                         ActionsAppointmentBloc(_firebaseFirestore),
-                    child: Builder(
-                      builder: (context) => ElevatedButton(
+                    child: BlocBuilder<FetchAppointmentsBloc,
+                            FetchAppointmentsState>(
+                        builder: (context, allAppontmentsState) {
+                      List<Appointment> appointments = [];
+
+                      print(allAppontmentsState);
+                      if (allAppontmentsState is FetchAppointmentsLoaded) {
+                        appointments = allAppontmentsState.appointments;
+                      }
+                      appointments = appointments
+                          .where((appo) =>
+                              (appo.date.year == widget.curentDate.year &&
+                                  appo.date.month == widget.curentDate.month &&
+                                  appo.date.day == widget.curentDate.day))
+                          .toList();
+
+                      return ElevatedButton(
                         onPressed: () {
                           var isOk = _submit();
                           if (isOk) {
                             Appointment appointment = Appointment(
-                              // appointmentId: widget.appointment.appointmentId,
                               masterId: FirebaseAuth.instance.currentUser!.uid,
                               clientName: enteredName,
                               clientNumber: enteredNumber,
@@ -391,26 +448,44 @@ class _EditingDialogState extends State<EditingDialog> {
                               duration: timeCounter,
                               date: selectedDate,
                             );
+
                             if (widget.appointment == null) {
+                              if (isOverlapping(appointment, appointments)) {
+                                print('overlap');
+                                showTopSnackBar(
+                                    context, 'Пересечение с другой записью');
+                                return;
+                              }
+
                               BlocProvider.of<ActionsAppointmentBloc>(context)
                                   .add(
                                 CreateAppointmentEvent(
                                     appointment: appointment),
                               );
+                              Navigator.pop(context);
                             } else {
                               appointment.appointmentId =
                                   widget.appointment!.appointmentId;
+
+                              if (isOverlapping(appointment, appointments)) {
+                                print('overlap');
+                                showTopSnackBar(
+                                    context, 'Пересечение с другой записью');
+                                return;
+                              }
+
                               BlocProvider.of<ActionsAppointmentBloc>(context)
                                   .add(
                                 UpdateAppointmentEvent(
                                     appointment: appointment),
                               );
+                              Navigator.pop(context);
                             }
                           }
                         },
                         child: const Text('Подтвердить'),
-                      ),
-                    ),
+                      );
+                    }),
                   ),
                 ])),
       ),

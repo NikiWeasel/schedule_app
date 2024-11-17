@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:schedule_app/widgets/labeled_switch.dart';
+import 'package:schedule_app/features/settings/view/widgets/labeled_switch.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

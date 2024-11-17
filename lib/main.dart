@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:schedule_app/screens/login_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'app.dart';
+import 'firebase_options.dart';
+import 'package:schedule_app/core/theme.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-final theme = ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    brightness: Brightness.light,
-    seedColor: const Color.fromARGB(255, 154, 0, 165),
-  ),
-  textTheme: GoogleFonts.rubikTextTheme(),
-  // elevatedButtonTheme: ElevatedButtonThemeData(
-  //   style: ButtonStyle(
-  //       backgroundColor: WidgetStateProperty.all<Color>(
-  //           Color.fromARGB(255, 236, 200, 200)),
-  //       foregroundColor: WidgetStateProperty.all<Color>(Colors.white)),
-  // )
-);
-
-void main() {
-  Widget currentScreen = LoginScreen();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await initializeDateFormatting('ru', null);
+  // Intl.systemLocale = await findSystemLocale();
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(MaterialApp(theme: theme, home: currentScreen));
+  runApp(MaterialApp(
+    localizationsDelegates: const [
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    supportedLocales: const [
+      Locale('en', 'US'), // English
+      Locale('ru', 'RU'), // Russian
+    ],
+    theme: theme,
+    home: const App(),
+  ));
 }

@@ -22,6 +22,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  Future<void> _onRefresh() async {
+    // Здесь вы можете выполнить асинхронную операцию, например, загрузку данных.
+    await Future.delayed(
+        Duration(seconds: 2)); // Задержка для имитации загрузки
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<UserBloc, UserState>(
@@ -62,48 +68,56 @@ class _HomeScreenState extends State<HomeScreen> {
               drawer: HomeScreenDrawer(
                 employee: state.user,
               ),
-              body: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Ваши следующие приемы на сегодня:',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(fontWeight: FontWeight.bold),
-                    ),
+              body: RefreshIndicator(
+                onRefresh: _onRefresh,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Ваши следующие приемы на сегодня:',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      HomeAppointments(
+                        emlpoyeeId: state.user.employeeId,
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (ctx) => ScheduleScreen(
+                                        user: state.user,
+                                      )));
+                            },
+                            child: const Text('Полное расписание')),
+                      ),
+                      // LoadingSkeleton(
+                      //   child: AppointmentWidget(
+                      //     height: 100,
+                      //     appointment: Appointment(
+                      //         appointments[0].master,
+                      //         appointments[0].client,
+                      //         appointments[0].startTime,
+                      //         appointments[0].duration),
+                      //     onHold: () {},
+                      //   ),
+                      // ),
+                      SizedBox(
+                        height: 800,
+                      )
+                    ],
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  HomeAppointments(
-                    emlpoyeeId: state.user.employeeId,
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (ctx) => ScheduleScreen(
-                                    user: state.user,
-                                  )));
-                        },
-                        child: const Text('Полное расписание')),
-                  ),
-                  // LoadingSkeleton(
-                  //   child: AppointmentWidget(
-                  //     height: 100,
-                  //     appointment: Appointment(
-                  //         appointments[0].master,
-                  //         appointments[0].client,
-                  //         appointments[0].startTime,
-                  //         appointments[0].duration),
-                  //     onHold: () {},
-                  //   ),
-                  // ),
-                ],
+                ),
               ));
         }
         return const SplashScreen();

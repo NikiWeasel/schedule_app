@@ -55,6 +55,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
         builder: (context, allEmployeesState) {
           return BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
             builder: (context, allAppontmentsState) {
+              print('Schedule table built');
               if ((allEmployeesState is AllEmployeesLoaded &&
                       allAppontmentsState is FetchAppointmentsLoaded) ||
                   (allEmployeesState is AllEmployeesLoaded)) {

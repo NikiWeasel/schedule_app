@@ -22,8 +22,6 @@ class ScheduleScreen extends StatefulWidget {
 class _ScheduleScreenState extends State<ScheduleScreen> {
   DateTime currentDate = DateTime.now();
 
-  // dateString
-
   void openCreateNewDialog() {
     showModalBottomSheet(
         context: context,
@@ -45,12 +43,19 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     setState(() {
       currentDate = pickedDate;
     });
-    // dateString = DateFormat('yMMMMEEEEd', 'ru').format(pickedDate!);
   }
 
   String formatDate(DateTime pickedDate) {
-    return DateFormat('d MMMM', 'ru').format(pickedDate);
+    return DateFormat('d MMMM yyyy', 'ru').format(pickedDate);
   }
+
+  void renewKey() {
+    setState(() {
+      key = ValueKey<DateTime>(DateTime.now());
+    });
+  }
+
+  var key = ValueKey<DateTime>(DateTime.now());
 
   @override
   Widget build(BuildContext context) {
@@ -70,14 +75,20 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 create: (context) => FetchAppointmentsBloc(),
               ),
             ],
-            child: Builder(builder: (context) {
+            child: BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
+                builder: (context, allAppontmentsState) {
               return IconButton(
                 icon: const Icon(Icons.autorenew),
                 onPressed: () {
+                  print(allAppontmentsState);
+
                   context.read<AllEmployeesBloc>().add(FetchAllEmployeesData());
                   context
                       .read<FetchAppointmentsBloc>()
                       .add(FetchAppointmentsData());
+                  print(allAppontmentsState);
+                  renewKey();
+                  print('renewed');
                 },
               );
             }),
@@ -89,6 +100,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         child: const Icon(Icons.add),
       ),
       body: ScheduleTable(
+        key: key,
         user: widget.user,
         curentDate: currentDate,
       ),

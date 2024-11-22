@@ -195,7 +195,7 @@ class _HomeLineChartState extends State<HomeLineChart> {
                     selectedEmpList,
                     colorsMap,
                     getDaysCount(dateTimeRange).toDouble(),
-                    maxAppos == 0 ? 3 : maxAppos),
+                    maxAppos == 0 ? 3 : maxAppos + 1),
                 duration: const Duration(milliseconds: 250),
               ),
             ),

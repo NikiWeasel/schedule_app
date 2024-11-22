@@ -15,6 +15,9 @@ class EmployeesSelectionDialog extends StatefulWidget {
 }
 
 class _EmployeesSelectionDialogState extends State<EmployeesSelectionDialog> {
+  late List<Employee> defaultEmployeeList;
+  late List<bool> defaultEmpBoolList;
+
   List<Employee> getSelectedEmployeeList() {
     List<Employee> selected = [];
     for (int i = 0; i < widget.empBoolList.length; i++) {
@@ -23,6 +26,13 @@ class _EmployeesSelectionDialogState extends State<EmployeesSelectionDialog> {
       }
     }
     return selected;
+  }
+
+  @override
+  void initState() {
+    defaultEmployeeList = List.from(widget.employeeList);
+    defaultEmpBoolList = List.from(widget.empBoolList);
+    super.initState();
   }
 
   @override
@@ -57,7 +67,10 @@ class _EmployeesSelectionDialogState extends State<EmployeesSelectionDialog> {
             child: const Text('Подтвердить')),
         TextButton(
             onPressed: () {
-              Navigator.of(context).pop();
+              setState(() {
+                widget.empBoolList.setAll(0, defaultEmpBoolList);
+              });
+              Navigator.of(context).pop(defaultEmployeeList);
             },
             child: const Text('Отмена')),
       ],

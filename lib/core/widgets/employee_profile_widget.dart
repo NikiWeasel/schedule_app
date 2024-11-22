@@ -7,7 +7,8 @@ import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/features/authentication/view/widgets/user_image_picker.dart';
 
-import '../../features/home/bloc/user_bloc.dart';
+import 'package:schedule_app/features/home/bloc/user_bloc.dart';
+import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 
 class EmployeeProfileWidget extends StatefulWidget {
   const EmployeeProfileWidget(
@@ -278,7 +279,7 @@ class _EmployeeProfileWidgetState extends State<EmployeeProfileWidget> {
                                             label: const Text('Загрузка'),
                                             onPressed: null,
                                             icon:
-                                                const CircularProgressIndicator(),
+                                                const CardCircularProgressIndicator(),
                                           )
                                         : ElevatedButton.icon(
                                             icon: const Icon(Icons.save),

@@ -35,6 +35,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   void chooseDate() async {
     var pickedDate = (await showDatePicker(
           context: context,
+          initialDate: currentDate,
           firstDate: DateTime.now().subtract(const Duration(days: 365)),
           lastDate: DateTime.now().add(const Duration(days: 365)),
         )) ??
@@ -63,9 +64,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       appBar: AppBar(
         title: Text(formatDate(currentDate)),
         actions: [
-          IconButton(
-              onPressed: chooseDate,
-              icon: const Icon(Icons.calendar_month_rounded)),
           MultiBlocProvider(
             providers: [
               BlocProvider<AllEmployeesBloc>(
@@ -93,6 +91,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               );
             }),
           ),
+          IconButton(
+              onPressed: chooseDate,
+              icon: const Icon(Icons.calendar_month_rounded)),
         ],
       ),
       floatingActionButton: FloatingActionButton(

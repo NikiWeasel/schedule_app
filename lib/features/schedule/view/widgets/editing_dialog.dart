@@ -161,7 +161,7 @@ class _EditingDialogState extends State<EditingDialog> {
   String formatTime(TimeOfDay time) {
     final now = DateTime.now();
     final dt = DateTime(now.year, now.month, now.day, time.hour, time.minute);
-    final format = DateFormat.Hm(); // Используйте нужный формат
+    final format = DateFormat.Hm();
     return format.format(dt);
   }
 
@@ -185,6 +185,7 @@ class _EditingDialogState extends State<EditingDialog> {
   void pickDate() async {
     final DateTime? dateTime = await showDatePicker(
         context: context,
+        initialDate: DateTime.now(),
         firstDate: DateTime.now(),
         lastDate: DateTime(DateTime.now().year + 1));
     if (dateTime != null) {

@@ -4,6 +4,7 @@ import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/widgets/loading_skeleton.dart';
 import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'package:schedule_app/features/home/view/widgets/home_appointments.dart';
+import 'package:schedule_app/features/home/view/widgets/home_line_chart.dart';
 import 'package:schedule_app/features/notifications/view/notifications_screen.dart';
 import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
 import 'package:schedule_app/core/widgets/appointment_widget.dart';
@@ -14,6 +15,9 @@ import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/widgets/card_circular_progress_indicator.dart';
+import '../../schedule/bloc/all_employees_bloc.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -22,105 +26,142 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Future<void> _onRefresh() async {
-    // Здесь вы можете выполнить асинхронную операцию, например, загрузку данных.
-    await Future.delayed(
-        Duration(seconds: 2)); // Задержка для имитации загрузки
-  }
+  bool isShowingMainData = true;
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
-      builder: (context, state) {
-        if (state is UserError) {
-          // ScaffoldMessenger.of(context).clearSnackBars();
-          // ScaffoldMessenger.of(context)
-          //     .showSnackBar(SnackBar(content: Text(state.erro
-          //     rMessage)));
-          debugPrint(state.error);
+    return BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
+      builder: (context, allAppontmentsState) {
+        return BlocBuilder<AllEmployeesBloc, AllEmployeesState>(
+          builder: (context, allEmployeesState) {
+            return BlocBuilder<UserBloc, UserState>(
+              builder: (context, userState) {
+                if (userState is UserError) {
+                  // ScaffoldMessenger.of(context).clearSnackBars();
+                  // ScaffoldMessenger.of(context)
+                  //     .showSnackBar(SnackBar(content: Text(state.erro
+                  //     rMessage)));
+                  debugPrint(userState.error);
 
-          return const SplashScreen();
-        }
-        if (state is UserLoaded) {
-          return Scaffold(
-              appBar: AppBar(
-                title: const Text('Vteme'),
-                actions: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) => const NotificationsScreen()));
-                      },
-                      icon: Badge(
-                        label: Text(
-                          '12',
-                          style: Theme.of(context).textTheme.bodySmall!,
+                  return const SplashScreen();
+                }
+                if (userState is UserLoaded) {
+                  return Scaffold(
+                      appBar: AppBar(
+                        title: const Text('Vteme'),
+                        actions: [
+                          IconButton(
+                              onPressed: () {},
+                              icon: const Icon(Icons.autorenew)),
+                          IconButton(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (ctx) =>
+                                        const NotificationsScreen()));
+                              },
+                              icon: Badge(
+                                label: Text(
+                                  '12',
+                                  style: Theme.of(context).textTheme.bodySmall!,
+                                ),
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .primaryContainer,
+                                child: const Icon(
+                                    Icons.notifications_none_outlined),
+                              )),
+                          const SizedBox(
+                            width: 8,
+                          )
+                        ],
+                      ),
+                      drawer: HomeScreenDrawer(
+                        employee: userState.user,
+                      ),
+                      body: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Ваши следующие приемы на сегодня:',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            HomeAppointments(
+                              emlpoyeeId: userState.user.employeeId,
+                              appointmentsState: allAppontmentsState,
+                            ),
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (ctx) => ScheduleScreen(
+                                                  user: userState.user,
+                                                )));
+                                  },
+                                  child: const Text('Полное расписание')),
+                            ),
+                            // LoadingSkeleton(
+                            //   child: AppointmentWidget(
+                            //     height: 100,
+                            //     appointment: Appointment(
+                            //         appointments[0].master,
+                            //         appointments[0].client,
+                            //         appointments[0].startTime,
+                            //         appointments[0].duration),
+                            //     onHold: () {},
+                            //   ),
+                            // ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom:
+                                        BorderSide(color: Colors.grey[300]!),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Статистика:',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: HomeLineChart(
+                                allAppointmentsState: allAppontmentsState,
+                                allEmployeesState: allEmployeesState,
+                                currentEmployeeId: userState.user.employeeId,
+                              ),
+                            ),
+                          ],
                         ),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        child: const Icon(Icons.notifications_none_outlined),
-                      )),
-                  const SizedBox(
-                    width: 8,
-                  )
-                ],
-              ),
-              drawer: HomeScreenDrawer(
-                employee: state.user,
-              ),
-              body: RefreshIndicator(
-                onRefresh: _onRefresh,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Ваши следующие приемы на сегодня:',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 8,
-                      ),
-                      HomeAppointments(
-                        emlpoyeeId: state.user.employeeId,
-                      ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (ctx) => ScheduleScreen(
-                                        user: state.user,
-                                      )));
-                            },
-                            child: const Text('Полное расписание')),
-                      ),
-                      // LoadingSkeleton(
-                      //   child: AppointmentWidget(
-                      //     height: 100,
-                      //     appointment: Appointment(
-                      //         appointments[0].master,
-                      //         appointments[0].client,
-                      //         appointments[0].startTime,
-                      //         appointments[0].duration),
-                      //     onHold: () {},
-                      //   ),
-                      // ),
-                      SizedBox(
-                        height: 800,
-                      )
-                    ],
-                  ),
-                ),
-              ));
-        }
-        return const SplashScreen();
+                      ));
+                }
+                return const SplashScreen();
+              },
+            );
+          },
+        );
       },
     );
   }

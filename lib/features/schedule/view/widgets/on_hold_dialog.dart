@@ -8,10 +8,17 @@ import 'package:schedule_app/core/models/appointment.dart';
 
 class OnHoldDialog extends StatelessWidget {
   OnHoldDialog(
-      {super.key, required this.appointment, required this.curentDate});
+      {super.key,
+      required this.appointment,
+      required this.curentDate,
+      required this.deleteAppoTable,
+      required this.editAppoTable});
 
   final Appointment appointment;
   final DateTime curentDate;
+  final void Function(Appointment appo) deleteAppoTable;
+  final void Function({Appointment? oldAppo, required Appointment newAppo})
+      editAppoTable;
 
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
@@ -23,6 +30,7 @@ class OnHoldDialog extends StatelessWidget {
         builder: (ctx) => EditingDialog(
               curentDate: curentDate,
               appointment: appointment,
+              editAppoTable: editAppoTable,
             ));
   }
 
@@ -43,6 +51,7 @@ class OnHoldDialog extends StatelessWidget {
                 ElevatedButton(
                     onPressed: () {
                       deleteAppointment();
+                      deleteAppoTable(appointment);
                       Navigator.pop(context);
                       Navigator.pop(context);
                     },

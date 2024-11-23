@@ -8,11 +8,13 @@ class AppointmentWidget extends StatelessWidget {
       {super.key,
       required this.height,
       required this.appointment,
+      required this.onTap,
       required this.onHold});
 
   final double height;
   final Appointment appointment;
   final void Function(Appointment appointment) onHold;
+  final void Function(Appointment appointment) onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,9 @@ class AppointmentWidget extends StatelessWidget {
       borderRadius: BorderRadius.circular(5),
       onLongPress: () {
         onHold(appointment);
+      },
+      onTap: () {
+        onTap(appointment);
       },
       child: Container(
         margin: const EdgeInsets.all(4.0),

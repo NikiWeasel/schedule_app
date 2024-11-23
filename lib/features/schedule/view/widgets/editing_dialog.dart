@@ -11,10 +11,16 @@ import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/schedule/view/widgets/service_button.dart';
 
 class EditingDialog extends StatefulWidget {
-  EditingDialog({super.key, this.appointment, required this.curentDate});
+  EditingDialog(
+      {super.key,
+      this.appointment,
+      required this.curentDate,
+      required this.editAppoTable});
 
   // final bool isEditing;
   final DateTime curentDate;
+  final void Function({Appointment? oldAppo, required Appointment newAppo})
+      editAppoTable;
   Appointment? appointment;
 
   @override
@@ -463,6 +469,7 @@ class _EditingDialogState extends State<EditingDialog> {
                                 CreateAppointmentEvent(
                                     appointment: appointment),
                               );
+                              widget.editAppoTable(newAppo: appointment);
                               Navigator.pop(context);
                             } else {
                               appointment.appointmentId =
@@ -480,6 +487,9 @@ class _EditingDialogState extends State<EditingDialog> {
                                 UpdateAppointmentEvent(
                                     appointment: appointment),
                               );
+                              widget.editAppoTable(
+                                  oldAppo: widget.appointment!,
+                                  newAppo: appointment);
                               Navigator.pop(context);
                             }
                           }

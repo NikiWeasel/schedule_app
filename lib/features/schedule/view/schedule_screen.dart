@@ -6,9 +6,11 @@ import 'package:schedule_app/core/bloc/add_delete/actions_appointment_bloc.dart'
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
 import 'package:schedule_app/features/schedule/view/widgets/editing_dialog.dart';
-
 import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
 import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
+import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
+
+import 'package:schedule_app/core/models/appointment.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({super.key, required this.user});
@@ -21,15 +23,17 @@ class ScheduleScreen extends StatefulWidget {
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
   DateTime currentDate = DateTime.now();
+  late void Function({Appointment? oldAppo, required Appointment newAppo})
+      editAppoTable;
 
   void openCreateNewDialog() {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (ctx) => EditingDialog(
-              curentDate: currentDate,
-              appointment: null,
-            ));
+            curentDate: currentDate,
+            appointment: null,
+            editAppoTable: (editAppoTable)));
   }
 
   void chooseDate() async {
@@ -60,20 +64,21 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(formatDate(currentDate)),
-        actions: [
-          MultiBlocProvider(
-            providers: [
-              BlocProvider<AllEmployeesBloc>(
-                create: (context) => AllEmployeesBloc(),
-              ),
-              BlocProvider<FetchAppointmentsBloc>(
-                create: (context) => FetchAppointmentsBloc(),
-              ),
-            ],
-            child: BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AllEmployeesBloc>(
+          create: (context) => AllEmployeesBloc()..add(FetchAllEmployeesData()),
+        ),
+        BlocProvider<FetchAppointmentsBloc>(
+          create: (context) =>
+              FetchAppointmentsBloc()..add(FetchAppointmentsData()),
+        ),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(formatDate(currentDate)),
+          actions: [
+            BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
                 builder: (context, allAppontmentsState) {
               return IconButton(
                 icon: const Icon(Icons.autorenew),
@@ -90,20 +95,41 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                 },
               );
             }),
-          ),
-          IconButton(
-              onPressed: chooseDate,
-              icon: const Icon(Icons.calendar_month_rounded)),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: openCreateNewDialog,
-        child: const Icon(Icons.add),
-      ),
-      body: ScheduleTable(
-        key: key,
-        user: widget.user,
-        curentDate: currentDate,
+            IconButton(
+                onPressed: chooseDate,
+                icon: const Icon(Icons.calendar_month_rounded)),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: openCreateNewDialog,
+          child: const Icon(Icons.add),
+        ),
+        body: BlocBuilder<AllEmployeesBloc, AllEmployeesState>(
+          builder: (context, allEmployeesState) {
+            return BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
+              builder: (context, allAppontmentsState) {
+                if ((allEmployeesState is AllEmployeesLoaded &&
+                    allAppontmentsState is FetchAppointmentsLoaded)) {
+                  return ScheduleTable(
+                    key: key,
+                    user: widget.user,
+                    curentDate: currentDate,
+                    allEmployees: allEmployeesState.employees,
+                    allAppontments: allAppontmentsState.appointments,
+                    setEditAppoTable: (callback) {
+                      setState(() {
+                        editAppoTable = callback;
+                      });
+                    },
+                  );
+                }
+                return const Center(
+                  child: CardCircularProgressIndicator(),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

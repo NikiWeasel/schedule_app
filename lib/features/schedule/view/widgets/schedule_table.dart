@@ -14,10 +14,20 @@ import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart'
 
 class ScheduleTable extends StatefulWidget {
   const ScheduleTable(
-      {super.key, required this.curentDate, required this.user});
+      {super.key,
+      required this.curentDate,
+      required this.user,
+      required this.allEmployees,
+      required this.allAppontments,
+      required this.setEditAppoTable});
 
   final DateTime curentDate;
   final Employee user;
+  final List<Employee> allEmployees;
+  final List<Appointment> allAppontments;
+  final void Function(
+          void Function({Appointment? oldAppo, required Appointment newAppo}))
+      setEditAppoTable;
 
   @override
   State<ScheduleTable> createState() => _ScheduleTableState();
@@ -30,105 +40,93 @@ class _ScheduleTableState extends State<ScheduleTable> {
 
   final double timeSlotWidth = 210;
 
+  late List<Appointment> tableAppos;
+
   void openEditingDialog(Appointment appointment) {
     showModalBottomSheet(
         context: context,
         builder: (ctx) => OnHoldDialog(
               curentDate: widget.curentDate,
               appointment: appointment,
+              deleteAppoTable: deleteAppoTable,
+              editAppoTable: editAppoTable,
             ));
+  }
+
+  void deleteAppoTable(Appointment appo) {
+    setState(() {
+      tableAppos.remove(appo);
+    });
+  }
+
+  void editAppoTable({Appointment? oldAppo, required Appointment newAppo}) {
+    if (oldAppo == null) {
+      setState(() {
+        tableAppos.add(newAppo);
+      });
+    } else {
+      setState(() {
+        var index = tableAppos.indexOf(oldAppo);
+        tableAppos.removeAt(index);
+        tableAppos.insert(index, newAppo);
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    tableAppos = widget.allAppontments;
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<AllEmployeesBloc>(
-          create: (context) => AllEmployeesBloc()..add(FetchAllEmployeesData()),
-        ),
-        BlocProvider<FetchAppointmentsBloc>(
-          create: (context) =>
-              FetchAppointmentsBloc()..add(FetchAppointmentsData()),
-        ),
-      ],
-      child: BlocBuilder<AllEmployeesBloc, AllEmployeesState>(
-        builder: (context, allEmployeesState) {
-          return BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
-            builder: (context, allAppontmentsState) {
-              print('Schedule table built');
-              if ((allEmployeesState is AllEmployeesLoaded &&
-                      allAppontmentsState is FetchAppointmentsLoaded) ||
-                  (allEmployeesState is AllEmployeesLoaded)) {
-                var allMasters = allEmployeesState.employees;
-                var masters = allMasters
-                    .where((e) => widget.user.employeeId != e.employeeId)
-                    .toList();
-                masters.insert(0, widget.user);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.setEditAppoTable(editAppoTable);
+    });
 
-                List<Appointment> appointments = [];
-                // print(allEmployeesState);
-                // print(allAppontmentsState);
+    var allMasters = widget.allEmployees;
+    var masters = allMasters
+        .where((e) => widget.user.employeeId != e.employeeId)
+        .toList();
+    masters.insert(0, widget.user);
 
-                if (allAppontmentsState is FetchAppointmentsLoaded) {
-                  appointments = allAppontmentsState.appointments;
-                }
-                appointments = appointments
-                    .where((appo) =>
-                        (appo.date.year == widget.curentDate.year &&
-                            appo.date.month == widget.curentDate.month &&
-                            appo.date.day == widget.curentDate.day))
-                    .toList();
+    tableAppos = tableAppos
+        .where((appo) => (appo.date.year == widget.curentDate.year &&
+            appo.date.month == widget.curentDate.month &&
+            appo.date.day == widget.curentDate.day))
+        .toList();
 
-                // print(appointments);
-                return SingleChildScrollView(
-                  child: IntrinsicHeight(
+    // print(appointments);
+    return SingleChildScrollView(
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            Row(
+              children: [
+                _buildTimeColumn(),
+                // ...masters.map((master) => _buildMasterColumn(master)),
+              ],
+            ),
+            Expanded(
+                child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Column(
+                children: [
+                  IntrinsicWidth(child: _buildHeader(masters)),
+                  Expanded(
                     child: Row(
                       children: [
-                        Row(
-                          children: [
-                            _buildTimeColumn(),
-                            // ...masters.map((master) => _buildMasterColumn(master)),
-                          ],
-                        ),
-                        Expanded(
-                            child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Column(
-                            children: [
-                              IntrinsicWidth(child: _buildHeader(masters)),
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    ...masters.map((masterName) =>
-                                        _buildMasterColumn(
-                                            masterName.employeeId,
-                                            appointments)),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ))
+                        ...masters.map((masterName) => _buildMasterColumn(
+                            masterName.employeeId, tableAppos)),
                       ],
                     ),
                   ),
-                );
-              }
-              if (allEmployeesState is AllEmployeesError) {
-                debugPrint(allEmployeesState.errorMessage);
-              }
-              if (allAppontmentsState is FetchAppointmentsError) {
-                debugPrint(allAppontmentsState.errorMessage);
-              }
-              print(allEmployeesState);
-              print(allAppontmentsState);
-
-              return const Center(
-                child: CardCircularProgressIndicator(),
-              );
-            },
-          );
-        },
+                ],
+              ),
+            ))
+          ],
+        ),
       ),
     );
   }
@@ -266,6 +264,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
             onHold: (holdAppointment) {
               openEditingDialog(holdAppointment);
             },
+            onTap: (tapAppo) {},
           ));
     }).toList();
   }

@@ -27,7 +27,11 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
   @override
   Widget build(BuildContext context) {
     if (widget.appointmentsState is FetchAppointmentsLoading) {
-      return const Center(child: CardCircularProgressIndicator());
+      return const Center(
+          child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 14),
+        child: CardCircularProgressIndicator(),
+      ));
     }
     if (widget.appointmentsState is FetchAppointmentsError) {
       return Padding(

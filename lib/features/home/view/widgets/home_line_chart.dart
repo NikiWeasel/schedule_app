@@ -36,6 +36,8 @@ class _HomeLineChartState extends State<HomeLineChart> {
 
   @override
   void initState() {
+    super.initState();
+
     dateTimeRange = getCurrentWeekTimeRange();
     if (widget.allEmployeesState is AllEmployeesLoaded) {
       var allEmpState = widget.allEmployeesState as AllEmployeesLoaded;
@@ -58,7 +60,7 @@ class _HomeLineChartState extends State<HomeLineChart> {
       selectedEmployee = allEmpState.employees;
     }
 
-    super.initState();
+    // super.initState();
   }
 
   DateTimeRange getCurrentWeekTimeRange() {
@@ -140,7 +142,7 @@ class _HomeLineChartState extends State<HomeLineChart> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.allAppointmentsState is FetchAppointmentsLoaded ||
+    if (widget.allAppointmentsState is FetchAppointmentsLoaded &&
         widget.allEmployeesState is AllEmployeesLoaded) {
       var allAppointments =
           (widget.allAppointmentsState as FetchAppointmentsLoaded).appointments;
@@ -209,7 +211,10 @@ class _HomeLineChartState extends State<HomeLineChart> {
       );
     }
     return const Center(
-      child: CardCircularProgressIndicator(),
+      child: Padding(
+        padding: EdgeInsets.only(top: 30.0),
+        child: CardCircularProgressIndicator(),
+      ),
     );
   }
 

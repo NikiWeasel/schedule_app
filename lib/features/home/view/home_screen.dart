@@ -16,7 +16,7 @@ import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/widgets/card_circular_progress_indicator.dart';
-import '../../schedule/bloc/all_employees_bloc.dart';
+import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,11 +26,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  var key = UniqueKey();
+
   bool isShowingMainData = true;
+
+  void renewKey() {
+    setState(() {
+      key = UniqueKey();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
+      // key: key,
       builder: (context, allAppontmentsState) {
         return BlocBuilder<AllEmployeesBloc, AllEmployeesState>(
           builder: (context, allEmployeesState) {
@@ -51,7 +60,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         title: const Text('Vteme'),
                         actions: [
                           IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                context
+                                    .read<AllEmployeesBloc>()
+                                    .add(FetchAllEmployeesData());
+                                context
+                                    .read<FetchAppointmentsBloc>()
+                                    .add(FetchAppointmentsData());
+                                renewKey();
+                              },
                               icon: const Icon(Icons.autorenew)),
                           IconButton(
                               onPressed: () {
@@ -96,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 8,
                             ),
                             HomeAppointments(
+                              key: key,
                               emlpoyeeId: userState.user.employeeId,
                               appointmentsState: allAppontmentsState,
                             ),
@@ -148,6 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8.0),
                               child: HomeLineChart(
+                                // key: key,
                                 allAppointmentsState: allAppontmentsState,
                                 allEmployeesState: allEmployeesState,
                                 currentEmployeeId: userState.user.employeeId,

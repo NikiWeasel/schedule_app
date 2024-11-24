@@ -38,9 +38,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
 
   Future<Employee> _onFetchUserData(FetchUserData event) async {
-    // emit(UserLoading());
-    // try {
-    // Получаем текущего пользователя
+    int maxRetries = 10;
+    const Duration delayBetweenRetries = Duration(seconds: 1);
+
     final user = _firebaseAuth.currentUser;
     if (user == null) {
       // emit(UserError(error: 'Пользователь не авторизован'));
@@ -50,9 +50,30 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     }
 
     // Запрашиваем данные пользователя из Firestore
-    final userData =
-        await _firebaseFirestore.collection('users').doc(user.uid).get();
-    final data = userData.data();
+    // final userData =
+    //     await _firebaseFirestore.collection('users').doc(user.uid).get();
+    // final data = userData.data();
+    Map<String, dynamic>? data;
+
+    for (int attempt = 0; attempt < maxRetries; attempt++) {
+      // final userData = await FirebaseFirestore.instance
+      //     .collection('users')
+      //     .doc(userId)
+      //     .get();
+      final userData =
+          await _firebaseFirestore.collection('users').doc(user.uid).get();
+      data = userData.data();
+
+      if (userData.exists) {
+        // return userData.data();
+        break;
+      }
+
+      // Ждем перед следующей попыткой
+      await Future.delayed(delayBetweenRetries);
+    }
+
+    // return null; // Если данные не появились
 
     if (data == null) {
       // emit(UserError(error: 'Данные пользователя не найдены'));

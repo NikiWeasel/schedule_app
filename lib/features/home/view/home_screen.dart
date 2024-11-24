@@ -47,10 +47,12 @@ class _HomeScreenState extends State<HomeScreen> {
             return BlocBuilder<UserBloc, UserState>(
               builder: (context, userState) {
                 if (userState is UserError) {
-                  // ScaffoldMessenger.of(context).clearSnackBars();
-                  // ScaffoldMessenger.of(context)
-                  //     .showSnackBar(SnackBar(content: Text(state.erro
-                  //     rMessage)));
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(userState.error)),
+                    );
+                  });
                   debugPrint(userState.error);
 
                   return const SplashScreen();

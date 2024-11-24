@@ -10,7 +10,9 @@ import 'package:schedule_app/features/authentication/view/widgets/user_image_pic
 final _firebase = FirebaseAuth.instance;
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({
+    super.key,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -90,20 +92,28 @@ class _LoginScreenState extends State<LoginScreen> {
           'image_url': imageUrl,
           'description': '',
         });
+        // widget.renew();
       }
     } on FirebaseAuthException catch (error) {
       // print(error.code + error.message.toString());
       if (error.code == 'email-already-in-use') {
-        //...
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(error.message ??
+                  'email уже используется\nemail-already-in-use.')));
+        }
       }
-      // ScaffoldMessenger.of(context).clearSnackBars();
-      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      //     content: Text(error.message ??
-      //         'Что-то пошло не так...\nAuthentification failed.')));
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(error.message ??
+                'Что-то пошло не так...\nAuthentification failed.')));
+      }
 
       setState(() {
         _isAuthing = false;
       });
+      // widget.renew();
     }
   }
 

@@ -3,29 +3,18 @@ import 'package:go_router/go_router.dart';
 import 'package:schedule_app/features/home/view/home_screen.dart';
 import 'package:schedule_app/features/notifications/view/notifications_screen.dart';
 import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
+import 'package:schedule_app/app.dart';
 
-final GoRouter _router = GoRouter(
+final GoRouter router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
       path: '/',
       builder: (BuildContext context, GoRouterState state) {
-        return const HomeScreen();
+        return const App();
       },
       routes: <RouteBase>[
-        // GoRoute(
-        //   path: 'schedule_screen',
-        //   builder: (BuildContext context, GoRouterState state) {
-        //     return const ScheduleScreen(user: user);
-        //   },
-        // ),
-        // GoRoute(
-        //   path: 'details',
-        //   builder: (BuildContext context, GoRouterState state) {
-        //     return const DetailsScreen();
-        //   },
-        // ),
         GoRoute(
-          path: '/schedule_screen',
+          path: '/schedule',
           builder: (context, state) {
             final data = state.extra as Map<String, dynamic>?;
             return ScheduleScreen(
@@ -35,7 +24,7 @@ final GoRouter _router = GoRouter(
           },
         ),
         GoRoute(
-          path: '/notifications_screen',
+          path: '/notifications',
           builder: (context, state) {
             // final data = state.extra as Map<String, dynamic>?;
             return const NotificationsScreen();

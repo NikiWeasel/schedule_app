@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/widgets/loading_skeleton.dart';
 import 'package:schedule_app/core/widgets/splash_screen.dart';
@@ -72,9 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               icon: const Icon(Icons.autorenew)),
                           IconButton(
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (ctx) =>
-                                        const NotificationsScreen()));
+                                context.go('/notifications');
                               },
                               icon: Badge(
                                 label: Text(
@@ -121,12 +120,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               alignment: Alignment.topRight,
                               child: TextButton(
                                   onPressed: () {
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                            builder: (ctx) => ScheduleScreen(
-                                                  user: userState.user,
-                                                  showDialogImidiatly: false,
-                                                )));
+                                    context.go('/schedule', extra: {
+                                      'user': userState.user,
+                                      'showDialogImidiatly': false
+                                    });
                                   },
                                   child: const Text('Полное расписание')),
                             ),

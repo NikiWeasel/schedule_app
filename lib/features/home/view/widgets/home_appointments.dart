@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/widgets/appointment_widget.dart';
@@ -63,11 +64,8 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
       var sortedAppointments = sortAppointments(appointments);
       if (sortedAppointments.isEmpty) {
         return NoAppointmentsWidget(onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (ctx) => ScheduleScreen(
-                    user: widget.emlpoyee,
-                    showDialogImidiatly: true,
-                  )));
+          context.go('/schedule',
+              extra: {'user': widget.emlpoyee, 'showDialogImidiatly': true});
         });
       }
 

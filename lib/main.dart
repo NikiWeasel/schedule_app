@@ -5,6 +5,7 @@ import 'app.dart';
 import 'firebase_options.dart';
 import 'package:schedule_app/core/theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:schedule_app/core/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(MaterialApp(
+  runApp(MaterialApp.router(
     localizationsDelegates: const [
       GlobalMaterialLocalizations.delegate,
       GlobalWidgetsLocalizations.delegate,
@@ -27,6 +28,7 @@ void main() async {
       Locale('ru', 'RU'), // Russian
     ],
     theme: theme,
-    home: const App(),
+    routerConfig: router,
+    // home: const App(),
   ));
 }

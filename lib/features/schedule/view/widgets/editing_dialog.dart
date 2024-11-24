@@ -32,10 +32,13 @@ class _EditingDialogState extends State<EditingDialog> {
   DateTime selectedDate = DateTime.now();
   String? selectedService;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _serviceFormKey = GlobalKey<FormState>();
   final TextEditingController _controller = TextEditingController();
   List<String> selectedServices = [];
   List<int> selectedServicesDuration = [];
   int timeCounter = 0;
+
+  bool isServicesEmptyError = false;
 
   late TextEditingController numberController;
   late TextEditingController nameController;
@@ -128,6 +131,11 @@ class _EditingDialogState extends State<EditingDialog> {
   bool _submit() {
     var isValid = _formKey.currentState!.validate();
 
+    if (selectedServices.isEmpty) {
+      setState(() {
+        isServicesEmptyError = true;
+      });
+    }
     if (!isValid || selectedServices.isEmpty) {
       return false;
     }
@@ -144,7 +152,9 @@ class _EditingDialogState extends State<EditingDialog> {
   }
 
   void addService() {
-    if (selectedService != null && _controller.text != '0') {
+    var isValid = _serviceFormKey.currentState!.validate();
+
+    if (isValid) {
       setState(() {
         selectedServices.add(selectedService!);
         selectedServicesDuration.add(int.parse(_controller.text));
@@ -360,9 +370,28 @@ class _EditingDialogState extends State<EditingDialog> {
                         alignment: Alignment.bottomRight,
                         child: Text('Суммарное время: $timeCounter мин')),
                   const SizedBox(
-                    height: 10,
+                    height: 5,
+                  ),
+                  if (selectedServices.isEmpty && isServicesEmptyError)
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          'Нет услуг',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color: Theme.of(context).colorScheme.error),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(
+                    height: 5,
                   ),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
@@ -398,15 +427,26 @@ class _EditingDialogState extends State<EditingDialog> {
                       ),
                       SizedBox(
                           width: 120,
-                          child: TextFormField(
-                            controller: _controller,
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              label: const Text('Время (мин)'),
-                              // hintText: 'Имя',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
+                          child: Form(
+                            key: _serviceFormKey,
+                            child: TextFormField(
+                              controller: _controller,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                label: const Text('Время (мин)'),
+                                // hintText: 'Имя',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
                               ),
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value == '0') {
+                                  return 'Некорректное\nзначение';
+                                }
+                                return null;
+                              },
                             ),
                           )),
                     ],

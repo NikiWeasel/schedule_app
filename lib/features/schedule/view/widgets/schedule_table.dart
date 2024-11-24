@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:schedule_app/app.dart';
 import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/widgets/appo_dialog.dart';
 import 'package:schedule_app/core/widgets/employee_profile_widget.dart';
 import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
 import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart';
@@ -71,6 +73,13 @@ class _ScheduleTableState extends State<ScheduleTable> {
         tableAppos.insert(index, newAppo);
       });
     }
+  }
+
+  void showAppoDialog(Appointment appointment) {
+    showDialog(
+      context: context,
+      builder: (context) => AppoDialog(appointment: appointment),
+    );
   }
 
   @override
@@ -264,7 +273,9 @@ class _ScheduleTableState extends State<ScheduleTable> {
             onHold: (holdAppointment) {
               openEditingDialog(holdAppointment);
             },
-            onTap: (tapAppo) {},
+            onTap: (tapAppo) {
+              showAppoDialog(tapAppo);
+            },
           ));
     }).toList();
   }

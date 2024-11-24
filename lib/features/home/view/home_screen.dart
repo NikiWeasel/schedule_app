@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             HomeAppointments(
                               key: key,
-                              emlpoyeeId: userState.user.employeeId,
+                              emlpoyee: userState.user,
                               appointmentsState: allAppontmentsState,
                             ),
                             Align(
@@ -125,6 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         .push(MaterialPageRoute(
                                             builder: (ctx) => ScheduleScreen(
                                                   user: userState.user,
+                                                  showDialogImidiatly: false,
                                                 )));
                                   },
                                   child: const Text('Полное расписание')),

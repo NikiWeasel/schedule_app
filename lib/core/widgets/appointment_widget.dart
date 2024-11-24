@@ -40,12 +40,14 @@ class AppointmentWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                  '${appointment.getFormattedStartTime()} — ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}'),
+                '${appointment.getFormattedStartTime()} — ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}',
+                overflow: TextOverflow.fade,
+              ),
               height >= 60
                   ? Text(
                       '${appointment.clientName} ${appointment.clientNumber} \n${appointment.serviceName}',
                       overflow: TextOverflow.fade,
-                      // maxLines: 1,
+                      maxLines: 2,
                     )
                   : Text(
                       '${appointment.clientName} ${appointment.clientNumber} ${appointment.serviceName}',

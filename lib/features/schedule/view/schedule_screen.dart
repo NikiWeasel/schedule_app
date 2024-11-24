@@ -13,9 +13,11 @@ import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart'
 import 'package:schedule_app/core/models/appointment.dart';
 
 class ScheduleScreen extends StatefulWidget {
-  const ScheduleScreen({super.key, required this.user});
+  const ScheduleScreen(
+      {super.key, required this.user, required this.showDialogImidiatly});
 
   final Employee user;
+  final bool showDialogImidiatly;
 
   @override
   State<ScheduleScreen> createState() => _ScheduleScreenState();
@@ -25,6 +27,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   DateTime currentDate = DateTime.now();
   late void Function({Appointment? oldAppo, required Appointment newAppo})
       editAppoTable;
+
+  bool wasDialogCalled = false;
 
   void openCreateNewDialog() {
     showModalBottomSheet(
@@ -56,11 +60,11 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   void renewKey() {
     setState(() {
-      key = ValueKey<DateTime>(DateTime.now());
+      key = UniqueKey();
     });
   }
 
-  var key = ValueKey<DateTime>(DateTime.now());
+  var key = UniqueKey();
 
   @override
   Widget build(BuildContext context) {
@@ -120,6 +124,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       setState(() {
                         editAppoTable = callback;
                       });
+                      if (widget.showDialogImidiatly && !wasDialogCalled) {
+                        // WidgetsBinding.instance.addPostFrameCallback((_) {
+                        openCreateNewDialog();
+                        setState(() {
+                          wasDialogCalled = true;
+                        });
+                        // });
+                      }
                     },
                   );
                 }

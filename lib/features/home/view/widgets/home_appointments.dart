@@ -7,12 +7,15 @@ import 'package:schedule_app/core/widgets/appointment_widget.dart';
 import 'package:schedule_app/features/home/view/widgets/no_appointments_widget.dart';
 
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
+import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
+
+import 'package:schedule_app/core/models/employee.dart';
 
 class HomeAppointments extends StatefulWidget {
   const HomeAppointments(
-      {super.key, required this.emlpoyeeId, required this.appointmentsState});
+      {super.key, required this.emlpoyee, required this.appointmentsState});
 
-  final String emlpoyeeId;
+  final Employee emlpoyee;
   final FetchAppointmentsState appointmentsState;
 
   @override
@@ -21,7 +24,9 @@ class HomeAppointments extends StatefulWidget {
 
 class _HomeAppointmentsState extends State<HomeAppointments> {
   List<Appointment> sortAppointments(List<Appointment> appointments) {
-    return appointments.where((a) => a.masterId == widget.emlpoyeeId).toList();
+    return appointments
+        .where((a) => a.masterId == widget.emlpoyee.employeeId)
+        .toList();
   }
 
   @override
@@ -57,7 +62,13 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
           .toList();
       var sortedAppointments = sortAppointments(appointments);
       if (sortedAppointments.isEmpty) {
-        return NoAppointmentsWidget(onTap: () {});
+        return NoAppointmentsWidget(onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (ctx) => ScheduleScreen(
+                    user: widget.emlpoyee,
+                    showDialogImidiatly: true,
+                  )));
+        });
       }
 
       return SingleChildScrollView(
@@ -66,19 +77,24 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
           children: [
             const Padding(padding: EdgeInsets.only(left: 8)),
             for (var appointment in sortedAppointments)
-              AppointmentWidget(
-                height: 100,
-                appointment: Appointment(
-                    clientName: appointment.clientName,
-                    clientNumber: appointment.clientNumber,
-                    startTime: appointment.startTime,
-                    duration: appointment.duration,
-                    masterId: appointment.masterId,
-                    appointmentId: appointment.appointmentId,
-                    serviceName: appointment.serviceName,
-                    date: appointment.date),
-                onHold: (appo) {},
-                onTap: (appo) {},
+              ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: 150,
+                ),
+                child: AppointmentWidget(
+                  height: 100,
+                  appointment: Appointment(
+                      clientName: appointment.clientName,
+                      clientNumber: appointment.clientNumber,
+                      startTime: appointment.startTime,
+                      duration: appointment.duration,
+                      masterId: appointment.masterId,
+                      appointmentId: appointment.appointmentId,
+                      serviceName: appointment.serviceName,
+                      date: appointment.date),
+                  onHold: (appo) {},
+                  onTap: (appo) {},
+                ),
               ),
             const Padding(padding: EdgeInsets.only(left: 8)),
             Container(
@@ -87,7 +103,13 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
                 color: Theme.of(context).colorScheme.secondaryContainer,
               ),
               child: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (ctx) => ScheduleScreen(
+                            user: widget.emlpoyee,
+                            showDialogImidiatly: true,
+                          )));
+                },
                 icon: const Icon(Icons.add),
               ),
             ),

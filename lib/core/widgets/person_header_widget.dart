@@ -33,25 +33,35 @@ class MasterHeaderWidget extends StatelessWidget {
             const SizedBox(
               width: 8,
             ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium!
-                      .copyWith(fontWeight: FontWeight.bold),
-                ),
-                subtitle == null
-                    ? const SizedBox()
-                    : Text(
-                        subtitle!,
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface),
-                      ),
-              ],
+            Flexible(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleMedium!
+                        .copyWith(fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
+                  ),
+                  subtitle == null
+                      ? const SizedBox()
+                      : Text(
+                          subtitle!,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall!
+                              .copyWith(
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface),
+                          overflow: TextOverflow.fade,
+                          softWrap: false,
+                        ),
+                ],
+              ),
             )
           ],
         ),

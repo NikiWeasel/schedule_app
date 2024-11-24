@@ -14,8 +14,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   UserBloc() : super(UserInitial()) {
-    // on<FetchUserData>(_onFetchUserData);
-
     on<FetchUserData>((event, emit) async {
       emit(UserLoading());
       try {
@@ -43,29 +41,17 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
     final user = _firebaseAuth.currentUser;
     if (user == null) {
-      // emit(UserError(error: 'Пользователь не авторизован'));
       throw Exception('Пользователь не авторизован');
-
-      // return null;
     }
 
-    // Запрашиваем данные пользователя из Firestore
-    // final userData =
-    //     await _firebaseFirestore.collection('users').doc(user.uid).get();
-    // final data = userData.data();
     Map<String, dynamic>? data;
 
     for (int attempt = 0; attempt < maxRetries; attempt++) {
-      // final userData = await FirebaseFirestore.instance
-      //     .collection('users')
-      //     .doc(userId)
-      //     .get();
       final userData =
           await _firebaseFirestore.collection('users').doc(user.uid).get();
       data = userData.data();
 
       if (userData.exists) {
-        // return userData.data();
         break;
       }
 
@@ -73,12 +59,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       await Future.delayed(delayBetweenRetries);
     }
 
-    // return null; // Если данные не появились
-
     if (data == null) {
-      // emit(UserError(error: 'Данные пользователя не найдены'));
-      throw Exception('Данные пользователя не найдены');
-      // return;
+      throw Exception(
+          'Данные пользователя не найдены\nПопробуйте перезайти позже');
     }
 
     // Создаем экземпляр класса User
@@ -93,10 +76,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     );
 
     return fetchedUser;
-    // emit(UserLoaded(user: fetchedUser));
-    // } catch (e) {
-    //   emit(UserError(error: e.toString()));
-    // }
   }
 
   Future<void> _onUpdateUserData(UpdateUserData event) async {

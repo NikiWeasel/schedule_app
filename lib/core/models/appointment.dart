@@ -11,7 +11,7 @@ class Appointment {
   });
 
   String? appointmentId;
-  final String masterId;
+  String masterId;
   final String clientName;
   final String clientNumber;
   final String serviceName;

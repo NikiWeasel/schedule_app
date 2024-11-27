@@ -11,20 +11,18 @@ import 'package:schedule_app/core/widgets/appointment_widget.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/widgets/person_header_widget.dart';
 import 'package:schedule_app/core/models/employee.dart';
-
+import 'package:schedule_app/core/utils/snackbar_utils.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 
 class ScheduleTable extends StatefulWidget {
   const ScheduleTable(
       {super.key,
       required this.curentDate,
-      required this.user,
       required this.allEmployees,
       required this.allAppontments,
       required this.setEditAppoTable});
 
   final DateTime curentDate;
-  final Employee user;
   final List<Employee> allEmployees;
   final List<Appointment> allAppontments;
   final void Function(
@@ -43,6 +41,8 @@ class _ScheduleTableState extends State<ScheduleTable> {
   final double timeSlotWidth = 210;
 
   late List<Appointment> tableAppos;
+
+  late Employee activeUser;
 
   void openEditingDialog(Appointment appointment) {
     showModalBottomSheet(
@@ -85,6 +85,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
   @override
   void initState() {
     super.initState();
+    activeUser = widget.allEmployees[0];
     tableAppos = widget.allAppontments;
   }
 
@@ -94,11 +95,11 @@ class _ScheduleTableState extends State<ScheduleTable> {
       widget.setEditAppoTable(editAppoTable);
     });
 
-    var allMasters = widget.allEmployees;
-    var masters = allMasters
-        .where((e) => widget.user.employeeId != e.employeeId)
-        .toList();
-    masters.insert(0, widget.user);
+    var masters = widget.allEmployees;
+    // var masters = allMasters
+    //     .where((e) => widget.user.employeeId != e.employeeId)
+    //     .toList();
+    // masters.insert(0, widget.user);
 
     tableAppos = tableAppos
         .where((appo) => (appo.date.year == widget.curentDate.year &&
@@ -194,9 +195,9 @@ class _ScheduleTableState extends State<ScheduleTable> {
           height: 28,
         ),
         Column(
-          children: List.generate(19, (index) {
+          children: List.generate(21, (index) {
             final time =
-                TimeOfDay(hour: 9 + (index ~/ 2), minute: (index % 2) * 30);
+                TimeOfDay(hour: 10 + (index ~/ 2), minute: (index % 2) * 30);
             return Container(
               width: 65,
               height: timeSlotHeight,
@@ -233,7 +234,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
 
   // Стандартные ячейки для временных слотов
   List<Widget> _buildTimeSlots() {
-    return List.generate(19, (index) {
+    return List.generate(21, (index) {
       return Positioned(
         top: index * timeSlotHeight - timeSlotHeight / 2,
         left: 0,
@@ -257,7 +258,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
     return appointments
         .where((appointment) => appointment.masterId == masterId)
         .map((appointment) {
-      final startMinutes = (appointment.getStartTimeHours() - 9) * 60 +
+      final startMinutes = (appointment.getStartTimeHours() - 10) * 60 +
           appointment.getStartTimeMinutes() +
           15;
       final topOffset = startMinutes / 30 * timeSlotHeight;
@@ -271,7 +272,12 @@ class _ScheduleTableState extends State<ScheduleTable> {
             height: height - 8,
             appointment: appointment,
             onHold: (holdAppointment) {
-              openEditingDialog(holdAppointment);
+              if (activeUser.isAdmin ||
+                  activeUser.employeeId == appointment.masterId) {
+                openEditingDialog(holdAppointment);
+              } else {
+                showTopSnackBar(context, 'Нельзя редактировать чужие записи');
+              }
             },
             onTap: (tapAppo) {
               showAppoDialog(tapAppo);

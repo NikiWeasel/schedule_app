@@ -25,6 +25,7 @@ class AllEmployeesBloc extends Bloc<AllEmployeesEvent, AllEmployeesState> {
         return Employee(
           name: data['name'],
           surname: data['surname'],
+          isAdmin: data['is_admin'],
           description: data['description'],
           email: data['email'],
           number: data['number'],

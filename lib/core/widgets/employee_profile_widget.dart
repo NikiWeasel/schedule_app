@@ -65,6 +65,7 @@ class _EmployeeProfileWidgetState extends State<EmployeeProfileWidget> {
         employeeId: widget.employee.employeeId,
         name: nameController.text,
         surname: surnameController.text,
+        isAdmin: widget.employee.isAdmin,
         description: descriptionController.text,
         email: widget.employee.email,
         number: numberController.text,

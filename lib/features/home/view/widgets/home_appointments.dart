@@ -77,7 +77,7 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
             for (var appointment in sortedAppointments)
               ConstrainedBox(
                 constraints: const BoxConstraints(
-                  maxWidth: 150,
+                  maxWidth: 200,
                 ),
                 child: AppointmentWidget(
                   height: 100,

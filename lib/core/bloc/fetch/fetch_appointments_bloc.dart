@@ -19,8 +19,8 @@ class FetchAppointmentsBloc
     on<FetchAppointmentsData>(_onFetchAppointmentsData);
   }
 
-  Future<void> _onFetchAppointmentsData(
-      FetchAppointmentsData event, Emitter<FetchAppointmentsState> emit) async {
+  Future<void> _onFetchAppointmentsData(FetchAppointmentsData event,
+      Emitter<FetchAppointmentsState> emit) async {
     print('bloc triggered');
 
     emit(FetchAppointmentsLoading());
@@ -28,7 +28,7 @@ class FetchAppointmentsBloc
 
     try {
       final QuerySnapshot snapshot =
-          await _firestore.collection('appointments').get();
+      await _firestore.collection('appointments').get();
 
       final List<Appointment> allAppointments = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
@@ -44,10 +44,10 @@ class FetchAppointmentsBloc
             appointmentId: doc.id);
       }).toList();
 
-      if (allAppointments.isEmpty) {
-        emit(FetchAppointmentsError(
-            errorMessage: 'Данные пользователей не найдены'));
-        return;
+      if (allAppointments.isEmpty) { //TODO: Добавить обработчик
+        // emit(FetchAppointmentsError(
+        //     errorMessage: 'Данные пользователей не найдены'));
+        // return;
       }
       List<Appointment> newList = List.from(allAppointments);
 

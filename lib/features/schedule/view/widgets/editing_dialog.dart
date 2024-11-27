@@ -8,28 +8,34 @@ import 'package:schedule_app/core/bloc/add_delete/actions_appointment_bloc.dart'
 import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/constants/saloon_services.dart';
 import 'package:schedule_app/core/models/appointment.dart';
+import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';
 import 'package:schedule_app/features/schedule/view/widgets/service_button.dart';
+import 'package:schedule_app/core/models/employee.dart';
+import 'editing_dialog/employee_drop_down_button.dart';
+import 'package:schedule_app/core/utils/snackbar_utils.dart';
 
 class EditingDialog extends StatefulWidget {
   EditingDialog(
       {super.key,
       this.appointment,
       required this.curentDate,
-      required this.editAppoTable});
+      required this.editAppoTable,
+      required this.employees});
 
   // final bool isEditing;
   final DateTime curentDate;
   final void Function({Appointment? oldAppo, required Appointment newAppo})
       editAppoTable;
   Appointment? appointment;
+  final List<Employee>? employees;
 
   @override
   State<EditingDialog> createState() => _EditingDialogState();
 }
 
 class _EditingDialogState extends State<EditingDialog> {
-  TimeOfDay selectedTime = const TimeOfDay(hour: 09, minute: 00);
-  DateTime selectedDate = DateTime.now();
+  TimeOfDay selectedTime = const TimeOfDay(hour: 10, minute: 00);
+  late DateTime selectedDate;
   String? selectedService;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _serviceFormKey = GlobalKey<FormState>();
@@ -37,6 +43,8 @@ class _EditingDialogState extends State<EditingDialog> {
   List<String> selectedServices = [];
   List<int> selectedServicesDuration = [];
   int timeCounter = 0;
+
+  Employee? selectedEmployee;
 
   bool isServicesEmptyError = false;
 
@@ -50,6 +58,9 @@ class _EditingDialogState extends State<EditingDialog> {
 
   @override
   void initState() {
+    selectedDate = widget.curentDate;
+    selectedEmployee = widget.employees?[0];
+
     nameController = TextEditingController();
     numberController = TextEditingController();
 
@@ -61,7 +72,9 @@ class _EditingDialogState extends State<EditingDialog> {
           minute: widget.appointment!.getStartTimeMinutes());
       selectedDate = widget.appointment!.date;
       selectedServices = widget.appointment!.serviceName.split(' + ');
+
       int sum = 0;
+
       for (var element in selectedServices) {
         // addService(element);
         int numToAdd = services[element]!;
@@ -99,33 +112,17 @@ class _EditingDialogState extends State<EditingDialog> {
     return false; // Нет пересечений
   }
 
-  void showTopSnackBar(
-    context,
-    String message, {
-    Duration? duration,
-  }) {
-    // print(MediaQuery.of(context).size.height - 100);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        dismissDirection: DismissDirection.horizontal,
-        duration: duration ?? const Duration(milliseconds: 1500),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).size.height -
-                150 -
-                MediaQuery.of(context).viewInsets.bottom,
-            left: 0,
-            right: 0),
-        behavior: SnackBarBehavior.floating,
-        content: Center(
-          child: Text('$message',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(color: Colors.white)),
-        ),
-      ),
-    );
+  bool isOverWorkingTime(Appointment newAppointment) {
+    var newEnd = newAppointment.startTime + newAppointment.duration;
+    var newStart = newAppointment.startTime;
+    var start = 600;
+    var end = 1200;
+
+    if ((newStart < start || newStart > end) || (newEnd > end)) {
+      return true;
+    }
+
+    return false;
   }
 
   bool _submit() {
@@ -189,7 +186,7 @@ class _EditingDialogState extends State<EditingDialog> {
     final TimeOfDay? time = await showTimePicker(
       initialEntryMode: TimePickerEntryMode.inputOnly,
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: const TimeOfDay(hour: 10, minute: 00),
     );
     if (time != null) {
       setState(() {
@@ -201,7 +198,8 @@ class _EditingDialogState extends State<EditingDialog> {
   void pickDate() async {
     final DateTime? dateTime = await showDatePicker(
         context: context,
-        initialDate: DateTime.now(),
+        initialDate: widget.curentDate,
+        currentDate: widget.curentDate,
         firstDate: DateTime.now(),
         lastDate: DateTime(DateTime.now().year + 1));
     if (dateTime != null) {
@@ -213,6 +211,12 @@ class _EditingDialogState extends State<EditingDialog> {
 
   int timeToMin(TimeOfDay timeOfDay) {
     return timeOfDay.hour * 60 + timeOfDay.minute;
+  }
+
+  void onEmpDropButtonChange(Employee emp) {
+    setState(() {
+      selectedEmployee = emp;
+    });
   }
 
   @override
@@ -268,8 +272,18 @@ class _EditingDialogState extends State<EditingDialog> {
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 8,
+                  if (widget.employees != null)
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: EmployeeDropDownButton(
+                            employees: widget.employees!,
+                            onChange: onEmpDropButtonChange,
+                          )),
+                    ),
+                  SizedBox(
+                    height: widget.employees != null ? 16 : 8,
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,10 +511,26 @@ class _EditingDialogState extends State<EditingDialog> {
                             );
 
                             if (widget.appointment == null) {
-                              if (isOverlapping(appointment, appointments)) {
-                                print('overlap');
+                              if (widget.employees != null) {
+                                appointment.masterId =
+                                    selectedEmployee!.employeeId;
+                              }
+
+                              var activeUserAppos = appointments
+                                  .where((appo) =>
+                                      appo.masterId == appointment.masterId)
+                                  .toList();
+
+                              if (isOverlapping(appointment, activeUserAppos)) {
+                                print('overlap1');
                                 showTopSnackBar(
                                     context, 'Пересечение с другой записью');
+                                return;
+                              }
+                              if (isOverWorkingTime(appointment)) {
+                                print('over working time');
+                                showTopSnackBar(
+                                    context, 'Запись вне рабочего времени');
                                 return;
                               }
 
@@ -515,10 +545,24 @@ class _EditingDialogState extends State<EditingDialog> {
                               appointment.appointmentId =
                                   widget.appointment!.appointmentId;
 
-                              if (isOverlapping(appointment, appointments)) {
-                                print('overlap');
+                              appointment.masterId =
+                                  widget.appointment!.masterId;
+
+                              var activeUserAppos = appointments
+                                  .where((appo) =>
+                                      appo.masterId == appointment.masterId)
+                                  .toList();
+
+                              if (isOverlapping(appointment, activeUserAppos)) {
+                                print('overlap2');
                                 showTopSnackBar(
                                     context, 'Пересечение с другой записью');
+                                return;
+                              }
+                              if (isOverWorkingTime(appointment)) {
+                                print('over working time');
+                                showTopSnackBar(
+                                    context, 'Запись вне рабочего времени');
                                 return;
                               }
 

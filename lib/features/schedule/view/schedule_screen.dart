@@ -30,14 +30,16 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   bool wasDialogCalled = false;
 
-  void openCreateNewDialog() {
+  void openCreateNewDialog(List<Employee> employees, Employee user) {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
         builder: (ctx) => EditingDialog(
-            curentDate: currentDate,
-            appointment: null,
-            editAppoTable: (editAppoTable)));
+              curentDate: currentDate,
+              appointment: null,
+              editAppoTable: (editAppoTable),
+              employees: user.isAdmin ? employees : null,
+            ));
   }
 
   void chooseDate() async {
@@ -69,80 +71,108 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider<AllEmployeesBloc>(
-          create: (context) => AllEmployeesBloc()..add(FetchAllEmployeesData()),
-        ),
-        BlocProvider<FetchAppointmentsBloc>(
-          create: (context) =>
-              FetchAppointmentsBloc()..add(FetchAppointmentsData()),
-        ),
-      ],
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(formatDate(currentDate)),
-          actions: [
-            BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
-                builder: (context, allAppontmentsState) {
-              return IconButton(
-                icon: const Icon(Icons.autorenew),
-                onPressed: () {
-                  print(allAppontmentsState);
-
-                  context.read<AllEmployeesBloc>().add(FetchAllEmployeesData());
-                  context
-                      .read<FetchAppointmentsBloc>()
-                      .add(FetchAppointmentsData());
-                  print(allAppontmentsState);
-                  renewKey();
-                  print('renewed');
-                },
-              );
-            }),
-            IconButton(
-                onPressed: chooseDate,
-                icon: const Icon(Icons.calendar_month_rounded)),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: openCreateNewDialog,
-          child: const Icon(Icons.add),
-        ),
-        body: BlocBuilder<AllEmployeesBloc, AllEmployeesState>(
+        providers: [
+          BlocProvider<AllEmployeesBloc>(
+            create: (context) =>
+                AllEmployeesBloc()..add(FetchAllEmployeesData()),
+          ),
+          BlocProvider<FetchAppointmentsBloc>(
+            create: (context) =>
+                FetchAppointmentsBloc()..add(FetchAppointmentsData()),
+          ),
+        ],
+        child: BlocBuilder<AllEmployeesBloc, AllEmployeesState>(
           builder: (context, allEmployeesState) {
             return BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
               builder: (context, allAppontmentsState) {
                 if ((allEmployeesState is AllEmployeesLoaded &&
                     allAppontmentsState is FetchAppointmentsLoaded)) {
-                  return ScheduleTable(
-                    key: key,
-                    user: widget.user,
-                    curentDate: currentDate,
-                    allEmployees: allEmployeesState.employees,
-                    allAppontments: allAppontmentsState.appointments,
-                    setEditAppoTable: (callback) {
-                      setState(() {
-                        editAppoTable = callback;
-                      });
-                      if (widget.showDialogImidiatly && !wasDialogCalled) {
-                        // WidgetsBinding.instance.addPostFrameCallback((_) {
-                        openCreateNewDialog();
+                  var allMasters = allEmployeesState.employees;
+                  var masters = allMasters
+                      .where((e) => widget.user.employeeId != e.employeeId)
+                      .toList();
+                  masters.insert(0, widget.user);
+
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: Text(formatDate(currentDate)),
+                      actions: [
+                        BlocBuilder<FetchAppointmentsBloc,
+                                FetchAppointmentsState>(
+                            builder: (context, allAppontmentsState) {
+                          return IconButton(
+                            icon: const Icon(Icons.autorenew),
+                            onPressed: () {
+                              print(allAppontmentsState);
+
+                              context
+                                  .read<AllEmployeesBloc>()
+                                  .add(FetchAllEmployeesData());
+                              context
+                                  .read<FetchAppointmentsBloc>()
+                                  .add(FetchAppointmentsData());
+                              print(allAppontmentsState);
+                              renewKey();
+                              print('renewed');
+                            },
+                          );
+                        }),
+                        IconButton(
+                            onPressed: chooseDate,
+                            icon: const Icon(Icons.calendar_month_rounded)),
+                      ],
+                    ),
+                    floatingActionButton: FloatingActionButton(
+                      onPressed: () {
+                        openCreateNewDialog(masters, widget.user);
+                      },
+                      child: const Icon(Icons.add),
+                    ),
+                    body: ScheduleTable(
+                      key: key,
+                      curentDate: currentDate,
+                      allEmployees: masters,
+                      allAppontments: allAppontmentsState.appointments,
+                      setEditAppoTable: (callback) {
                         setState(() {
-                          wasDialogCalled = true;
+                          editAppoTable = callback;
                         });
-                        // });
-                      }
-                    },
+                        if (widget.showDialogImidiatly && !wasDialogCalled) {
+                          // WidgetsBinding.instance.addPostFrameCallback((_) {
+                          openCreateNewDialog(masters, widget.user);
+                          setState(() {
+                            wasDialogCalled = true;
+                          });
+                          // });
+                        }
+                      },
+                    ),
                   );
                 }
-                return const Center(
-                  child: CardCircularProgressIndicator(),
+                return Scaffold(
+                  appBar: AppBar(
+                    title: Text(formatDate(currentDate)),
+                    actions: [
+                      IconButton(
+                        icon: const Icon(Icons.autorenew),
+                        onPressed: () {},
+                      ),
+                      IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.calendar_month_rounded)),
+                    ],
+                  ),
+                  floatingActionButton: FloatingActionButton(
+                    onPressed: () {},
+                    child: const Icon(Icons.add),
+                  ),
+                  body: const Center(
+                    child: CardCircularProgressIndicator(),
+                  ),
                 );
               },
             );
           },
-        ),
-      ),
-    );
+        ));
   }
 }

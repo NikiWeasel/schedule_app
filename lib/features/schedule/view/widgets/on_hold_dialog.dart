@@ -6,6 +6,8 @@ import 'package:schedule_app/features/schedule/view/widgets/editing_dialog.dart'
 import 'package:schedule_app/core/bloc/add_delete/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 
+import 'package:schedule_app/core/models/employee.dart';
+
 class OnHoldDialog extends StatelessWidget {
   OnHoldDialog(
       {super.key,
@@ -22,7 +24,10 @@ class OnHoldDialog extends StatelessWidget {
 
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  void onEdit(BuildContext context, Appointment appointment) {
+  void onEdit(
+    BuildContext context,
+    Appointment appointment,
+  ) {
     Navigator.pop(context);
     showModalBottomSheet(
         context: context,
@@ -31,6 +36,7 @@ class OnHoldDialog extends StatelessWidget {
               curentDate: curentDate,
               appointment: appointment,
               editAppoTable: editAppoTable,
+              employees: null,
             ));
   }
 

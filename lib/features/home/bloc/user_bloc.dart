@@ -68,6 +68,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     final fetchedUser = Employee(
       name: data['name'],
       surname: data['surname'],
+      isAdmin: data['is_admin'],
       description: data['description'],
       email: data['email'],
       number: data['number'],

@@ -87,6 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
             .set({
           'name': _enteredName,
           'surname': _enteredSurname,
+          'is_admin': false,
           'email': _enteredEmail,
           'number': _enteredNumber,
           'image_url': imageUrl,

@@ -3,6 +3,7 @@ class Employee {
     required this.employeeId,
     required this.name,
     required this.surname,
+    required this.isAdmin,
     required this.description,
     required this.email,
     required this.number,
@@ -12,6 +13,7 @@ class Employee {
   final String employeeId;
   final String name;
   final String surname;
+  final bool isAdmin;
   final String description;
   final String email;
   final String number;

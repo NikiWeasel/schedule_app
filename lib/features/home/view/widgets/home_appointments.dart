@@ -64,7 +64,7 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
       var sortedAppointments = sortAppointments(appointments);
       if (sortedAppointments.isEmpty) {
         return NoAppointmentsWidget(onTap: () {
-          context.go('/schedule',
+          context.push('/schedule',
               extra: {'user': widget.emlpoyee, 'showDialogImidiatly': true});
         });
       }

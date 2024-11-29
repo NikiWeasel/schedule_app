@@ -19,21 +19,8 @@ class App extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const SplashScreen();
         }
-
         if (snapshot.hasData) {
-          return MultiBlocProvider(providers: [
-            BlocProvider<UserBloc>(
-              create: (context) => UserBloc()..add(FetchUserData()),
-            ),
-            BlocProvider<AllEmployeesBloc>(
-              create: (context) =>
-                  AllEmployeesBloc()..add(FetchAllEmployeesData()),
-            ),
-            BlocProvider<FetchAppointmentsBloc>(
-              create: (context) =>
-                  FetchAppointmentsBloc()..add(FetchAppointmentsData()),
-            ),
-          ], child: const HomeScreen());
+          return const HomeScreen();
         }
         return const LoginScreen();
       },

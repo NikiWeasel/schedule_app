@@ -6,17 +6,8 @@ import 'package:schedule_app/core/widgets/loading_skeleton.dart';
 import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'package:schedule_app/features/home/view/widgets/home_appointments.dart';
 import 'package:schedule_app/features/home/view/widgets/home_line_chart.dart';
-import 'package:schedule_app/features/notifications/view/notifications_screen.dart';
-import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
-import 'package:schedule_app/core/widgets/appointment_widget.dart';
-import 'package:schedule_app/features/home/view/widgets/home_screen_drawer.dart';
-import 'package:schedule_app/core/widgets/person_header_widget.dart';
-import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
-import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,14 +18,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  var key = UniqueKey();
-
   bool isShowingMainData = true;
 
+  int currentPageIndex = 0;
+
   void renewKey() {
-    setState(() {
-      key = UniqueKey();
-    });
+    //TODO мб засунуть еще для UserBloc
+    context.read<AllEmployeesBloc>().add(FetchAllEmployeesData());
+    context.read<FetchAppointmentsBloc>().add(FetchAppointmentsData());
   }
 
   @override
@@ -75,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               icon: const Icon(Icons.autorenew)),
                           IconButton(
                               onPressed: () {
-                                context.go('/notifications');
+                                context.push('/notifications');
                               },
                               icon: Badge(
                                 label: Text(
@@ -92,9 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             width: 8,
                           )
                         ],
-                      ),
-                      drawer: HomeScreenDrawer(
-                        employee: userState.user,
                       ),
                       body: SingleChildScrollView(
                         child: Column(
@@ -114,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 8,
                             ),
                             HomeAppointments(
-                              key: key,
                               emlpoyee: userState.user,
                               appointmentsState: allAppontmentsState,
                             ),
@@ -122,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               alignment: Alignment.topRight,
                               child: TextButton(
                                   onPressed: () {
-                                    context.go('/schedule', extra: {
+                                    context.push('/schedule', extra: {
                                       'user': userState.user,
                                       'showDialogImidiatly': false
                                     });

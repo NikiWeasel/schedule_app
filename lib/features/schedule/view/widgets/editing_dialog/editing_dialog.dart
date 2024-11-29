@@ -11,7 +11,7 @@ import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';
 import 'package:schedule_app/features/schedule/view/widgets/service_button.dart';
 import 'package:schedule_app/core/models/employee.dart';
-import 'editing_dialog/employee_drop_down_button.dart';
+import 'employee_drop_down_button.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
 
 class EditingDialog extends StatefulWidget {

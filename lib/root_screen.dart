@@ -3,30 +3,36 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class RootScreen extends StatelessWidget {
-  const RootScreen({super.key, required this.navigationShell});
+  const RootScreen(
+      {super.key,
+      required this.navigationShell,
+      required this.hideNavigationBar});
 
   /// Контейнер для навигационного бара.
   final StatefulNavigationShell navigationShell;
+  final bool hideNavigationBar;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: NavigationBar(
-        indicatorColor: Theme.of(context).colorScheme.secondaryContainer,
+      bottomNavigationBar: hideNavigationBar
+          ? null
+          : NavigationBar(
+              indicatorColor: Theme.of(context).colorScheme.secondaryContainer,
 
-        /// Лист элементов для нижнего навигационного бара.
-        destinations: _buildBottomNavBarItems,
+              /// Лист элементов для нижнего навигационного бара.
+              destinations: _buildBottomNavBarItems,
 
-        /// Текущий индекс нижнего навигационного бара.
-        selectedIndex: navigationShell.currentIndex,
+              /// Текущий индекс нижнего навигационного бара.
+              selectedIndex: navigationShell.currentIndex,
 
-        /// Обработчик нажатия на элемент нижнего навигационного бара.
-        onDestinationSelected: (index) => navigationShell.goBranch(
-          index,
-          initialLocation: index == navigationShell.currentIndex,
-        ),
-      ),
+              /// Обработчик нажатия на элемент нижнего навигационного бара.
+              onDestinationSelected: (index) => navigationShell.goBranch(
+                index,
+                initialLocation: index == navigationShell.currentIndex,
+              ),
+            ),
     );
   }
 

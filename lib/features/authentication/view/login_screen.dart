@@ -6,6 +6,7 @@ import 'package:schedule_app/features/home/view/home_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schedule_app/features/authentication/view/widgets/user_image_picker.dart';
+import 'package:go_router/go_router.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -114,6 +115,9 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isAuthing = false;
       });
+      if (mounted) {
+        context.go('/app', extra: false);
+      }
       // widget.renew();
     }
   }

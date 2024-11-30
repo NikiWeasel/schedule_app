@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'core/bloc/fetch/fetch_appointments_bloc.dart';
 import 'core/widgets/splash_screen.dart';
 import 'features/authentication/view/login_screen.dart';
@@ -20,6 +21,9 @@ class App extends StatelessWidget {
           return const SplashScreen();
         }
         if (snapshot.hasData) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            context.go('/app', extra: false);
+          });
           return const HomeScreen();
         }
         return const LoginScreen();

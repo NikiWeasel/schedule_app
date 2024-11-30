@@ -36,21 +36,25 @@ final router = GoRouter(
     GoRoute(
       path: '/notifications',
       builder: (context, state) {
-        // final data = state.extra as Map<String, dynamic>?;
         return const NotificationsScreen();
       },
     ),
     GoRoute(
       path: '/settings',
       builder: (context, state) {
-        // final data = state.extra as Map<String, dynamic>?;
         return const SettingsScreen();
       },
     ),
     // BottomNavigationBar
     StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) =>
-          RootScreen(navigationShell: navigationShell),
+      builder: (context, state, navigationShell) {
+        final hideNavigationBar = state.extra as bool? ?? false;
+
+        return RootScreen(
+          navigationShell: navigationShell,
+          hideNavigationBar: hideNavigationBar,
+        );
+      },
       branches: [
         StatefulShellBranch(
           routes: [
@@ -65,7 +69,6 @@ final router = GoRouter(
             GoRoute(
               path: '/regulations',
               builder: (context, state) {
-                print('/regulations');
                 return const RegulationsScreen();
               },
             ),

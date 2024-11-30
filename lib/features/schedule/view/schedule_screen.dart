@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:schedule_app/core/bloc/add_delete/actions_appointment_bloc.dart';
+import 'package:schedule_app/core/bloc/actions_appointments//actions_appointment_bloc.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
 import 'package:schedule_app/features/schedule/view/widgets/editing_dialog/editing_dialog.dart';
-import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments//fetch_appointments_bloc.dart';
 import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 

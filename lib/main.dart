@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'app.dart';
-import 'core/bloc/fetch/fetch_appointments_bloc.dart';
+import 'core/bloc/fetch_appointments//fetch_appointments_bloc.dart';
 import 'features/home/bloc/user_bloc.dart';
 import 'features/schedule/bloc/all_employees_bloc.dart';
 import 'firebase_options.dart';

@@ -1,18 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:schedule_app/app.dart';
-import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/widgets/appo_dialog.dart';
 import 'package:schedule_app/core/widgets/employee_profile_widget.dart';
-import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
 import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart';
 import 'package:schedule_app/core/widgets/appointment_widget.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/widgets/person_header_widget.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
-import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 
 class ScheduleTable extends StatefulWidget {
   const ScheduleTable(

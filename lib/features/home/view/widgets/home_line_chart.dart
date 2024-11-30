@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:schedule_app/core/bloc/fetch/fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments//fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/features/home/view/widgets/chart_employee_tile.dart';
 import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';

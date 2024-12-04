@@ -8,6 +8,6 @@ class Regulation {
 
   String? id;
   final String name;
-  final String duration;
-  final String cost;
+  final int duration;
+  final int cost;
 }

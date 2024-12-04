@@ -93,6 +93,14 @@ class _EditingDialogState extends State<EditingDialog> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    numberController.dispose();
+    _controller.dispose();
+    nameController.dispose();
+    super.dispose();
+  }
+
   bool isOverlapping(
       Appointment newAppointment, List<Appointment> appointments) {
     var newEnd = newAppointment.startTime + newAppointment.duration;
@@ -139,6 +147,72 @@ class _EditingDialogState extends State<EditingDialog> {
     _formKey.currentState!.save();
 
     return true;
+  }
+
+  void onConfirm(
+      void Function(Appointment appo) updateAppo,
+      void Function(Appointment appo) createAppo,
+      List<Appointment> appointments) {
+    if (!_submit()) {
+      return;
+    }
+    Appointment appointment = Appointment(
+      masterId: FirebaseAuth.instance.currentUser!.uid,
+      clientName: enteredName,
+      clientNumber: enteredNumber,
+      serviceName: selectedServices.join(' + '),
+      startTime: timeToMin(selectedTime),
+      duration: timeCounter,
+      date: selectedDate,
+    );
+
+    if (widget.appointment == null) {
+      if (widget.employees != null) {
+        appointment.masterId = selectedEmployee!.employeeId;
+      }
+
+      var activeUserAppos = appointments
+          .where((appo) => appo.masterId == appointment.masterId)
+          .toList();
+
+      if (isOverlapping(appointment, activeUserAppos)) {
+        print('overlap1');
+        showTopSnackBar(context, 'Пересечение с другой записью');
+        return;
+      }
+      if (isOverWorkingTime(appointment)) {
+        print('over working time');
+        showTopSnackBar(context, 'Запись вне рабочего времени');
+        return;
+      }
+
+      createAppo(appointment);
+      widget.editAppoTable(newAppo: appointment);
+      Navigator.pop(context);
+    } else {
+      appointment.appointmentId = widget.appointment!.appointmentId;
+
+      appointment.masterId = widget.appointment!.masterId;
+
+      var activeUserAppos = appointments
+          .where((appo) => appo.masterId == appointment.masterId)
+          .toList();
+
+      if (isOverlapping(appointment, activeUserAppos)) {
+        print('overlap2');
+        showTopSnackBar(context, 'Пересечение с другой записью');
+        return;
+      }
+      if (isOverWorkingTime(appointment)) {
+        print('over working time');
+        showTopSnackBar(context, 'Запись вне рабочего времени');
+        return;
+      }
+
+      updateAppo(appointment);
+      widget.editAppoTable(oldAppo: widget.appointment!, newAppo: appointment);
+      Navigator.pop(context);
+    }
   }
 
   void resetTimeCounter() {
@@ -498,85 +572,17 @@ class _EditingDialogState extends State<EditingDialog> {
 
                       return ElevatedButton(
                         onPressed: () {
-                          var isOk = _submit();
-                          if (isOk) {
-                            Appointment appointment = Appointment(
-                              masterId: FirebaseAuth.instance.currentUser!.uid,
-                              clientName: enteredName,
-                              clientNumber: enteredNumber,
-                              serviceName: selectedServices.join(' + '),
-                              startTime: timeToMin(selectedTime),
-                              duration: timeCounter,
-                              date: selectedDate,
+                          onConfirm((appointment) {
+                            BlocProvider.of<ActionsAppointmentBloc>(context)
+                                .add(
+                              UpdateAppointmentEvent(appointment: appointment),
                             );
-
-                            if (widget.appointment == null) {
-                              if (widget.employees != null) {
-                                appointment.masterId =
-                                    selectedEmployee!.employeeId;
-                              }
-
-                              var activeUserAppos = appointments
-                                  .where((appo) =>
-                                      appo.masterId == appointment.masterId)
-                                  .toList();
-
-                              if (isOverlapping(appointment, activeUserAppos)) {
-                                print('overlap1');
-                                showTopSnackBar(
-                                    context, 'Пересечение с другой записью');
-                                return;
-                              }
-                              if (isOverWorkingTime(appointment)) {
-                                print('over working time');
-                                showTopSnackBar(
-                                    context, 'Запись вне рабочего времени');
-                                return;
-                              }
-
-                              BlocProvider.of<ActionsAppointmentBloc>(context)
-                                  .add(
-                                CreateAppointmentEvent(
-                                    appointment: appointment),
-                              );
-                              widget.editAppoTable(newAppo: appointment);
-                              Navigator.pop(context);
-                            } else {
-                              appointment.appointmentId =
-                                  widget.appointment!.appointmentId;
-
-                              appointment.masterId =
-                                  widget.appointment!.masterId;
-
-                              var activeUserAppos = appointments
-                                  .where((appo) =>
-                                      appo.masterId == appointment.masterId)
-                                  .toList();
-
-                              if (isOverlapping(appointment, activeUserAppos)) {
-                                print('overlap2');
-                                showTopSnackBar(
-                                    context, 'Пересечение с другой записью');
-                                return;
-                              }
-                              if (isOverWorkingTime(appointment)) {
-                                print('over working time');
-                                showTopSnackBar(
-                                    context, 'Запись вне рабочего времени');
-                                return;
-                              }
-
-                              BlocProvider.of<ActionsAppointmentBloc>(context)
-                                  .add(
-                                UpdateAppointmentEvent(
-                                    appointment: appointment),
-                              );
-                              widget.editAppoTable(
-                                  oldAppo: widget.appointment!,
-                                  newAppo: appointment);
-                              Navigator.pop(context);
-                            }
-                          }
+                          }, (appointment) {
+                            BlocProvider.of<ActionsAppointmentBloc>(context)
+                                .add(
+                              CreateAppointmentEvent(appointment: appointment),
+                            );
+                          }, appointments);
                         },
                         child: const Text('Подтвердить'),
                       );

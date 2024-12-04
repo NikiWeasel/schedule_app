@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'package:schedule_app/features/home/view/home_screen.dart';
 import 'package:schedule_app/features/notifications/view/notifications_screen.dart';
 import 'package:schedule_app/features/portfolio/view/portfolio_screen.dart';

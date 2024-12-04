@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int currentPageIndex = 0;
 
-  void renewKey() {
+  void renew() {
     //TODO мб засунуть еще для UserBloc
     context.read<AllEmployeesBloc>().add(FetchAllEmployeesData());
     context.read<FetchAppointmentsBloc>().add(FetchAppointmentsData());
@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context
                                     .read<FetchAppointmentsBloc>()
                                     .add(FetchAppointmentsData());
-                                renewKey();
+                                renew();
                               },
                               icon: const Icon(Icons.autorenew)),
                           IconButton(

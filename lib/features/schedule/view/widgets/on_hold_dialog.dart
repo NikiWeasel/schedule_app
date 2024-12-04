@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:schedule_app/core/widgets/alert_confirm_dialog.dart';
 import 'package:schedule_app/features/schedule/view/widgets/editing_dialog/editing_dialog.dart';
 import 'package:schedule_app/core/bloc/actions_appointments//actions_appointment_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
@@ -43,33 +44,13 @@ class OnHoldDialog extends StatelessWidget {
   void onDelete(BuildContext context, void Function() deleteAppointment) {
     showDialog(
         context: context,
-        builder: (ctx) => AlertDialog(
-              title: Text(
-                'Отменить запись?',
-                style: Theme.of(context).textTheme.titleLarge!,
-              ),
-              content: Text(
-                'Запись будет удалена навсегда.',
-                style: Theme.of(context).textTheme.titleMedium!,
-              ),
-              actionsAlignment: MainAxisAlignment.start,
-              actions: [
-                ElevatedButton(
-                    onPressed: () {
-                      deleteAppointment();
-                      deleteAppoTable(appointment);
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Подтвердить')),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      // Navigator.of(context).pop();
-                    },
-                    child: const Text('Отмена'))
-              ],
-            ));
+        builder: (ctx) => AlertConfirmDialog(
+            title: 'Отменить запись?',
+            content: 'Запись будет удалена навсегда.',
+            onConfirm: () {
+              deleteAppointment();
+              deleteAppoTable(appointment);
+            }));
   }
 
   @override

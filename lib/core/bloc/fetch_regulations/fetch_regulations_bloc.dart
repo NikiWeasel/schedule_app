@@ -1,8 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meta/meta.dart';
-
-import '../../models/regulation.dart';
+import 'package:schedule_app/core/models/regulation.dart';
 
 part 'fetch_regulations_event.dart';
 
@@ -24,23 +23,23 @@ class FetchRegulationsBloc
 
     try {
       final QuerySnapshot snapshot =
-          await _firestore.collection('appointments').get();
+          await _firestore.collection('regulations').get();
 
       final List<Regulation> allAppointments = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
 
         return Regulation(
-            name: data['masterId'],
-            duration: data['clientName'],
-            cost: data['clientNumber'],
+            name: data['name'],
+            duration: data['duration'],
+            cost: data['cost'],
             id: doc.id);
       }).toList();
 
-      if (allAppointments.isEmpty) {
-        emit(FetchRegulationsErrorState(
-            errorMessage: 'Данные регламентов не найдены'));
-        return;
-      }
+      // if (allAppointments.isEmpty) {
+      //   emit(FetchRegulationsErrorState(
+      //       errorMessage: 'Данные регламентов не найдены'));
+      //   return;
+      // }
       List<Regulation> newList = List.from(allAppointments);
 
       emit(FetchRegulationsLoadedState(regulations: newList));

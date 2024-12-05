@@ -11,6 +11,7 @@ import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';
 import 'package:schedule_app/features/schedule/view/widgets/service_button.dart';
 import 'package:schedule_app/core/models/employee.dart';
+import 'package:schedule_app/core/models/regulation.dart';
 import 'employee_drop_down_button.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
 
@@ -20,13 +21,15 @@ class EditingDialog extends StatefulWidget {
       this.appointment,
       required this.curentDate,
       required this.editAppoTable,
-      required this.employees});
+      required this.employees,
+      required this.services});
 
   // final bool isEditing;
   final DateTime curentDate;
   final void Function({Appointment? oldAppo, required Appointment newAppo})
       editAppoTable;
   Appointment? appointment;
+  final Map<String, int> services;
   final List<Employee>? employees;
 
   @override
@@ -56,6 +59,14 @@ class _EditingDialogState extends State<EditingDialog> {
   String enteredNumber = '';
   String enteredName = '';
 
+  // Map<String, int> regToServicesList(List<Regulation> regList) {
+  //   Map<String, int> map = {};
+  //   for (var e in regList) {
+  //     map[e.name] = e.duration;
+  //   }
+  //   return map;
+  // }
+
   @override
   void initState() {
     selectedDate = widget.curentDate;
@@ -77,7 +88,7 @@ class _EditingDialogState extends State<EditingDialog> {
 
       for (var element in selectedServices) {
         // addService(element);
-        int numToAdd = services[element]!;
+        int numToAdd = widget.services[element]!;
         selectedServicesDuration.add(numToAdd);
         sum = sum + numToAdd;
       }
@@ -487,7 +498,7 @@ class _EditingDialogState extends State<EditingDialog> {
                           hint: const Text('Выберите услугу'),
                           isExpanded: true,
                           // Для полного расширения кнопки по ширине
-                          items: services.keys
+                          items: widget.services.keys
                               .map<DropdownMenuItem<String>>((String key) {
                             return DropdownMenuItem<String>(
                               value: key,
@@ -498,7 +509,8 @@ class _EditingDialogState extends State<EditingDialog> {
                             setState(() {
                               selectedService =
                                   newValue; // Установка выбранного значения
-                              _controller.text = services[newValue].toString();
+                              _controller.text =
+                                  widget.services[newValue].toString();
                             });
                           },
                           dropdownColor: Colors.white,

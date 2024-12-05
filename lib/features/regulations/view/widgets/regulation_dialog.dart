@@ -82,6 +82,7 @@ class _RegulationDialogState extends State<RegulationDialog> {
     } else {
       createRegulation(newReg);
     }
+    Navigator.pop(context);
   }
 
   @override

@@ -33,29 +33,35 @@ class RegulationTile extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: ListTile(
-        tileColor: Theme.of(context).colorScheme.secondaryContainer,
-        shape: ShapeBorder.lerp(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
+      child: Stack(children: [
+        ListTile(
+          tileColor: Theme.of(context).colorScheme.secondaryContainer,
+          shape: ShapeBorder.lerp(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ),
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5),
+            ),
+            1,
           ),
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
-          1,
+          title: Text(regulation.name),
+          subtitle: Text('${regulation.duration.toString()} мин'),
+          trailing: Text('${regulation.cost.toString()} руб'),
+          onLongPress: onLongPress,
         ),
-        title: Text(regulation.name),
-        subtitle: Text('${regulation.duration.toString()} мин'),
-        trailing: Text('${regulation.cost.toString()} руб'),
-        leading: isAdmin
-            ? IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  onDeleteButton(onDelete);
-                })
-            : null,
-        onLongPress: onLongPress,
-      ),
+        isAdmin
+            ? Positioned(
+                top: -8,
+                right: -9,
+                child: IconButton(
+                    icon: Transform.scale(
+                        scale: 0.8, child: const Icon(Icons.close)),
+                    onPressed: () {
+                      onDeleteButton(onDelete);
+                    }))
+            : const SizedBox.shrink()
+      ]),
     );
   }
 }

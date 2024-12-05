@@ -10,6 +10,7 @@ import 'package:schedule_app/features/regulations/view/widgets/regulation_tile.d
 import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 import 'package:schedule_app/features/regulations/bloc/actions_regulations_bloc.dart';
+import 'package:schedule_app/core/utils/snackbar_utils.dart';
 
 class RegulationsScreen extends StatelessWidget {
   const RegulationsScreen({super.key});
@@ -22,10 +23,14 @@ class RegulationsScreen extends StatelessWidget {
       context.read<FetchRegulationsBloc>().add(FetchRegulationsData());
     }
 
-    void onLongPress(Regulation reg) {
-      showModalBottomSheet(
-          context: context,
-          builder: (context) => RegulationDialog(regulation: reg));
+    void onLongPress(Regulation reg, bool isAdmin) {
+      if (isAdmin) {
+        showModalBottomSheet(
+            context: context,
+            builder: (context) => RegulationDialog(regulation: reg));
+      } else {
+        showTopSnackBar(context, 'Нельзя редактировать услуги');
+      }
     }
 
     return BlocProvider(
@@ -61,7 +66,7 @@ class RegulationsScreen extends StatelessWidget {
                             RegulationTile(
                               isAdmin: isAdmin,
                               onLongPress: () {
-                                onLongPress(reg);
+                                onLongPress(reg, isAdmin);
                               },
                               onDelete: () {
                                 context.read<ActionsRegulationsBloc>().add(

@@ -119,8 +119,8 @@ class _RegulationDialogState extends State<RegulationDialog> {
                             children: [
                               Text(
                                 widget.regulation != null
-                                    ? 'Изменить запись'
-                                    : 'Добавить запись',
+                                    ? 'Изменить услугу'
+                                    : 'Добавить услугу',
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleLarge!

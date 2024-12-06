@@ -11,6 +11,7 @@ import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 import 'package:schedule_app/features/regulations/bloc/actions_regulations_bloc.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
+import 'package:schedule_app/core/widgets/alert_confirm_dialog.dart';
 
 class RegulationsScreen extends StatelessWidget {
   const RegulationsScreen({super.key});
@@ -31,6 +32,20 @@ class RegulationsScreen extends StatelessWidget {
       } else {
         showTopSnackBar(context, 'Нельзя редактировать услуги');
       }
+    }
+
+    Future<bool> confirmDismiss() async {
+      bool wasDismissed = false;
+      await showDialog(
+          context: context,
+          builder: (ctx) => AlertConfirmDialog(
+              title: 'Удалить услугу?',
+              content: 'Услуга будет удалена навсегда.',
+              onConfirm: () {
+                // delete();
+                wasDismissed = true;
+              }));
+      return wasDismissed;
     }
 
     return BlocProvider(
@@ -63,16 +78,42 @@ class RegulationsScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         children: [
                           for (var reg in regList)
-                            RegulationTile(
-                              isAdmin: isAdmin,
-                              onLongPress: () {
-                                onLongPress(reg, isAdmin);
+                            Dismissible(
+                              direction: DismissDirection.endToStart,
+                              dismissThresholds: const {
+                                DismissDirection.endToStart: 0.5
                               },
-                              onDelete: () {
+                              confirmDismiss: (dis) {
+                                return confirmDismiss();
+                              },
+                              key: ValueKey<int>(regList.indexOf(reg)),
+                              background: Container(
+                                alignment: Alignment.centerRight,
+                                color: Theme.of(context).colorScheme.surface,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 16.0),
+                                  child: Icon(
+                                    Icons.delete_outline,
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                ),
+                              ),
+                              onDismissed: (DismissDirection direction) {
                                 context.read<ActionsRegulationsBloc>().add(
                                     DeleteRegulationEvent(regulation: reg));
+                                regList.remove(reg);
                               },
-                              regulation: reg,
+                              child: RegulationTile(
+                                isAdmin: isAdmin,
+                                onLongPress: () {
+                                  onLongPress(reg, isAdmin);
+                                },
+                                // onDelete: () {
+                                //   context.read<ActionsRegulationsBloc>().add(
+                                //       DeleteRegulationEvent(regulation: reg));
+                                // },
+                                regulation: reg,
+                              ),
                             )
                         ],
                       ),

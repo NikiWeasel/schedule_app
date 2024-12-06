@@ -9,59 +9,36 @@ class RegulationTile extends StatelessWidget {
       {super.key,
       required this.onLongPress,
       required this.isAdmin,
-      required this.onDelete,
+      // required this.onDelete,
       required this.regulation});
 
   final Regulation regulation;
   final bool isAdmin;
 
   final void Function() onLongPress;
-  final void Function() onDelete;
+
+  // final void Function() onDelete;
 
   @override
   Widget build(BuildContext context) {
-    void onDeleteButton(void Function() delete) {
-      showDialog(
-          context: context,
-          builder: (ctx) => AlertConfirmDialog(
-              title: 'Удалить услугу?',
-              content: 'Услуга будет удалена навсегда.',
-              onConfirm: () {
-                delete();
-              }));
-    }
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Stack(children: [
-        ListTile(
-          tileColor: Theme.of(context).colorScheme.secondaryContainer,
-          shape: ShapeBorder.lerp(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-            ),
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-            1,
+      child: ListTile(
+        tileColor: Theme.of(context).colorScheme.secondaryContainer,
+        shape: ShapeBorder.lerp(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(0),
           ),
-          title: Text(regulation.name),
-          subtitle: Text('${regulation.duration.toString()} мин'),
-          trailing: Text('${regulation.cost.toString()} руб'),
-          onLongPress: onLongPress,
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          1,
         ),
-        isAdmin
-            ? Positioned(
-                top: -8,
-                right: -9,
-                child: IconButton(
-                    icon: Transform.scale(
-                        scale: 0.8, child: const Icon(Icons.close)),
-                    onPressed: () {
-                      onDeleteButton(onDelete);
-                    }))
-            : const SizedBox.shrink()
-      ]),
+        title: Text(regulation.name),
+        subtitle: Text('${regulation.duration.toString()} мин'),
+        trailing: Text('${regulation.cost.toString()} руб'),
+        onLongPress: onLongPress,
+      ),
     );
   }
 }

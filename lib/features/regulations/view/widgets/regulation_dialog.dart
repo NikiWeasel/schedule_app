@@ -160,7 +160,7 @@ class _RegulationDialogState extends State<RegulationDialog> {
                           },
                         ),
                         const SizedBox(
-                          height: 8,
+                          height: 16,
                         ),
                         Row(
                           children: [

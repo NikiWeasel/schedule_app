@@ -8,6 +8,7 @@ import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/widgets/person_header_widget.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
+import 'package:schedule_app/core/utils/vibration.dart';
 
 class ScheduleTable extends StatefulWidget {
   const ScheduleTable(
@@ -267,6 +268,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
             height: height - 8,
             appointment: appointment,
             onHold: (holdAppointment) {
+              onHoldVibrate();
               if (activeUser.isAdmin ||
                   activeUser.employeeId == appointment.masterId) {
                 openEditingDialog(holdAppointment);

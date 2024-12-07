@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:schedule_app/core/models/regulation.dart';
-
-import 'package:schedule_app/core/widgets/alert_confirm_dialog.dart';
+import 'package:schedule_app/core/utils/vibration.dart';
 
 class RegulationTile extends StatelessWidget {
   const RegulationTile(
@@ -37,7 +36,10 @@ class RegulationTile extends StatelessWidget {
         title: Text(regulation.name),
         subtitle: Text('${regulation.duration.toString()} мин'),
         trailing: Text('${regulation.cost.toString()} руб'),
-        onLongPress: onLongPress,
+        onLongPress: () {
+          onHoldVibrate();
+          onLongPress();
+        },
       ),
     );
   }

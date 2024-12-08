@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CarouselWidget extends StatefulWidget {
-  const CarouselWidget({super.key, required this.imageSliders});
+  const CarouselWidget(
+      {super.key, required this.imageSliders, required this.autoPlay});
 
   final List<Widget> imageSliders;
+  final bool autoPlay;
 
   @override
   State<CarouselWidget> createState() => _CarouselWidgetState();
@@ -17,7 +19,7 @@ class _CarouselWidgetState extends State<CarouselWidget> {
     return Container(
       child: CarouselSlider(
         options: CarouselOptions(
-            autoPlay: true,
+            autoPlay: widget.autoPlay,
             aspectRatio: 2.0,
             enlargeCenterPage: true,
             // scrollDirection: Axis.vertical

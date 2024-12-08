@@ -21,6 +21,7 @@ class PortfolioScreen extends StatefulWidget {
 
 class _PortfolioScreenState extends State<PortfolioScreen> {
   final _key = GlobalKey<ExpandableFabState>();
+  bool autoPlay = true;
 
   void toggleFloatingButton() {
     final state = _key.currentState;
@@ -34,7 +35,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     toggleFloatingButton();
     final pickedImage = await ImagePicker().pickImage(
       source: ImageSource.camera,
-      imageQuality: 100,
+      imageQuality: 70,
       maxWidth: 1920,
       maxHeight: 1080,
     );
@@ -50,7 +51,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
 
     final pickedImage = await ImagePicker().pickImage(
       source: ImageSource.gallery,
-      imageQuality: 100,
+      imageQuality: 70,
       maxWidth: 1920,
       maxHeight: 1080,
     );
@@ -67,6 +68,26 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       context.read<FetchPortfolioPhotosBloc>().add(FetchPortfolioPhotosData());
     }
 
+    void showConfirmDialog(void Function() deleteImage) async {
+      setState(() {
+        autoPlay = false;
+      });
+      await showDialog(
+          context: context,
+          builder: (ctx) => AlertConfirmDialog(
+              title: 'Удалить фото?',
+              content: 'Фото будет удалена навсегда.',
+              onConfirm: () {
+                deleteImage();
+              }));
+
+      if (mounted) {
+        setState(() {
+          autoPlay = true;
+        });
+      }
+    }
+
     List<Widget> getWidgetImageList(
         List<String> imgList, void Function(String imageUrl) deleteImage) {
       return imgList
@@ -75,14 +96,9 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 child: Center(
                     child: InkWell(
                   onLongPress: () {
-                    showDialog(
-                        context: context,
-                        builder: (ctx) => AlertConfirmDialog(
-                            title: 'Удалить фото?',
-                            content: 'Фото будет удалена навсегда.',
-                            onConfirm: () {
-                              deleteImage(item);
-                            }));
+                    showConfirmDialog(() {
+                      deleteImage(item);
+                    });
                   },
                   child: Image.network(
                     item,
@@ -127,6 +143,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                                     DeletePortfolioPhotoEvent(
                                         imageUrl: imageUrl));
                               }),
+                              autoPlay: autoPlay,
                             ),
                           )
                         : const Center(child: Text('Пока ничего.')),

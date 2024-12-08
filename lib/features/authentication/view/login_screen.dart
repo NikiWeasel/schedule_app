@@ -8,6 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:schedule_app/features/authentication/view/widgets/user_image_picker.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:schedule_app/core/app_router.dart';
+
 final _firebase = FirebaseAuth.instance;
 
 class LoginScreen extends StatefulWidget {
@@ -114,10 +116,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
       setState(() {
         _isAuthing = false;
+        // AppRouter.hideNavigationBar.value = false;
       });
-      if (mounted) {
-        context.go('/app', extra: false);
-      }
       // widget.renew();
     }
   }

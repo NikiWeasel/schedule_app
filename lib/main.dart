@@ -49,7 +49,7 @@ void main() async {
         Locale('ru', 'RU'), // Russian
       ],
       theme: theme,
-      routerConfig: router,
+      routerConfig: AppRouter.router,
       // home: const App(),
     ),
   ));

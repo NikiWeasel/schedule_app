@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:schedule_app/core/app_router.dart';
 
 class LogOutAlert extends StatelessWidget {
   const LogOutAlert({super.key});
@@ -23,7 +24,8 @@ class LogOutAlert extends StatelessWidget {
             onPressed: () {
               FirebaseAuth.instance.signOut();
               Navigator.pop(context);
-              context.go('/app', extra: true);
+              // AppRouter.hideNavigationBar.value = true;
+              context.go('/app');
             },
             child: const Text('Подтвердить')),
         TextButton(

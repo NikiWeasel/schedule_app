@@ -50,6 +50,7 @@ dependencies:
   vibration: ^2.0.1
   carousel_slider: ^5.0.0
   flutter_expandable_fab: ^2.3.0
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:

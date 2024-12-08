@@ -48,6 +48,8 @@ dependencies:
   fl_chart: ^0.69.0
   go_router: ^14.6.1
   vibration: ^2.0.1
+  carousel_slider: ^5.0.0
+  flutter_expandable_fab: ^2.3.0
 
 dev_dependencies:
   flutter_test:

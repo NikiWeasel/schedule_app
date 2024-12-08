@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:schedule_app/core/bloc/fetch_portfolio_photos/fetch_portfolio_photos_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
 import 'app.dart';
 import 'core/bloc/fetch_appointments//fetch_appointments_bloc.dart';
@@ -36,6 +37,10 @@ void main() async {
       BlocProvider<FetchRegulationsBloc>(
         create: (context) =>
             FetchRegulationsBloc()..add(FetchRegulationsData()),
+      ),
+      BlocProvider<FetchPortfolioPhotosBloc>(
+        create: (context) =>
+            FetchPortfolioPhotosBloc()..add(FetchPortfolioPhotosData()),
       ),
     ],
     child: MaterialApp.router(

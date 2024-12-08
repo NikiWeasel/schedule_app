@@ -59,11 +59,19 @@ class ActionsPortfolioPhotosBloc
     if (employeeId == null) {
       throw Exception('User: null');
     }
+
+    final uri = Uri.parse(event.imageUrl);
+
+    var fullPath = Uri.decodeComponent(uri.pathSegments.last);
+    var name = fullPath.split('/').last;
+
     final storageRef = FirebaseStorage.instance
         .ref()
         .child('employee_portfolio_images')
         .child(employeeId!)
-        .child('${event.imageUrl}.jpg');
+        .child(name);
+    print(name);
+    print(storageRef);
 
     await storageRef.delete();
   }

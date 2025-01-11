@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments//fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
+import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/widgets/loading_skeleton.dart';
 import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'package:schedule_app/features/home/view/widgets/home_appointments.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
 
 import 'package:schedule_app/core/app_router.dart';
+import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -31,18 +34,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext rootContext) {
     return BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
-      // key: key,
-      builder: (context, allAppontmentsState) {
+      builder: (context1, allAppontmentsState) {
         return BlocBuilder<AllEmployeesBloc, AllEmployeesState>(
-          builder: (context, allEmployeesState) {
+          builder: (context2, allEmployeesState) {
             return BlocBuilder<UserBloc, UserState>(
-              builder: (context, userState) {
+              builder: (context3, userState) {
                 if (userState is UserError) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    ScaffoldMessenger.of(rootContext).clearSnackBars();
+                    ScaffoldMessenger.of(rootContext).showSnackBar(
                       SnackBar(content: Text(userState.error)),
                     );
                   });
@@ -57,10 +59,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         actions: [
                           IconButton(
                               onPressed: () {
-                                context
+                                rootContext
                                     .read<AllEmployeesBloc>()
                                     .add(FetchAllEmployeesData());
-                                context
+                                rootContext
                                     .read<FetchAppointmentsBloc>()
                                     .add(FetchAppointmentsData());
                                 renew();
@@ -68,14 +70,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               icon: const Icon(Icons.autorenew)),
                           IconButton(
                               onPressed: () {
-                                context.push('/notifications');
+                                rootContext.push('/notifications');
                               },
                               icon: Badge(
                                 label: Text(
                                   '12',
-                                  style: Theme.of(context).textTheme.bodySmall!,
+                                  style: Theme.of(rootContext)
+                                      .textTheme
+                                      .bodySmall!,
                                 ),
-                                backgroundColor: Theme.of(context)
+                                backgroundColor: Theme.of(rootContext)
                                     .colorScheme
                                     .primaryContainer,
                                 child: const Icon(
@@ -94,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 'Ваши следующие приемы на сегодня:',
-                                style: Theme.of(context)
+                                style: Theme.of(rootContext)
                                     .textTheme
                                     .titleLarge!
                                     .copyWith(fontWeight: FontWeight.bold),
@@ -111,7 +115,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               alignment: Alignment.topRight,
                               child: TextButton(
                                   onPressed: () {
-                                    context.push('/schedule', extra: {
+                                    print(
+                                        '1. ${context.read<ActionsAppointmentBloc>()}');
+                                    print(
+                                        '2. ${rootContext.read<ActionsAppointmentBloc>()}');
+                                    print(context1
+                                        .read<ActionsAppointmentBloc>());
+
+                                    rootContext.push('/schedule', extra: {
                                       'user': userState.user,
                                       'showDialogImidiatly': false
                                     });
@@ -145,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 'Статистика:',
-                                style: Theme.of(context)
+                                style: Theme.of(rootContext)
                                     .textTheme
                                     .titleLarge!
                                     .copyWith(fontWeight: FontWeight.bold),

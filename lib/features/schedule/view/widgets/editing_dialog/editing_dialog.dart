@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:schedule_app/core/bloc/actions_appointments//actions_appointment_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments//fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/constants/saloon_services.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';
@@ -54,21 +54,13 @@ class _EditingDialogState extends State<EditingDialog> {
   late TextEditingController numberController;
   late TextEditingController nameController;
 
-  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-
   String enteredNumber = '';
   String enteredName = '';
 
-  // Map<String, int> regToServicesList(List<Regulation> regList) {
-  //   Map<String, int> map = {};
-  //   for (var e in regList) {
-  //     map[e.name] = e.duration;
-  //   }
-  //   return map;
-  // }
-
   @override
   void initState() {
+    context.read<FetchAppointmentsBloc>().add(FetchAppointmentsData());
+
     selectedDate = widget.curentDate;
     selectedEmployee = widget.employees?[0];
 
@@ -306,302 +298,288 @@ class _EditingDialogState extends State<EditingDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          FetchAppointmentsBloc()..add(FetchAppointmentsData()),
-      child: Form(
-        key: _formKey,
-        child: Padding(
-            padding: EdgeInsets.only(
-                top: 8.0,
-                left: 8.0,
-                right: 8,
-                bottom: 8 + MediaQuery.of(context).viewInsets.bottom),
-            child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 3,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
+    return Form(
+      key: _formKey,
+      child: Padding(
+          padding: EdgeInsets.only(
+              top: 8.0,
+              left: 8.0,
+              right: 8,
+              bottom: 8 + MediaQuery.of(context).viewInsets.bottom),
+          child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  height: 3,
+                  width: 50,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Row(
-                      children: [
-                        Text(
-                          widget.appointment != null
-                              ? 'Изменить запись'
-                              : 'Добавить запись',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const Spacer(),
-                        Transform.scale(
-                          scale: 1.3,
-                          child: IconButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              icon: const Icon(Icons.close)),
-                        )
-                      ],
-                    ),
-                  ),
-                  if (widget.employees != null)
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: EmployeeDropDownButton(
-                            employees: widget.employees!,
-                            onChange: onEmpDropButtonChange,
-                          )),
-                    ),
-                  SizedBox(
-                    height: widget.employees != null ? 16 : 8,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Row(
                     children: [
-                      Expanded(
-                        child: TextFormField(
-                          keyboardType: TextInputType.phone,
-                          controller: numberController,
-                          decoration: InputDecoration(
-                              label: const Text('Номер'),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              )),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Незаполненное поле';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            enteredNumber = value!;
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 8,
-                      ),
-                      Expanded(
-                        child: TextFormField(
-                          controller: nameController,
-                          decoration: InputDecoration(
-                              label: const Text('Имя'),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              )),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Незаполненное поле';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            enteredName = value!;
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    children: [
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      TextButton.icon(
-                        onPressed: pickTime,
-                        label: Text(
-                          formatTime(selectedTime),
-                          style: Theme.of(context).textTheme.bodyLarge!,
-                        ),
-                        icon: const Icon(Icons.access_time_outlined),
+                      Text(
+                        widget.appointment != null
+                            ? 'Изменить запись'
+                            : 'Добавить запись',
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(fontWeight: FontWeight.bold),
                       ),
                       const Spacer(),
-                      TextButton.icon(
-                        onPressed: pickDate,
-                        label: Text(
-                          formatDate(selectedDate),
-                          style: Theme.of(context).textTheme.bodyLarge!,
-                        ),
-                        icon: const Icon(Icons.calendar_month_rounded),
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
+                      Transform.scale(
+                        scale: 1.3,
+                        child: IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            icon: const Icon(Icons.close)),
+                      )
                     ],
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
+                ),
+                if (widget.employees != null)
                   Align(
                     alignment: Alignment.topLeft,
-                    child: Wrap(
-                      spacing: 0.4,
-                      children: [
-                        for (var service in selectedServices)
-                          ServiceButton(
-                              onClose: () {
-                                removeService(service);
-                              },
-                              label: service)
-                      ],
-                    ),
+                    child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: EmployeeDropDownButton(
+                          employees: widget.employees!,
+                          onChange: onEmpDropButtonChange,
+                        )),
                   ),
-                  if (selectedServices.isNotEmpty)
-                    Align(
-                        alignment: Alignment.bottomRight,
-                        child: Text('Суммарное время: $timeCounter мин')),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  if (selectedServices.isEmpty && isServicesEmptyError)
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          'Нет услуг',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall!
-                              .copyWith(
-                                  color: Theme.of(context).colorScheme.error),
-                        ),
-                      ),
-                    ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: selectedService,
-                          hint: const Text('Выберите услугу'),
-                          isExpanded: true,
-                          // Для полного расширения кнопки по ширине
-                          items: widget.services.keys
-                              .map<DropdownMenuItem<String>>((String key) {
-                            return DropdownMenuItem<String>(
-                              value: key,
-                              child: Text(key), // Вывод названия услуги и цены
-                            );
-                          }).toList(),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedService =
-                                  newValue; // Установка выбранного значения
-                              _controller.text =
-                                  widget.services[newValue].toString();
-                            });
-                          },
-                          dropdownColor: Colors.white,
-                          decoration: InputDecoration(
+                SizedBox(
+                  height: widget.employees != null ? 16 : 8,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        keyboardType: TextInputType.phone,
+                        controller: numberController,
+                        decoration: InputDecoration(
+                            label: const Text('Номер'),
                             border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16)),
-                          ),
-                          // Обертка выпадающего списка в ограниченную высоту с прокруткой
-                          menuMaxHeight: 200,
-                        ),
+                              borderRadius: BorderRadius.circular(16),
+                            )),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Незаполненное поле';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          enteredNumber = value!;
+                        },
                       ),
-                      const SizedBox(
-                        width: 8,
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    Expanded(
+                      child: TextFormField(
+                        controller: nameController,
+                        decoration: InputDecoration(
+                            label: const Text('Имя'),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            )),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Незаполненное поле';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          enteredName = value!;
+                        },
                       ),
-                      SizedBox(
-                          width: 120,
-                          child: Form(
-                            key: _serviceFormKey,
-                            child: TextFormField(
-                              controller: _controller,
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                label: const Text('Время (мин)'),
-                                // hintText: 'Имя',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              validator: (value) {
-                                if (value == null ||
-                                    value.isEmpty ||
-                                    value == '0') {
-                                  return 'Некорректное\nзначение';
-                                }
-                                return null;
-                              },
-                            ),
-                          )),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    TextButton.icon(
+                      onPressed: pickTime,
+                      label: Text(
+                        formatTime(selectedTime),
+                        style: Theme.of(context).textTheme.bodyLarge!,
+                      ),
+                      icon: const Icon(Icons.access_time_outlined),
+                    ),
+                    const Spacer(),
+                    TextButton.icon(
+                      onPressed: pickDate,
+                      label: Text(
+                        formatDate(selectedDate),
+                        style: Theme.of(context).textTheme.bodyLarge!,
+                      ),
+                      icon: const Icon(Icons.calendar_month_rounded),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Wrap(
+                    spacing: 0.4,
+                    children: [
+                      for (var service in selectedServices)
+                        ServiceButton(
+                            onClose: () {
+                              removeService(service);
+                            },
+                            label: service)
                     ],
                   ),
-                  const SizedBox(
-                    width: 8,
-                  ),
+                ),
+                if (selectedServices.isNotEmpty)
                   Align(
-                    alignment: Alignment.topRight,
-                    child: TextButton(
-                        onPressed: addService,
-                        child: const Text('Добавить услугу')),
+                      alignment: Alignment.bottomRight,
+                      child: Text('Суммарное время: $timeCounter мин')),
+                const SizedBox(
+                  height: 5,
+                ),
+                if (selectedServices.isEmpty && isServicesEmptyError)
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        'Нет услуг',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                            color: Theme.of(context).colorScheme.error),
+                      ),
+                    ),
                   ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  BlocProvider(
-                    create: (context) =>
-                        ActionsAppointmentBloc(_firebaseFirestore),
-                    child: BlocBuilder<FetchAppointmentsBloc,
-                            FetchAppointmentsState>(
-                        builder: (context, allAppontmentsState) {
-                      List<Appointment> appointments = [];
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: selectedService,
+                        hint: const Text('Выберите услугу'),
+                        isExpanded: true,
+                        // Для полного расширения кнопки по ширине
+                        items: widget.services.keys
+                            .map<DropdownMenuItem<String>>((String key) {
+                          return DropdownMenuItem<String>(
+                            value: key,
+                            child: Text(key), // Вывод названия услуги и цены
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            selectedService =
+                                newValue; // Установка выбранного значения
+                            _controller.text =
+                                widget.services[newValue].toString();
+                          });
+                        },
+                        dropdownColor: Colors.white,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16)),
+                        ),
+                        // Обертка выпадающего списка в ограниченную высоту с прокруткой
+                        menuMaxHeight: 200,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    SizedBox(
+                        width: 120,
+                        child: Form(
+                          key: _serviceFormKey,
+                          child: TextFormField(
+                            controller: _controller,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              label: const Text('Время (мин)'),
+                              // hintText: 'Имя',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  value == '0') {
+                                return 'Некорректное\nзначение';
+                              }
+                              return null;
+                            },
+                          ),
+                        )),
+                  ],
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: TextButton(
+                      onPressed: addService,
+                      child: const Text('Добавить услугу')),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
+                    builder: (context, allAppontmentsState) {
+                  List<Appointment> appointments = [];
 
-                      print(allAppontmentsState);
-                      if (allAppontmentsState is FetchAppointmentsLoaded) {
-                        appointments = allAppontmentsState.appointments;
-                      }
-                      appointments = appointments
-                          .where((appo) =>
-                              (appo.date.year == widget.curentDate.year &&
-                                  appo.date.month == widget.curentDate.month &&
-                                  appo.date.day == widget.curentDate.day))
-                          .toList();
+                  print(allAppontmentsState);
+                  if (allAppontmentsState is FetchAppointmentsLoaded) {
+                    appointments = allAppontmentsState.appointments;
+                  }
+                  appointments = appointments
+                      .where((appo) =>
+                          (appo.date.year == widget.curentDate.year &&
+                              appo.date.month == widget.curentDate.month &&
+                              appo.date.day == widget.curentDate.day))
+                      .toList();
 
-                      return ElevatedButton(
-                        onPressed: () {
-                          onConfirm((appointment) {
-                            BlocProvider.of<ActionsAppointmentBloc>(context)
-                                .add(
+                  return ElevatedButton(
+                    onPressed: () {
+                      onConfirm((appointment) {
+                        context.read<ActionsAppointmentBloc>().add(
                               UpdateAppointmentEvent(appointment: appointment),
                             );
-                          }, (appointment) {
-                            BlocProvider.of<ActionsAppointmentBloc>(context)
-                                .add(
+                      }, (appointment) {
+                        context.read<ActionsAppointmentBloc>().add(
                               CreateAppointmentEvent(appointment: appointment),
                             );
-                          }, appointments);
-                        },
-                        child: const Text('Подтвердить'),
-                      );
-                    }),
-                  ),
-                ])),
-      ),
+                      }, appointments);
+                    },
+                    child: const Text('Подтвердить'),
+                  );
+                }),
+              ])),
     );
   }
 }

@@ -11,10 +11,9 @@ part 'actions_appointment_state.dart';
 
 class ActionsAppointmentBloc
     extends Bloc<ActionsAppointmentEvent, ActionsAppointmentState> {
-  final FirebaseFirestore _firebaseFirestore;
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  ActionsAppointmentBloc(this._firebaseFirestore)
-      : super(ActionsAppointmentInitialState()) {
+  ActionsAppointmentBloc() : super(ActionsAppointmentInitialState()) {
     // Register the handler for CreateAppointmentEvent
     on<CreateAppointmentEvent>((event, emit) async {
       emit(ActionsAppointmentLoadingState());
@@ -31,7 +30,7 @@ class ActionsAppointmentBloc
       emit(ActionsAppointmentLoadingState());
       try {
         await _deleteAppointment(event);
-        emit(ActionsAppointmentLoadedState());
+        emit(ActionsAppointmentDeletedState());
       } catch (e) {
         emit(ActionsAppointmentErrorState(error: e.toString()));
       }
@@ -41,7 +40,7 @@ class ActionsAppointmentBloc
       emit(ActionsAppointmentLoadingState());
       try {
         await _updateAppointment(event);
-        emit(ActionsAppointmentLoadedState());
+        emit(ActionsAppointmentUpdatedState());
       } catch (e) {
         emit(ActionsAppointmentErrorState(error: e.toString()));
       }

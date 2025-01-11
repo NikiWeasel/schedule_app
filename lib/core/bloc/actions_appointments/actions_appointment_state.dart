@@ -8,6 +8,10 @@ class ActionsAppointmentLoadingState extends ActionsAppointmentState {}
 
 class ActionsAppointmentLoadedState extends ActionsAppointmentState {}
 
+class ActionsAppointmentUpdatedState extends ActionsAppointmentState {}
+
+class ActionsAppointmentDeletedState extends ActionsAppointmentState {}
+
 class ActionsAppointmentErrorState extends ActionsAppointmentState {
   final String error;
 

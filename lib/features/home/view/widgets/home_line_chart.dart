@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments//fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/features/home/view/widgets/chart_employee_tile.dart';
 import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';
@@ -321,7 +321,17 @@ class _HomeLineChartState extends State<HomeLineChart> {
       double value, TitleMeta meta, DateTimeRange dateTimeRange) {
     DateTime startDateTime = dateTimeRange.start;
     DateTime cellDateTime = startDateTime.add(Duration(days: value.toInt()));
-    String date = '${cellDateTime.day}.${cellDateTime.month}';
+    // String date = '${cellDateTime.day}.${cellDateTime.month}';
+
+    var day = cellDateTime.day.toString().length == 1
+        ? '0${cellDateTime.day}'
+        : cellDateTime.day;
+
+    var month = cellDateTime.month.toString().length == 1
+        ? '0${cellDateTime.month}'
+        : cellDateTime.month;
+
+    String date = '$day.$month';
 
     Widget text;
     if (cellDateTime == dateTimeRange.end.add(const Duration(days: 1))) {

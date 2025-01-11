@@ -5,8 +5,10 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:schedule_app/core/bloc/fetch_portfolio_photos/fetch_portfolio_photos_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
 import 'app.dart';
-import 'core/bloc/fetch_appointments//fetch_appointments_bloc.dart';
+import 'core/bloc/actions_appointments/actions_appointment_bloc.dart';
+import 'core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
 import 'features/home/bloc/user_bloc.dart';
+import 'features/portfolio/bloc/actions_portfolio_photos_bloc.dart';
 import 'features/schedule/bloc/all_employees_bloc.dart';
 import 'firebase_options.dart';
 import 'package:schedule_app/core/theme.dart';
@@ -41,6 +43,12 @@ void main() async {
       BlocProvider<FetchPortfolioPhotosBloc>(
         create: (context) =>
             FetchPortfolioPhotosBloc()..add(FetchPortfolioPhotosData()),
+      ),
+      BlocProvider<ActionsAppointmentBloc>(
+        create: (context) => ActionsAppointmentBloc(),
+      ),
+      BlocProvider<ActionsPortfolioPhotosBloc>(
+        create: (context) => ActionsPortfolioPhotosBloc(),
       ),
     ],
     child: MaterialApp.router(

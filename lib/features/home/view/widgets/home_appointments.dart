@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments//fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/widgets/appointment_widget.dart';
 import 'package:schedule_app/features/home/view/widgets/no_appointments_widget.dart';
@@ -102,11 +102,15 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
               ),
               child: IconButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (ctx) => ScheduleScreen(
-                            user: widget.emlpoyee,
-                            showDialogImidiatly: true,
-                          )));
+                  context.push('/schedule', extra: {
+                    'user': widget.emlpoyee,
+                    'showDialogImidiatly': false
+                  });
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //     builder: (ctx) => ScheduleScreen(
+                  //           user: widget.emlpoyee,
+                  //           showDialogImidiatly: true,
+                  //         )));
                 },
                 icon: const Icon(Icons.add),
               ),

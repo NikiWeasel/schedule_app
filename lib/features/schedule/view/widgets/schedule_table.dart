@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:schedule_app/core/widgets/appo_dialog.dart';
 import 'package:schedule_app/core/widgets/employee_profile_widget.dart';
 import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart';
@@ -9,6 +10,7 @@ import 'package:schedule_app/core/widgets/person_header_widget.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
 import 'package:schedule_app/core/utils/vibration.dart';
+import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 
 class ScheduleTable extends StatefulWidget {
   const ScheduleTable(
@@ -30,7 +32,10 @@ class ScheduleTable extends StatefulWidget {
 }
 
 class _ScheduleTableState extends State<ScheduleTable> {
-  // final List<String> masters = ['Мастер 1', 'Мастер 2', 'Мастер 3'];
+  Appointment? _oldAppo;
+  late Appointment _newAppo;
+  late Appointment _appoToDelete;
+
   final double timeSlotHeight =
       60.0; // Высота одного временного интервала (30 минут)
 
@@ -43,18 +48,30 @@ class _ScheduleTableState extends State<ScheduleTable> {
   void openEditingDialog(Appointment appointment) {
     showModalBottomSheet(
         context: context,
-        builder: (ctx) => OnHoldDialog(
-              curentDate: widget.curentDate,
-              appointment: appointment,
-              deleteAppoTable: deleteAppoTable,
-              editAppoTable: editAppoTable,
-            ));
+        builder: (ctx) {
+          return OnHoldDialog(
+            curentDate: widget.curentDate,
+            appointment: appointment,
+            deleteAppoTable: setToDeleteAppoTableValue,
+            editAppoTable: setAppoTableValues,
+          );
+        });
+  }
+
+  void setToDeleteAppoTableValue(Appointment appo) {
+    _appoToDelete = appo;
   }
 
   void deleteAppoTable(Appointment appo) {
     setState(() {
       tableAppos.remove(appo);
     });
+  }
+
+  void setAppoTableValues(
+      {Appointment? oldAppo, required Appointment newAppo}) {
+    _newAppo = newAppo;
+    _oldAppo = oldAppo;
   }
 
   void editAppoTable({Appointment? oldAppo, required Appointment newAppo}) {
@@ -88,7 +105,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.setEditAppoTable(editAppoTable);
+      widget.setEditAppoTable(setAppoTableValues);
     });
 
     var masters = widget.allEmployees;
@@ -103,35 +120,65 @@ class _ScheduleTableState extends State<ScheduleTable> {
             appo.date.day == widget.curentDate.day))
         .toList();
 
-    // print(appointments);
-    return SingleChildScrollView(
-      child: IntrinsicHeight(
-        child: Row(
-          children: [
-            Row(
-              children: [
-                _buildTimeColumn(),
-                // ...masters.map((master) => _buildMasterColumn(master)),
-              ],
-            ),
-            Expanded(
-                child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Column(
+    // print(context.read<ActionsAppointmentBloc>());
+    return BlocListener<ActionsAppointmentBloc, ActionsAppointmentState>(
+      listener: (context, state) {
+        if (state is ActionsAppointmentLoadingState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Загрузка...');
+        }
+        if (state is ActionsAppointmentLoadedState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Запись сделана!');
+          print(_newAppo);
+          editAppoTable(newAppo: _newAppo, oldAppo: null);
+        }
+        if (state is ActionsAppointmentUpdatedState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Запись обновлена!');
+          print(_newAppo);
+          editAppoTable(newAppo: _newAppo, oldAppo: _oldAppo);
+        }
+        if (state is ActionsAppointmentDeletedState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Запись удалена!');
+          deleteAppoTable(_appoToDelete);
+        }
+
+        if (state is ActionsAppointmentErrorState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Произошла ошибка: ${state.error}');
+        }
+      },
+      child: SingleChildScrollView(
+        child: IntrinsicHeight(
+          child: Row(
+            children: [
+              Row(
                 children: [
-                  IntrinsicWidth(child: _buildHeader(masters)),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        ...masters.map((masterName) => _buildMasterColumn(
-                            masterName.employeeId, tableAppos)),
-                      ],
-                    ),
-                  ),
+                  _buildTimeColumn(),
+                  // ...masters.map((master) => _buildMasterColumn(master)),
                 ],
               ),
-            ))
-          ],
+              Expanded(
+                  child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Column(
+                  children: [
+                    IntrinsicWidth(child: _buildHeader(masters)),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          ...masters.map((masterName) => _buildMasterColumn(
+                              masterName.employeeId, tableAppos)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ))
+            ],
+          ),
         ),
       ),
     );

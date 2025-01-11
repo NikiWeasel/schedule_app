@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'package:schedule_app/features/authentication/view/login_screen.dart';
 import 'package:schedule_app/features/home/view/home_screen.dart';
@@ -12,6 +14,8 @@ import 'package:schedule_app/app.dart';
 import 'package:schedule_app/features/settings/view/settings_screen.dart';
 import 'package:schedule_app/features/profile/view/profile_screen.dart';
 import 'package:schedule_app/root_screen.dart';
+
+import 'bloc/actions_appointments/actions_appointment_bloc.dart';
 
 //         GoRoute(
 //           path: '/schedule',
@@ -34,6 +38,7 @@ class AppRouter {
           path: '/schedule',
           builder: (context, state) {
             final data = state.extra as Map<String, dynamic>?;
+            print('router. ${context.read<ActionsAppointmentBloc>()}');
             return ScheduleScreen(
               user: data?['user'],
               showDialogImidiatly: data?['showDialogImidiatly'],

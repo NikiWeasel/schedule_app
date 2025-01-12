@@ -11,10 +11,9 @@ part 'actions_regulations_state.dart';
 
 class ActionsRegulationsBloc
     extends Bloc<ActionsRegulationsEvent, ActionsRegulationsState> {
-  final FirebaseFirestore _firebaseFirestore;
+  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
-  ActionsRegulationsBloc(this._firebaseFirestore)
-      : super(ActionsRegulationsInitialState()) {
+  ActionsRegulationsBloc() : super(ActionsRegulationsInitialState()) {
     on<CreateRegulationEvent>((event, emit) async {
       emit(ActionsRegulationsLoadingState());
       try {

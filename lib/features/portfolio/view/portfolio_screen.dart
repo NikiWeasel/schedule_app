@@ -104,94 +104,113 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                     item,
                     fit: BoxFit.cover,
                     height: MediaQuery.of(context).size.height,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child; // Когда изображение загружено, оно отображается.
+                      }
+                      return Container(
+                        decoration: BoxDecoration(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .primaryContainer
+                                .withOpacity(0.5),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(0.5))),
+                        height: MediaQuery.of(context).size.height,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    (loadingProgress.expectedTotalBytes ?? 1)
+                                : null, // Прогресс загрузки, если известен размер.
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 )),
               ))
           .toList();
     }
 
-    return BlocProvider(
-      create: (context) => ActionsPortfolioPhotosBloc(),
-      child:
-          BlocBuilder<ActionsPortfolioPhotosBloc, ActionsPortfolioPhotosState>(
-        builder: (context, state) {
-          return BlocBuilder<FetchPortfolioPhotosBloc,
-              FetchPortfolioPhotosState>(
-            builder: (context, portfolioState) {
-              if (portfolioState is FetchPortfolioPhotosLoadingState) {
-                return const Center(
-                  child: CardCircularProgressIndicator(),
-                );
-              }
-              if (portfolioState is FetchPortfolioPhotosLoadedState) {
-                List<String> imageUrlList = portfolioState.downloadUrls;
-
-                return Scaffold(
-                    appBar: AppBar(
-                      title: const Text('Портфолио'),
-                      actions: [
-                        IconButton(
-                            onPressed: renew, icon: const Icon(Icons.autorenew))
-                      ],
-                    ),
-                    body: imageUrlList.isNotEmpty
-                        ? SingleChildScrollView(
-                            child: CarouselWidget(
-                              imageSliders:
-                                  getWidgetImageList(imageUrlList, (imageUrl) {
-                                context.read<ActionsPortfolioPhotosBloc>().add(
-                                    DeletePortfolioPhotoEvent(
-                                        imageUrl: imageUrl));
-                              }),
-                              autoPlay: autoPlay,
-                            ),
-                          )
-                        : const Center(child: Text('Пока ничего.')),
-                    floatingActionButtonLocation: ExpandableFab.location,
-                    floatingActionButton: ExpandableFab(
-                      key: _key,
-                      type: ExpandableFabType.up,
-                      childrenAnimation: ExpandableFabAnimation.none,
-                      distance: 70,
-                      overlayStyle: ExpandableFabOverlayStyle(
-                        color: Colors.black.withOpacity(0.5),
-                      ),
-                      openButtonBuilder: RotateFloatingActionButtonBuilder(
-                        child: const Icon(Icons.add),
-                      ),
-                      children: [
-                        FloatingActionButton.small(
-                          heroTag: null,
-                          child: const Icon(Icons.photo_sharp),
-                          onPressed: () {
-                            _pickImageFromGal((File imageFile) {
-                              context.read<ActionsPortfolioPhotosBloc>().add(
-                                  CreatePortfolioPhotoEvent(
-                                      imageFile: imageFile));
-                            });
-                          },
-                        ),
-                        FloatingActionButton.small(
-                          heroTag: null,
-                          child: const Icon(Icons.camera),
-                          onPressed: () {
-                            _pickImageFromCam((File imageFile) {
-                              context.read<ActionsPortfolioPhotosBloc>().add(
-                                  CreatePortfolioPhotoEvent(
-                                      imageFile: imageFile));
-                            });
-                          },
-                        ),
-                      ],
-                    ));
-              }
+    return BlocBuilder<ActionsPortfolioPhotosBloc, ActionsPortfolioPhotosState>(
+      builder: (context, state) {
+        return BlocBuilder<FetchPortfolioPhotosBloc, FetchPortfolioPhotosState>(
+          builder: (context, portfolioState) {
+            if (portfolioState is FetchPortfolioPhotosLoadingState) {
               return const Center(
                 child: CardCircularProgressIndicator(),
               );
-            },
-          );
-        },
-      ),
+            }
+            if (portfolioState is FetchPortfolioPhotosLoadedState) {
+              List<String> imageUrlList = portfolioState.downloadUrls;
+
+              return Scaffold(
+                  appBar: AppBar(
+                    title: const Text('Портфолио'),
+                    actions: [
+                      IconButton(
+                          onPressed: renew, icon: const Icon(Icons.autorenew))
+                    ],
+                  ),
+                  body: imageUrlList.isNotEmpty
+                      ? SingleChildScrollView(
+                          child: CarouselWidget(
+                            imageSliders:
+                                getWidgetImageList(imageUrlList, (imageUrl) {
+                              context.read<ActionsPortfolioPhotosBloc>().add(
+                                  DeletePortfolioPhotoEvent(
+                                      imageUrl: imageUrl));
+                            }),
+                            autoPlay: autoPlay,
+                          ),
+                        )
+                      : const Center(child: Text('Пока ничего.')),
+                  floatingActionButtonLocation: ExpandableFab.location,
+                  floatingActionButton: ExpandableFab(
+                    key: _key,
+                    type: ExpandableFabType.up,
+                    childrenAnimation: ExpandableFabAnimation.none,
+                    distance: 70,
+                    overlayStyle: ExpandableFabOverlayStyle(
+                      color: Colors.black.withOpacity(0.5),
+                    ),
+                    openButtonBuilder: RotateFloatingActionButtonBuilder(
+                      child: const Icon(Icons.add),
+                    ),
+                    children: [
+                      FloatingActionButton.small(
+                        heroTag: null,
+                        child: const Icon(Icons.photo_sharp),
+                        onPressed: () {
+                          _pickImageFromGal((File imageFile) {
+                            context.read<ActionsPortfolioPhotosBloc>().add(
+                                CreatePortfolioPhotoEvent(
+                                    imageFile: imageFile));
+                          });
+                        },
+                      ),
+                      FloatingActionButton.small(
+                        heroTag: null,
+                        child: const Icon(Icons.camera),
+                        onPressed: () {
+                          _pickImageFromCam((File imageFile) {
+                            context.read<ActionsPortfolioPhotosBloc>().add(
+                                CreatePortfolioPhotoEvent(
+                                    imageFile: imageFile));
+                          });
+                        },
+                      ),
+                    ],
+                  ));
+            }
+            return const Center(
+              child: CardCircularProgressIndicator(),
+            );
+          },
+        );
+      },
     );
   }
 }

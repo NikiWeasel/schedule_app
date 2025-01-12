@@ -87,149 +87,146 @@ class _RegulationDialogState extends State<RegulationDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ActionsRegulationsBloc(_firebaseFirestore),
-      child: BlocBuilder<ActionsRegulationsBloc, ActionsRegulationsState>(
-        builder: (context, state) {
-          return Form(
-              key: _formKey,
-              child: Padding(
-                  padding: EdgeInsets.only(
-                      top: 8.0,
-                      left: 8.0,
-                      right: 8,
-                      bottom: 8 + MediaQuery.of(context).viewInsets.bottom),
-                  child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 3,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
+    return BlocBuilder<ActionsRegulationsBloc, ActionsRegulationsState>(
+      builder: (context, state) {
+        return Form(
+            key: _formKey,
+            child: Padding(
+                padding: EdgeInsets.only(
+                    top: 8.0,
+                    left: 8.0,
+                    right: 8,
+                    bottom: 8 + MediaQuery.of(context).viewInsets.bottom),
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 3,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary,
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                widget.regulation != null
-                                    ? 'Изменить услугу'
-                                    : 'Добавить услугу',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge!
-                                    .copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              const Spacer(),
-                              Transform.scale(
-                                scale: 1.3,
-                                child: IconButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    icon: const Icon(Icons.close)),
-                              )
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        TextFormField(
-                          controller: nameController,
-                          decoration: InputDecoration(
-                              label: const Text('Название'),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              )),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Незаполненное поле';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            selectedName = value!;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        Row(
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Row(
                           children: [
-                            Expanded(
-                              child: TextFormField(
-                                keyboardType: TextInputType.datetime,
-                                controller: durationController,
-                                decoration: InputDecoration(
-                                    label: const Text('Длительность'),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    )),
-                                validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      value == '0') {
-                                    return 'Незаполненное поле';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (value) {
-                                  selectedDuration = int.parse(value!);
-                                },
-                              ),
+                            Text(
+                              widget.regulation != null
+                                  ? 'Изменить услугу'
+                                  : 'Добавить услугу',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge!
+                                  .copyWith(fontWeight: FontWeight.bold),
                             ),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            Expanded(
-                              child: TextFormField(
-                                keyboardType: TextInputType.number,
-                                controller: costController,
-                                decoration: InputDecoration(
-                                    label: const Text('Цена'),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    )),
-                                validator: (value) {
-                                  if (value == null ||
-                                      value.isEmpty ||
-                                      value == '0') {
-                                    return 'Незаполненное поле';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (value) {
-                                  selectedCost = int.parse(value!);
-                                },
-                              ),
-                            ),
+                            const Spacer(),
+                            Transform.scale(
+                              scale: 1.3,
+                              child: IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: const Icon(Icons.close)),
+                            )
                           ],
                         ),
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        ElevatedButton(
-                            onPressed: () {
-                              completeEditing((newReg) {
-                                context.read<ActionsRegulationsBloc>().add(
-                                    UpdateRegulationEvent(regulation: newReg));
-                              }, (newReg) {
-                                context.read<ActionsRegulationsBloc>().add(
-                                    CreateRegulationEvent(regulation: newReg));
-                              });
-                            },
-                            child: const Text('Подтвердить'))
-                      ])));
-        },
-      ),
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      TextFormField(
+                        controller: nameController,
+                        decoration: InputDecoration(
+                            label: const Text('Название'),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            )),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Незаполненное поле';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          selectedName = value!;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              keyboardType: TextInputType.datetime,
+                              controller: durationController,
+                              decoration: InputDecoration(
+                                  label: const Text('Длительность'),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  )),
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value == '0') {
+                                  return 'Незаполненное поле';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                selectedDuration = int.parse(value!);
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Expanded(
+                            child: TextFormField(
+                              keyboardType: TextInputType.number,
+                              controller: costController,
+                              decoration: InputDecoration(
+                                  label: const Text('Цена'),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  )),
+                              validator: (value) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value == '0') {
+                                  return 'Незаполненное поле';
+                                }
+                                return null;
+                              },
+                              onSaved: (value) {
+                                selectedCost = int.parse(value!);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            completeEditing((newReg) {
+                              context.read<ActionsRegulationsBloc>().add(
+                                  UpdateRegulationEvent(regulation: newReg));
+                            }, (newReg) {
+                              context.read<ActionsRegulationsBloc>().add(
+                                  CreateRegulationEvent(regulation: newReg));
+                            });
+                          },
+                          child: const Text('Подтвердить'))
+                    ])));
+      },
     );
   }
 }

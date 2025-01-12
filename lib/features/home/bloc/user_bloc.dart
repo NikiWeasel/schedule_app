@@ -28,7 +28,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       emit(UserLoading());
       try {
         await _onUpdateUserData(event);
-        // emit(UserLoadingUser());
+        emit(UserUpdated());
       } catch (e) {
         emit(UserError(error: e.toString()));
       }

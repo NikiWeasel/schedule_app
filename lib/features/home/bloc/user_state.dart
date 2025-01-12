@@ -13,6 +13,8 @@ class UserLoaded extends UserState {
   UserLoaded({required this.user});
 }
 
+class UserUpdated extends UserState {}
+
 class UserError extends UserState {
   final String error;
 

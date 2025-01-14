@@ -36,6 +36,16 @@ class ActionsAppointmentBloc
       }
     });
 
+    on<DeleteAllAppointmentsEvent>((event, emit) async {
+      emit(ActionsAppointmentLoadingState());
+      try {
+        await _deleteAllAppointments(event);
+        emit(ActionsAppointmentDeletedState());
+      } catch (e) {
+        emit(ActionsAppointmentErrorState(error: e.toString()));
+      }
+    });
+
     on<UpdateAppointmentEvent>((event, emit) async {
       emit(ActionsAppointmentLoadingState());
       try {
@@ -85,5 +95,15 @@ class ActionsAppointmentBloc
         .collection('appointments')
         .doc(event.appointment.appointmentId)
         .delete();
+  }
+
+  Future<void> _deleteAllAppointments(DeleteAllAppointmentsEvent event) async {
+    var allAppos = event.appointments;
+    for (var a in allAppos) {
+      await _firebaseFirestore
+          .collection('appointments')
+          .doc(a.appointmentId)
+          .delete();
+    }
   }
 }

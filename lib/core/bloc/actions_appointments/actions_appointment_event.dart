@@ -14,6 +14,12 @@ class DeleteAppointmentEvent extends ActionsAppointmentEvent {
   DeleteAppointmentEvent({required this.appointment});
 }
 
+class DeleteAllAppointmentsEvent extends ActionsAppointmentEvent {
+  final List<Appointment> appointments;
+
+  DeleteAllAppointmentsEvent({required this.appointments});
+}
+
 class UpdateAppointmentEvent extends ActionsAppointmentEvent {
   final Appointment appointment;
 

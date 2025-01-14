@@ -32,7 +32,7 @@ class AppRouter {
 
   static get router {
     return GoRouter(
-      initialLocation: '/splash',
+      initialLocation: '/home',
       routes: [
         GoRoute(
           path: '/schedule',

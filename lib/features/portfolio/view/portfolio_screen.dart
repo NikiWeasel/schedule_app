@@ -76,7 +76,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           context: context,
           builder: (ctx) => AlertConfirmDialog(
               title: 'Удалить фото?',
-              content: 'Фото будет удалена навсегда.',
+              content: 'Фото будет удалено навсегда.',
               onConfirm: () {
                 deleteImage();
               }));

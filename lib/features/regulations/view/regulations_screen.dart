@@ -65,7 +65,7 @@ class RegulationsScreen extends StatelessWidget {
                   bool isAdmin = userState.user.isAdmin;
                   return Scaffold(
                     appBar: AppBar(
-                      title: const Text('Регламент'),
+                      title: const Text('Услуги'),
                       actions: [
                         IconButton(
                             onPressed: renew, icon: const Icon(Icons.autorenew))

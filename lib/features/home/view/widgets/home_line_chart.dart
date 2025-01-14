@@ -210,11 +210,15 @@ class _HomeLineChartState extends State<HomeLineChart> {
         ],
       );
     }
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.only(top: 30.0),
-        child: CardCircularProgressIndicator(),
+    return Container(
+      // margin: const EdgeInsets.all(16.0),
+      height: 200,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(5),
       ),
+      child: const Text('data'),
     );
   }
 

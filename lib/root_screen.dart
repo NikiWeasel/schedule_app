@@ -46,7 +46,7 @@ class RootScreen extends StatelessWidget {
         NavigationDestination(
           selectedIcon: Icon(Icons.business),
           icon: Badge(child: Icon(Icons.business_outlined)),
-          label: 'Регламент',
+          label: 'Услуги',
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.insert_drive_file),

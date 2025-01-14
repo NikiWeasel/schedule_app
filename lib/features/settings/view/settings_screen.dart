@@ -1,7 +1,17 @@
+import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
+import 'package:schedule_app/features/settings/view/widgets/color_picker_dialog.dart';
+import 'package:schedule_app/features/settings/view/widgets/color_tile.dart';
 import 'package:schedule_app/features/settings/view/widgets/labeled_switch.dart';
+import 'package:schedule_app/features/settings/bloc/settings_bloc.dart';
+
+import 'package:schedule_app/core/models/settings.dart';
+import 'package:schedule_app/features/settings/view/widgets/settings_content.dart';
+
+import '../../../core/utils/snackbar_utils.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -11,40 +21,27 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  // bool sliderValue = false;
-  //
-  // void toggleSliderValue() {
-  //   setState(() {
-  //     sliderValue = !sliderValue;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Настройки'),
-        ),
-        body: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-            child: Text(
-              'Уведомления',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
-                  .copyWith(fontWeight: FontWeight.bold),
+    return BlocBuilder<SettingsBloc, SettingsState>(
+      builder: (context, settingsState) {
+        if (settingsState is SettingsLoaded) {
+          return Scaffold(
+              appBar: AppBar(
+                title: const Text('Настройки'),
+              ),
+              body: SettingsContent(
+                settings: settingsState.settings,
+              ));
+        }
+        return Scaffold(
+            appBar: AppBar(
+              title: const Text('Настройки'),
             ),
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          Card(
-              margin: EdgeInsets.symmetric(horizontal: 16),
-              child: Column(children: [
-                LabeledSwitch(label: 'Уведомлять при новых отзывах'),
-                LabeledSwitch(label: 'Уведомлять о сессиях заранее'),
-              ]))
-        ]));
+            body: const Center(
+              child: CardCircularProgressIndicator(),
+            ));
+      },
+    );
   }
 }

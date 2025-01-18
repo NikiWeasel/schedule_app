@@ -28,6 +28,8 @@ void showTopSnackBar(
       behavior: SnackBarBehavior.floating,
       content: Center(
         child: Text('$message',
+            maxLines: 2,
+            overflow: TextOverflow.fade,
             style: Theme.of(context)
                 .textTheme
                 .titleMedium!

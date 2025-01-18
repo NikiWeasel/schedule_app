@@ -18,8 +18,8 @@ class ActionsPortfolioPhotosBloc
     on<CreatePortfolioPhotoEvent>((event, emit) async {
       emit(ActionsPortfolioPhotosLoadingState());
       try {
-        await _createAppointment(event);
-        emit(ActionsPortfolioPhotosLoadedState());
+        var url = await _createAppointment(event);
+        emit(ActionsPortfolioPhotosLoadedState(url: url));
       } catch (e) {
         emit(ActionsPortfolioPhotosErrorState(error: e.toString()));
       }
@@ -29,30 +29,32 @@ class ActionsPortfolioPhotosBloc
       emit(ActionsPortfolioPhotosLoadingState());
       try {
         await _deleteAppointment(event);
-        emit(ActionsPortfolioPhotosLoadedState());
+        emit(ActionsPortfolioPhotosDeletedState());
       } catch (e) {
         emit(ActionsPortfolioPhotosErrorState(error: e.toString()));
       }
     });
   }
 
-  Future<void> _createAppointment(CreatePortfolioPhotoEvent event) async {
+  Future<String> _createAppointment(CreatePortfolioPhotoEvent event) async {
     debugPrint('create');
     if (employeeId == null) {
       throw Exception('User: null');
     }
     var uuid = const Uuid();
+    final name = uuid.v6();
 
     final storageRef = FirebaseStorage.instance
         .ref()
         .child('employee_portfolio_images')
         .child(employeeId!)
-        .child('${uuid.v6()}.jpg');
+        .child('$name.jpg');
 
     await storageRef.putFile(event.imageFile);
     final imageUrl = await storageRef.getDownloadURL();
 
     debugPrint('added photo');
+    return storageRef.getDownloadURL();
   }
 
   Future<void> _deleteAppointment(DeletePortfolioPhotoEvent event) async {

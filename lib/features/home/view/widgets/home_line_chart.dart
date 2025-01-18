@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/features/home/view/widgets/chart_employee_tile.dart';
 import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';
@@ -12,13 +13,15 @@ import 'package:schedule_app/core/models/appointment.dart';
 class HomeLineChart extends StatefulWidget {
   const HomeLineChart(
       {super.key,
-      required this.allAppointmentsState,
-      required this.allEmployeesState,
-      required this.currentEmployeeId});
+      required this.allAppointments,
+      required this.allEmployees,
+      required this.currentEmployeeId,
+      required this.allRegulations});
 
   final String currentEmployeeId;
-  final FetchAppointmentsState allAppointmentsState;
-  final AllEmployeesState allEmployeesState;
+  final List<Appointment> allAppointments;
+  final List<Employee> allEmployees;
+  final List<Regulation> allRegulations;
 
   @override
   State<HomeLineChart> createState() => _HomeLineChartState();
@@ -28,6 +31,8 @@ class _HomeLineChartState extends State<HomeLineChart> {
   DateTime selectedDate = DateTime.now();
   late DateTimeRange dateTimeRange;
   List<Employee> selectedEmployee = [];
+
+  bool isMoneyGraph = false;
 
   // late List<Color> employeeColors;
   late Map<String, Color> colorsMap;
@@ -39,28 +44,31 @@ class _HomeLineChartState extends State<HomeLineChart> {
     super.initState();
 
     dateTimeRange = getCurrentWeekTimeRange();
-    if (widget.allEmployeesState is AllEmployeesLoaded) {
-      var allEmpState = widget.allEmployeesState as AllEmployeesLoaded;
+    var allEmps = widget.allEmployees;
 
-      empBoolList =
-          List.generate(allEmpState.employees.length, (int index) => true);
+    empBoolList = List.generate(allEmps.length, (int index) => true);
 
-      var employeeColors = List.generate(
-        allEmpState.employees.length,
-        (int index) {
-          // Генерация цвета на основе индекса и равномерного распределения по цветовому кругу
-          double hue = (index * 360 / allEmpState.employees.length) % 360;
-          return HSVColor.fromAHSV(1.0, hue, 0.7, 0.9)
-              .toColor(); // Полнота и яркость для хорошей читаемости
-        },
-      );
-      var idList = allEmpState.employees.map((e) => e.employeeId).toList();
-      colorsMap = Map.fromIterables(idList, employeeColors);
+    var employeeColors = List.generate(
+      allEmps.length,
+      (int index) {
+        // Генерация цвета на основе индекса и равномерного распределения по цветовому кругу
+        double hue = (index * 360 / allEmps.length) % 360;
+        return HSVColor.fromAHSV(1.0, hue, 0.7, 0.9)
+            .toColor(); // Полнота и яркость для хорошей читаемости
+      },
+    );
+    var idList = allEmps.map((e) => e.employeeId).toList();
+    colorsMap = Map.fromIterables(idList, employeeColors);
 
-      selectedEmployee = allEmpState.employees;
-    }
+    selectedEmployee = allEmps;
 
     // super.initState();
+  }
+
+  void toggleGraph() {
+    setState(() {
+      isMoneyGraph = !isMoneyGraph;
+    });
   }
 
   DateTimeRange getCurrentWeekTimeRange() {
@@ -140,96 +148,166 @@ class _HomeLineChartState extends State<HomeLineChart> {
         : appointmentsCountByDay.values.reduce((a, b) => a > b ? a : b);
   }
 
+  int nextMultipleOfFive(int value) {
+    return (value + 4) ~/ 5 * 5;
+  }
+
+  int getMaxMoneyPerDay(
+      List<Appointment> appointments, List<Regulation> regList) {
+    Map<DateTime, int> appointmentsCountByDay = {};
+
+    for (var appo in appointments) {
+      DateTime dateOnly =
+          DateTime(appo.date.year, appo.date.month, appo.date.day);
+      if (!appointmentsCountByDay.containsKey(dateOnly)) {
+        appointmentsCountByDay[dateOnly] = regList
+            .where((element) => element.name == appo.serviceName)
+            .toList()
+            .single
+            .cost;
+      } else {
+        appointmentsCountByDay[dateOnly] = appointmentsCountByDay[dateOnly]! +
+            regList
+                .where((element) => element.name == appo.serviceName)
+                .toList()
+                .single
+                .cost;
+      }
+    }
+    var maxValue = appointmentsCountByDay.values.isEmpty
+        ? 0
+        : appointmentsCountByDay.values.reduce((a, b) => a > b ? a : b);
+    if ((maxValue / 100) % 5 == 0) {
+      return maxValue;
+    } else {
+      return nextMultipleOfFive(maxValue ~/ 100).toInt() * 100;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (widget.allAppointmentsState is FetchAppointmentsLoaded &&
-        widget.allEmployeesState is AllEmployeesLoaded) {
-      var allAppointments =
-          (widget.allAppointmentsState as FetchAppointmentsLoaded).appointments;
-      var allEmployees =
-          (widget.allEmployeesState as AllEmployeesLoaded).employees;
+    var allAppointments = widget.allAppointments;
+    var allEmployees = widget.allEmployees;
 
-      var apposInRange = getApposInSelectedRange(allAppointments);
-      List<Employee> selectedEmpList = [];
-      for (int i = 0; i < empBoolList.length; i++) {
-        if (empBoolList[i]) {
-          selectedEmpList.add(allEmployees[i]);
-        }
+    var apposInRange = getApposInSelectedRange(allAppointments);
+    List<Employee> selectedEmpList = [];
+    for (int i = 0; i < empBoolList.length; i++) {
+      if (empBoolList[i]) {
+        selectedEmpList.add(allEmployees[i]);
       }
-
-      var maxAppos = getMaxAppointmentsPerDay(apposInRange).toDouble();
-
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              TextButton.icon(
-                onPressed: pickDateTimeRange,
-                label: Text(formatDateTimeRange(dateTimeRange)),
-                icon: const Icon(Icons.calendar_month_rounded),
-              ),
-              const Spacer(),
-              TextButton.icon(
-                onPressed: () {
-                  openEmployeesSelectionDialog(allEmployees, empBoolList);
-                },
-                label: const Text('Мастера'),
-                icon: const Icon(Icons.person),
-              ),
-            ],
-          ),
-          Container(
-            // margin: const EdgeInsets.all(16.0),
-            height: 200,
-            decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .primaryContainer
-                  .withOpacity(0.5),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16.0, right: 8, bottom: 8),
-              child: LineChart(
-                getSampleData1(
-                    apposInRange,
-                    selectedEmpList,
-                    colorsMap,
-                    getDaysCount(dateTimeRange).toDouble(),
-                    maxAppos == 0 ? 3 : maxAppos + 1),
-                duration: const Duration(milliseconds: 250),
-              ),
-            ),
-          ),
-          for (int i = 0; i < selectedEmployee.length; i++)
-            ChartEmployeeTile(
-                color: colorsMap[selectedEmployee[i].employeeId]!,
-                text:
-                    '${selectedEmployee[i].name} ${selectedEmployee[i].surname}')
-        ],
-      );
     }
-    return Container(
-      // margin: const EdgeInsets.all(16.0),
-      height: 200,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(5),
-      ),
-      child: const Text('data'),
+
+    var maxAppos = getMaxAppointmentsPerDay(apposInRange).toDouble();
+    var maxMoney =
+        getMaxMoneyPerDay(apposInRange, widget.allRegulations).toDouble();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            TextButton.icon(
+              onPressed: pickDateTimeRange,
+              label: Text(formatDateTimeRange(dateTimeRange)),
+              icon: const Icon(Icons.calendar_month_rounded),
+            ),
+            const Spacer(),
+            TextButton.icon(
+              onPressed: () {
+                openEmployeesSelectionDialog(allEmployees, empBoolList);
+              },
+              label: const Text('Мастера'),
+              icon: const Icon(Icons.person),
+            ),
+          ],
+        ),
+        Stack(
+          children: [
+            Container(
+              // margin: const EdgeInsets.all(16.0),
+              height: 200,
+
+              decoration: BoxDecoration(
+                color: Theme.of(context)
+                    .colorScheme
+                    .primaryContainer
+                    .withOpacity(0.5),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16.0, right: 8, bottom: 8),
+                child: LineChart(
+                  isMoneyGraph
+                      ? getMoneyGraphData(
+                          apposInRange,
+                          selectedEmpList,
+                          widget.allRegulations,
+                          colorsMap,
+                          getDaysCount(dateTimeRange).toDouble(),
+                          maxMoney == 0 ? 3 : maxMoney)
+                      : getAppoGraphData(
+                          apposInRange,
+                          selectedEmpList,
+                          colorsMap,
+                          getDaysCount(dateTimeRange).toDouble(),
+                          maxAppos == 0 ? 3 : maxAppos + 1),
+                  duration: const Duration(milliseconds: 250),
+                ),
+              ),
+            ),
+            Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  icon: isMoneyGraph
+                      ? const Icon(Icons.monetization_on)
+                      : const Icon(Icons.production_quantity_limits),
+                  onPressed: toggleGraph,
+                ))
+          ],
+        ),
+        for (int i = 0; i < selectedEmployee.length; i++)
+          ChartEmployeeTile(
+              color: colorsMap[selectedEmployee[i].employeeId]!,
+              text:
+                  '${selectedEmployee[i].name} ${selectedEmployee[i].surname}'),
+      ],
     );
   }
 
-  LineChartData getSampleData1(List<Appointment> appos, List<Employee> empList,
-      Map<String, Color> colorsMap, double maxX, double maxY) {
+  LineChartData getAppoGraphData(
+      List<Appointment> appos,
+      List<Employee> empList,
+      Map<String, Color> colorsMap,
+      double maxX,
+      double maxY) {
     return LineChartData(
       lineTouchData: lineTouchData,
-      gridData: gridData,
+      gridData: gridAppoData,
       titlesData: titlesData,
       borderData: borderData,
       lineBarsData: getLineBarsData(appos, empList, colorsMap, maxX.toInt()),
+      minX: 0,
+      maxX: maxX,
+      maxY: maxY,
+      minY: 0,
+    );
+  }
+
+  LineChartData getMoneyGraphData(
+      List<Appointment> appos,
+      List<Employee> empList,
+      List<Regulation> regList,
+      Map<String, Color> colorsMap,
+      double maxX,
+      double maxY) {
+    return LineChartData(
+      lineTouchData: lineTouchData,
+      gridData: gridMoneyData,
+      titlesData: titlesData,
+      borderData: borderData,
+      lineBarsData:
+          getLineBarsData2(appos, empList, regList, colorsMap, maxX.toInt()),
       minX: 0,
       maxX: maxX,
       maxY: maxY,
@@ -255,7 +333,7 @@ class _HomeLineChartState extends State<HomeLineChart> {
           sideTitles: SideTitles(showTitles: false),
         ),
         leftTitles: AxisTitles(
-          sideTitles: leftTitles(),
+          sideTitles: isMoneyGraph ? leftMoneyTitles() : leftAppoTitles(),
         ),
       );
 
@@ -305,6 +383,67 @@ class _HomeLineChartState extends State<HomeLineChart> {
     return lineBars;
   }
 
+  List<LineChartBarData> getLineBarsData2(
+      List<Appointment> appos,
+      List<Employee> empList,
+      List<Regulation> regList,
+      Map<String, Color> colorsMap,
+      int length) {
+    Map<String, List<Appointment>> appointmentsByEmployee = {};
+
+    for (var appo in appos) {
+      if (empList.any((emp) => emp.employeeId == appo.masterId)) {
+        if (!appointmentsByEmployee.containsKey(appo.masterId)) {
+          appointmentsByEmployee[appo.masterId] = [];
+        }
+        appointmentsByEmployee[appo.masterId]!.add(appo);
+      }
+    }
+
+    List<LineChartBarData> lineBars = [];
+    int colorIndex = 0;
+
+    for (var entry in appointmentsByEmployee.entries) {
+      List<FlSpot> spots = [];
+      for (int i = 0; i < length; i++) {
+        DateTime currentDay = dateTimeRange.start.add(Duration(days: i));
+        var list = entry.value
+            .where((a) =>
+                a.date.year == currentDay.year &&
+                a.date.month == currentDay.month &&
+                a.date.day == currentDay.day)
+            .toList();
+        int count = 0;
+        for (var e in list) {
+          final sum = regList
+              .where((item) => item.name == e.serviceName) // Фильтруем элементы
+              .map((item) => item.cost) // Получаем список значений
+              .fold(0, (prev, value) => prev + value); //
+          print(sum);
+          // Складываем значения
+          count += sum;
+        }
+        // print(count);
+
+        spots.add(FlSpot(i.toDouble(), count.toDouble()));
+      }
+
+      lineBars.add(LineChartBarData(
+        isCurved: false,
+        color: colorsMap[entry.key],
+        curveSmoothness: 0,
+        barWidth: 4,
+        isStrokeCapRound: true,
+        dotData: const FlDotData(show: true),
+        belowBarData: BarAreaData(show: false),
+        spots: spots,
+      ));
+      colorIndex++;
+    }
+
+    return lineBars;
+  }
+
   Widget leftTitleWidgets(double value, TitleMeta meta) {
     const style = TextStyle(
       fontWeight: FontWeight.bold,
@@ -314,10 +453,17 @@ class _HomeLineChartState extends State<HomeLineChart> {
         style: style, textAlign: TextAlign.center);
   }
 
-  SideTitles leftTitles() => SideTitles(
+  SideTitles leftAppoTitles() => SideTitles(
         getTitlesWidget: leftTitleWidgets,
         showTitles: true,
         interval: 1,
+        reservedSize: 40,
+      );
+
+  SideTitles leftMoneyTitles() => SideTitles(
+        getTitlesWidget: leftTitleWidgets,
+        showTitles: true,
+        interval: 500,
         reservedSize: 40,
       );
 
@@ -370,10 +516,29 @@ class _HomeLineChartState extends State<HomeLineChart> {
             bottomTitleWidgets(value, meta, dateTimeRange),
       );
 
-  FlGridData get gridData => FlGridData(
+  FlGridData get gridAppoData => FlGridData(
         show: true,
         drawVerticalLine: true,
         horizontalInterval: 1,
+        verticalInterval: 1,
+        getDrawingHorizontalLine: (value) {
+          return const FlLine(
+            color: Colors.black26,
+            strokeWidth: 1,
+          );
+        },
+        getDrawingVerticalLine: (value) {
+          return const FlLine(
+            color: Colors.black26,
+            strokeWidth: 1,
+          );
+        },
+      );
+
+  FlGridData get gridMoneyData => FlGridData(
+        show: true,
+        drawVerticalLine: true,
+        horizontalInterval: 500,
         verticalInterval: 1,
         getDrawingHorizontalLine: (value) {
           return const FlLine(

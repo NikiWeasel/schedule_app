@@ -28,7 +28,7 @@ class ActionsRegulationsBloc
       emit(ActionsRegulationsLoadingState());
       try {
         await _deleteAppointment(event);
-        emit(ActionsRegulationsLoadedState());
+        emit(ActionsRegulationsDeletedState());
       } catch (e) {
         emit(ActionsRegulationsErrorState(error: e.toString()));
       }
@@ -38,7 +38,7 @@ class ActionsRegulationsBloc
       emit(ActionsRegulationsLoadingState());
       try {
         await _updateAppointment(event);
-        emit(ActionsRegulationsLoadedState());
+        emit(ActionsRegulationsUpdatedState());
       } catch (e) {
         emit(ActionsRegulationsErrorState(error: e.toString()));
       }

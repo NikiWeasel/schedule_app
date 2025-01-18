@@ -113,8 +113,8 @@ class _EditingDialogState extends State<EditingDialog> {
       var start = appo.startTime;
       var end = start + appo.duration;
       // Проверка на пересечение
-      if ((newStart >= start && newStart <= end) ||
-          (newEnd >= start && newEnd <= end)) {
+      if ((newStart > start && newStart < end) ||
+          (newEnd > start && newEnd < end)) {
         if (appo.appointmentId != newAppointment.appointmentId) {
           return true; // Пересечение найдено
         }

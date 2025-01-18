@@ -104,15 +104,15 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       title: Text(formatDate(currentDate)),
                       actions: [
                         IconButton(
+                            onPressed: chooseDate,
+                            icon: const Icon(Icons.calendar_month_rounded)),
+                        IconButton(
                           icon: const Icon(Icons.autorenew),
                           onPressed: () {
                             renew();
                             print('renewed');
                           },
                         ),
-                        IconButton(
-                            onPressed: chooseDate,
-                            icon: const Icon(Icons.calendar_month_rounded)),
                       ],
                     ),
                     floatingActionButton: FloatingActionButton(
@@ -148,12 +148,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     title: Text(formatDate(currentDate)),
                     actions: [
                       IconButton(
+                          onPressed: () {},
+                          icon: const Icon(Icons.calendar_month_rounded)),
+                      IconButton(
                         icon: const Icon(Icons.autorenew),
                         onPressed: () {},
                       ),
-                      IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.calendar_month_rounded)),
                     ],
                   ),
                   floatingActionButton: FloatingActionButton(

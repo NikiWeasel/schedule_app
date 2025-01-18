@@ -65,7 +65,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
 
   void deleteAppoTable(Appointment appo) {
     setState(() {
-      tableAppos.remove(appo);
+      allTableAppos.remove(appo);
     });
   }
 
@@ -78,13 +78,13 @@ class _ScheduleTableState extends State<ScheduleTable> {
   void editAppoTable({Appointment? oldAppo, required Appointment newAppo}) {
     if (oldAppo == null) {
       setState(() {
-        tableAppos.add(newAppo);
+        allTableAppos.add(newAppo);
       });
     } else {
       setState(() {
-        var index = tableAppos.indexOf(oldAppo);
-        tableAppos.removeAt(index);
-        tableAppos.insert(index, newAppo);
+        var index = allTableAppos.indexOf(oldAppo);
+        allTableAppos.removeAt(index);
+        allTableAppos.insert(index, newAppo);
       });
     }
   }

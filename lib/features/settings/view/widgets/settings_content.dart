@@ -62,6 +62,7 @@ class _SettingsContentState extends State<SettingsContent> {
         builder: (context) => ColorPickerDialog(
               aciveColor: themeSeed,
             ));
+    if (color == null) return;
     setState(() {
       themeSeed = color;
     });

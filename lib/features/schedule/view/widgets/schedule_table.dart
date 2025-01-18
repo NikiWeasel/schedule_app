@@ -42,6 +42,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
   final double timeSlotWidth = 210;
 
   late List<Appointment> tableAppos;
+  late List<Appointment> allTableAppos;
 
   late Employee activeUser;
 
@@ -99,7 +100,8 @@ class _ScheduleTableState extends State<ScheduleTable> {
   void initState() {
     super.initState();
     activeUser = widget.allEmployees[0];
-    tableAppos = widget.allAppontments;
+    allTableAppos = widget.allAppontments;
+    // print
   }
 
   @override
@@ -114,13 +116,12 @@ class _ScheduleTableState extends State<ScheduleTable> {
     //     .toList();
     // masters.insert(0, widget.user);
 
-    tableAppos = tableAppos
+    tableAppos = allTableAppos
         .where((appo) => (appo.date.year == widget.curentDate.year &&
             appo.date.month == widget.curentDate.month &&
             appo.date.day == widget.curentDate.day))
         .toList();
 
-    // print(context.read<ActionsAppointmentBloc>());
     return BlocListener<ActionsAppointmentBloc, ActionsAppointmentState>(
       listener: (context, state) {
         if (state is ActionsAppointmentLoadingState) {

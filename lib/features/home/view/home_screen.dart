@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
-import 'package:schedule_app/core/widgets/loading_skeleton.dart';
+import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'package:schedule_app/features/home/view/widgets/home_appointments.dart';
 import 'package:schedule_app/features/home/view/widgets/home_line_chart.dart';
@@ -16,6 +16,8 @@ import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/utils/old_appo_removal.dart';
 import 'package:schedule_app/features/settings/bloc/settings_bloc.dart';
+
+import 'package:schedule_app/main.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,7 +58,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
                       debugPrint(userState.error);
 
-                      return const SplashScreen();
+                      return const Center(
+                        child: CardCircularProgressIndicator(),
+                      );
                     }
                     if (userState is UserLoaded) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -100,12 +104,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   )),
                               IconButton(
                                   onPressed: () {
-                                    rootContext
-                                        .read<AllEmployeesBloc>()
-                                        .add(FetchAllEmployeesData());
-                                    rootContext
-                                        .read<FetchAppointmentsBloc>()
-                                        .add(FetchAppointmentsData());
                                     renew();
                                   },
                                   icon: const Icon(Icons.autorenew)),
@@ -232,7 +230,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ));
                     }
-                    return const SplashScreen();
+                    return const Center(
+                      child: CardCircularProgressIndicator(),
+                    );
                   },
                 );
               },

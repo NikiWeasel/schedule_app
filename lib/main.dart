@@ -59,7 +59,10 @@ void main() async {
     ],
     child: BlocBuilder<SettingsBloc, SettingsState>(
       builder: (context, state) {
+        print('BlocBuilder');
         if (state is SettingsLoaded) {
+          print('BlocBuilder2');
+
           return MaterialApp.router(
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,
@@ -75,7 +78,7 @@ void main() async {
             // home: const App(),
           );
         }
-        return MaterialApp.router(
+        return MaterialApp(
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
@@ -85,8 +88,8 @@ void main() async {
             Locale('en', 'US'), // English
             Locale('ru', 'RU'), // Russian
           ],
-          theme: theme,
-          routerConfig: AppRouter.router,
+          theme: getTheme(0xFF9A00A5),
+          home: const SplashScreen(),
           // home: const App(),
         );
       },

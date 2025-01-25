@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
 import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
@@ -14,7 +14,7 @@ import 'package:schedule_app/features/home/view/widgets/home_appointments.dart';
 import 'package:schedule_app/features/home/view/widgets/home_line_chart.dart';
 import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
+import 'package:schedule_app/features/schedule/bloc/local_employees_bloc.dart';
 import 'package:schedule_app/core/app_router.dart';
 import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
 import 'package:schedule_app/core/models/appointment.dart';
@@ -39,19 +39,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void renew() {
     //TODO мб засунуть еще для UserBloc
-    context.read<AllEmployeesBloc>().add(FetchAllEmployeesData());
-    context.read<FetchAppointmentsBloc>().add(FetchAppointmentsData());
+    context.read<LocalEmployeesBloc>().add(FetchAllEmployeesData());
+    context.read<LocalAppointmentsBloc>().add(FetchAppointmentsData());
   }
 
   @override
   Widget build(BuildContext rootContext) {
-    return BlocBuilder<FetchRegulationsBloc, FetchRegulationsState>(
+    return BlocBuilder<LocalRegulationsBloc, FetchRegulationsState>(
       builder: (context, regulationsState) {
         return BlocBuilder<SettingsBloc, SettingsState>(
           builder: (context, settingsState) {
-            return BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
+            return BlocBuilder<LocalAppointmentsBloc, LocalAppointmentsState>(
               builder: (context1, allAppontmentsState) {
-                return BlocBuilder<AllEmployeesBloc, AllEmployeesState>(
+                return BlocBuilder<LocalEmployeesBloc, LocalEmployeesState>(
                   builder: (context2, allEmployeesState) {
                     return BlocBuilder<UserBloc, UserState>(
                       builder: (context3, userState) {
@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             if (!didTryToDeleteAppos &&
                                 allAppontmentsState
-                                    is FetchAppointmentsLoaded &&
+                                    is LocalAppointmentsLoaded &&
                                 settingsState is SettingsLoaded) {
                               didTryToDeleteAppos = true;
                               deleteOldAppos(
@@ -193,11 +193,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 8.0),
                                         child: (allAppontmentsState
-                                                    is FetchAppointmentsLoaded &&
+                                                    is LocalAppointmentsLoaded &&
                                                 allEmployeesState
-                                                    is AllEmployeesLoaded &&
+                                                    is LocalEmployeesLoaded &&
                                                 regulationsState
-                                                    is FetchRegulationsLoadedState)
+                                                    is LocalRegulationsLoadedState)
                                             ? HomeLineChart(
                                                 // key: key,
                                                 allAppointments:

@@ -8,7 +8,7 @@ import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/features/profile/view/widgets/employee_profile.dart';
 import 'package:schedule_app/features/profile/view/widgets/log_out_alert.dart';
-import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
+import 'package:schedule_app/features/schedule/bloc/local_employees_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
@@ -31,12 +31,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AllEmployeesBloc, AllEmployeesState>(
+    return BlocBuilder<LocalEmployeesBloc, LocalEmployeesState>(
         builder: (context, allEmployeesState) {
       {
         // final allEmployeesState = context.read<AllEmployeesBloc>().state;
         List<Employee> emps = [];
-        if (allEmployeesState is AllEmployeesLoaded) {
+        if (allEmployeesState is LocalEmployeesLoaded) {
           emps = allEmployeesState.employees;
 
           final currentUser = emps

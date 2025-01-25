@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/features/regulations/view/widgets/regulation_dialog.dart';
 import 'package:schedule_app/features/regulations/view/widgets/regulation_tile.dart';
-import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
 import 'package:schedule_app/core/widgets/alert_confirm_dialog.dart';
 import 'package:schedule_app/features/regulations/bloc/actions_regulations_bloc.dart';
@@ -33,7 +33,7 @@ class _RegulationsContentState extends State<RegulationsContent> {
   }
 
   void renew() {
-    context.read<FetchRegulationsBloc>().add(FetchRegulationsData());
+    context.read<LocalRegulationsBloc>().add(FetchRegulationsData());
   }
 
   void onLongPress(Regulation reg, bool isAdmin) {

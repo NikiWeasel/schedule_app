@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
 import 'package:schedule_app/features/schedule/view/widgets/editing_dialog/editing_dialog.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
-import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
+import 'package:schedule_app/features/schedule/bloc/local_employees_bloc.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/models/regulation.dart';
@@ -74,23 +74,23 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   }
 
   void renew() {
-    context.read<AllEmployeesBloc>().add(FetchAllEmployeesData());
-    context.read<FetchAppointmentsBloc>().add(FetchAppointmentsData());
-    context.read<FetchRegulationsBloc>().add(FetchRegulationsData());
+    context.read<LocalEmployeesBloc>().add(FetchAllEmployeesData());
+    context.read<LocalAppointmentsBloc>().add(FetchAppointmentsData());
+    context.read<LocalRegulationsBloc>().add(FetchRegulationsData());
   }
 
   @override
   Widget build(BuildContext context) {
     // print(widget.value);
-    return BlocBuilder<AllEmployeesBloc, AllEmployeesState>(
+    return BlocBuilder<LocalEmployeesBloc, LocalEmployeesState>(
       builder: (context, allEmployeesState) {
-        return BlocBuilder<FetchRegulationsBloc, FetchRegulationsState>(
+        return BlocBuilder<LocalRegulationsBloc, FetchRegulationsState>(
           builder: (context, regulationsState) {
-            return BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
+            return BlocBuilder<LocalAppointmentsBloc, LocalAppointmentsState>(
               builder: (context, allAppontmentsState) {
-                if ((allEmployeesState is AllEmployeesLoaded &&
-                    allAppontmentsState is FetchAppointmentsLoaded &&
-                    regulationsState is FetchRegulationsLoadedState)) {
+                if ((allEmployeesState is LocalEmployeesLoaded &&
+                    allAppontmentsState is LocalAppointmentsLoaded &&
+                    regulationsState is LocalRegulationsLoadedState)) {
                   var allMasters = allEmployeesState.employees;
                   var masters = allMasters
                       .where((e) => widget.user.employeeId != e.employeeId)

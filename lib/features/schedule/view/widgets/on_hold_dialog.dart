@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
 import 'package:schedule_app/core/widgets/alert_confirm_dialog.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/features/schedule/view/widgets/editing_dialog/editing_dialog.dart';
@@ -64,10 +64,10 @@ class OnHoldDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: BlocBuilder<FetchRegulationsBloc, FetchRegulationsState>(
+      child: BlocBuilder<LocalRegulationsBloc, FetchRegulationsState>(
         builder: (context, regulationsState) {
           // return Builder(builder: (context) {
-          if (regulationsState is FetchRegulationsLoadedState) {
+          if (regulationsState is LocalRegulationsLoadedState) {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [

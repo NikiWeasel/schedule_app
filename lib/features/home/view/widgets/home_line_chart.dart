@@ -1,12 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/features/home/view/widgets/chart_employee_tile.dart';
 import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';
-import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
+import 'package:schedule_app/features/schedule/bloc/local_employees_bloc.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 
@@ -299,7 +299,7 @@ class _HomeLineChartState extends State<HomeLineChart> {
                             widget.allRegulations,
                             colorsMap,
                             getDaysCount(dateTimeRange).toDouble(),
-                            maxMoney == 0 ? 3 : maxMoney)
+                            maxMoney == 0 ? 3 : maxMoney + 500)
                         : getAppoGraphData(
                             apposInRange,
                             selectedEmpList,

@@ -5,24 +5,27 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:schedule_app/core/bloc/fetch_portfolio_photos/fetch_portfolio_photos_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_portfolio_photos/local_portfolio_photos_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
+import 'package:schedule_app/core/repository/local_appointments_repository.dart';
+import 'package:schedule_app/core/repository/local_regulations_repository.dart';
 import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 import 'package:schedule_app/features/home/user_repository.dart';
 import 'package:schedule_app/features/portfolio/bloc/actions_portfolio_photos_bloc.dart';
 import 'package:schedule_app/features/regulations/actions_regulations_repository.dart';
 import 'package:schedule_app/features/regulations/bloc/actions_regulations_bloc.dart';
-import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
+import 'package:schedule_app/features/schedule/bloc/local_employees_bloc.dart';
+import 'package:schedule_app/features/schedule/local_employees_repository.dart';
 import 'package:schedule_app/features/settings/bloc/settings_bloc.dart';
 import 'package:schedule_app/features/settings/settings_repository.dart';
 import 'package:schedule_app/firebase_options.dart';
 import 'package:schedule_app/core/theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:schedule_app/core/app_router.dart';
-import 'package:schedule_app/core/repository/fetch_data_repository.dart';
+import 'package:schedule_app/core/repository/local_portfolio_photos_repository.dart';
 import 'package:schedule_app/core/repository/actions_appointment_repository.dart';
 import 'package:schedule_app/features/portfolio/actions_portfolio_photos_repository.dart';
 
@@ -37,10 +40,22 @@ void main() async {
   final FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
 
-  final FetchDataRepository fetchDataRepository = FetchDataRepository(
-      firebaseFirestore: firebaseFirestore,
-      firebaseAuth: firebaseAuth,
-      firebaseStorage: firebaseStorage);
+  final LocalPortfolioPhotosRepository fetchDataRepository =
+      LocalPortfolioPhotosRepository(
+          firebaseAuth: firebaseAuth, firebaseStorage: firebaseStorage);
+  final LocalEmployeesRepository localEmployeesRepository =
+      LocalEmployeesRepository(
+    firebaseFirestore: firebaseFirestore,
+  );
+  final LocalAppointmentsRepository localAppointmentsRepository =
+      LocalAppointmentsRepository(
+          firebaseFirestore: firebaseFirestore,
+          firebaseAuth: firebaseAuth,
+          firebaseStorage: firebaseStorage);
+  final LocalRegulationsRepository localRegulationsRepository =
+      LocalRegulationsRepository(
+    firebaseFirestore: firebaseFirestore,
+  );
 
   final userRepository = UserRepository(
       firebaseFirestore: firebaseFirestore, firebaseAuth: firebaseAuth);
@@ -59,20 +74,20 @@ void main() async {
       BlocProvider<UserBloc>(
         create: (context) => UserBloc(userRepository)..add(FetchUserData()),
       ),
-      BlocProvider<AllEmployeesBloc>(
-        create: (context) =>
-            AllEmployeesBloc(fetchDataRepository)..add(FetchAllEmployeesData()),
+      BlocProvider<LocalEmployeesBloc>(
+        create: (context) => LocalEmployeesBloc(localEmployeesRepository)
+          ..add(FetchAllEmployeesData()),
       ),
-      BlocProvider<FetchAppointmentsBloc>(
-        create: (context) => FetchAppointmentsBloc(fetchDataRepository)
+      BlocProvider<LocalAppointmentsBloc>(
+        create: (context) => LocalAppointmentsBloc(localAppointmentsRepository)
           ..add(FetchAppointmentsData()),
       ),
-      BlocProvider<FetchRegulationsBloc>(
-        create: (context) => FetchRegulationsBloc(fetchDataRepository)
+      BlocProvider<LocalRegulationsBloc>(
+        create: (context) => LocalRegulationsBloc(localRegulationsRepository)
           ..add(FetchRegulationsData()),
       ),
-      BlocProvider<FetchPortfolioPhotosBloc>(
-        create: (context) => FetchPortfolioPhotosBloc(fetchDataRepository)
+      BlocProvider<LocalPortfolioPhotosBloc>(
+        create: (context) => LocalPortfolioPhotosBloc(fetchDataRepository)
           ..add(FetchPortfolioPhotosData()),
       ),
       BlocProvider<ActionsAppointmentBloc>(

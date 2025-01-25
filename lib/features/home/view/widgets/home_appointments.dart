@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/widgets/appointment_widget.dart';
 import 'package:schedule_app/features/home/view/widgets/no_appointments_widget.dart';
@@ -17,7 +17,7 @@ class HomeAppointments extends StatefulWidget {
       {super.key, required this.emlpoyee, required this.appointmentsState});
 
   final Employee emlpoyee;
-  final FetchAppointmentsState appointmentsState;
+  final LocalAppointmentsState appointmentsState;
 
   @override
   State<HomeAppointments> createState() => _HomeAppointmentsState();
@@ -32,19 +32,19 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.appointmentsState is FetchAppointmentsLoading) {
+    if (widget.appointmentsState is LocalAppointmentsLoading) {
       return const Center(
           child: Padding(
         padding: EdgeInsets.symmetric(vertical: 14),
         child: CardCircularProgressIndicator(),
       ));
     }
-    if (widget.appointmentsState is FetchAppointmentsError) {
+    if (widget.appointmentsState is LocalAppointmentsError) {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
         child: Center(
             child: Text(
-          'Error: ${(widget.appointmentsState as FetchAppointmentsError).errorMessage}',
+          'Error: ${(widget.appointmentsState as LocalAppointmentsError).errorMessage}',
           style: Theme.of(context)
               .textTheme
               .bodyLarge!
@@ -53,9 +53,9 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
       );
     }
 
-    if (widget.appointmentsState is FetchAppointmentsLoaded) {
+    if (widget.appointmentsState is LocalAppointmentsLoaded) {
       DateTime curentDate = DateTime.now();
-      var appointments = (widget.appointmentsState as FetchAppointmentsLoaded)
+      var appointments = (widget.appointmentsState as LocalAppointmentsLoaded)
           .appointments
           .where((appo) => (appo.date.year == curentDate.year &&
               appo.date.month == curentDate.month &&

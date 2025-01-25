@@ -1,4 +1,4 @@
-part of 'fetch_portfolio_photos_bloc.dart';
+part of 'local_portfolio_photos_bloc.dart';
 
 @immutable
 sealed class FetchPortfolioPhotosEvent {}

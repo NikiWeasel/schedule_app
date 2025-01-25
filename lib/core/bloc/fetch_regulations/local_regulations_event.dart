@@ -1,4 +1,4 @@
-part of 'fetch_regulations_bloc.dart';
+part of 'local_regulations_bloc.dart';
 
 @immutable
 sealed class FetchRegulationsEvent {}

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:schedule_app/core/bloc/fetch_portfolio_photos/fetch_portfolio_photos_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_portfolio_photos/local_portfolio_photos_bloc.dart';
 import 'package:schedule_app/core/widgets/alert_confirm_dialog.dart';
 import 'package:schedule_app/features/portfolio/bloc/actions_portfolio_photos_bloc.dart';
 import 'package:schedule_app/features/portfolio/view/widgets/carousel_widget.dart';
@@ -97,7 +97,7 @@ class _PortfolioContentState extends State<PortfolioContent> {
     }
 
     void renew() {
-      context.read<FetchPortfolioPhotosBloc>().add(FetchPortfolioPhotosData());
+      context.read<LocalPortfolioPhotosBloc>().add(FetchPortfolioPhotosData());
     }
 
     void showConfirmDialog(void Function() deleteImage) async {

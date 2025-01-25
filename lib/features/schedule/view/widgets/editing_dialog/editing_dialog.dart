@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';
 import 'package:schedule_app/features/schedule/view/widgets/service_button.dart';
@@ -58,7 +58,7 @@ class _EditingDialogState extends State<EditingDialog> {
 
   @override
   void initState() {
-    context.read<FetchAppointmentsBloc>().add(FetchAppointmentsData());
+    context.read<LocalAppointmentsBloc>().add(FetchAppointmentsData());
 
     selectedDate = widget.curentDate;
     selectedEmployee = widget.employees?[0];
@@ -555,12 +555,12 @@ class _EditingDialogState extends State<EditingDialog> {
                 const SizedBox(
                   height: 16,
                 ),
-                BlocBuilder<FetchAppointmentsBloc, FetchAppointmentsState>(
+                BlocBuilder<LocalAppointmentsBloc, LocalAppointmentsState>(
                     builder: (context, allAppontmentsState) {
                   List<Appointment> appointments = [];
 
                   print(allAppontmentsState);
-                  if (allAppontmentsState is FetchAppointmentsLoaded) {
+                  if (allAppontmentsState is LocalAppointmentsLoaded) {
                     appointments = allAppontmentsState.appointments;
                   }
                   appointments = appointments

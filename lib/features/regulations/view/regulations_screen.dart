@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/features/regulations/view/widgets/regulation_dialog.dart';
 import 'package:schedule_app/features/regulations/view/widgets/regulation_tile.dart';
@@ -23,14 +23,14 @@ class RegulationsScreen extends StatelessWidget {
       builder: (context, userState) {
         return BlocBuilder<ActionsRegulationsBloc, ActionsRegulationsState>(
           builder: (context, actionsState) {
-            return BlocBuilder<FetchRegulationsBloc, FetchRegulationsState>(
+            return BlocBuilder<LocalRegulationsBloc, FetchRegulationsState>(
               builder: (context, regulationsState) {
-                if (regulationsState is FetchRegulationsLoadingState) {
+                if (regulationsState is LocalRegulationsLoadingState) {
                   return const Center(
                     child: CardCircularProgressIndicator(),
                   );
                 }
-                if (regulationsState is FetchRegulationsLoadedState &&
+                if (regulationsState is LocalRegulationsLoadedState &&
                     userState is UserLoaded) {
                   var regList = regulationsState.regulations;
                   bool isAdmin = userState.user.isAdmin;
@@ -39,7 +39,7 @@ class RegulationsScreen extends StatelessWidget {
                     isAdmin: isAdmin,
                   );
                 }
-                if (regulationsState is FetchRegulationsErrorState) {
+                if (regulationsState is LocalRegulationsErrorState) {
                   return Center(
                     child: Center(
                         child: Text(

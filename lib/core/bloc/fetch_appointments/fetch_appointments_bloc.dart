@@ -24,7 +24,6 @@ class FetchAppointmentsBloc
     print('bloc triggered');
 
     emit(FetchAppointmentsLoading());
-    DateFormat format = DateFormat("dd.MM.yyyy");
 
     try {
       final QuerySnapshot snapshot =

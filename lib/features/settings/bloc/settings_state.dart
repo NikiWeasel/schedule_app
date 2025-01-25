@@ -10,7 +10,7 @@ final class SettingsLoading extends SettingsState {}
 // final class SettingsUpdated extends SettingsState {}
 
 final class SettingsLoaded extends SettingsState {
-  final Settings settings;
+  final UserSettings settings;
 
   SettingsLoaded({required this.settings});
 }

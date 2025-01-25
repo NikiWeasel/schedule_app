@@ -4,7 +4,7 @@ part of 'settings_bloc.dart';
 sealed class SettingsEvent {}
 
 class UpdateSettings extends SettingsEvent {
-  final Settings settings;
+  final UserSettings settings;
 
   UpdateSettings({required this.settings});
 }

@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/home/view/widgets/old_appos_bottom_sheet.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
+import 'package:schedule_app/features/settings/bloc/settings_bloc.dart';
+import 'package:schedule_app/core/models/settings.dart';
 
 DateTime _subtractMonths(DateTime date, int months) {
   int newYear = date.year;
@@ -41,18 +44,46 @@ List<Appointment> _getOldAppos(
 void deleteOldAppos(
     {required bool isAdmin,
     required List<Appointment> apposList,
-    required int monthsOldToDelete,
-    required bool deleteWithoutAsking,
-    required BuildContext context}) {
+    required BuildContext context,
+    required UserSettings settings}) {
   var date = DateTime.now();
-  var oldAppos =
-      _getOldAppos(apposList: apposList, monthsOldToDelete: monthsOldToDelete);
+  var oldAppos = _getOldAppos(
+      apposList: apposList, monthsOldToDelete: settings.monthsOldToDelete);
 
-  if (date.day != 1 || !isAdmin || oldAppos.isEmpty) return;
+  var removalDateStart = DateTime(date.year, date.month, 1);
+  var removalDateEnd = DateTime(date.year, date.month, 7);
+  // if (date.day == 28) settings.didAsk = false;
+  if (date.isAfter(removalDateEnd) && settings.didAsk) {
+    UserSettings newSettings = UserSettings(
+        monthsOldToDelete: settings.monthsOldToDelete,
+        deleteWithoutAsking: settings.deleteWithoutAsking,
+        didAsk: false,
+        themeSeed: settings.themeSeed);
 
-  if (deleteWithoutAsking) {
+    context.read<SettingsBloc>().add(
+          UpdateSettings(settings: newSettings),
+        );
+  }
+
+  if (!((date.isAfter(removalDateStart) && date.isBefore(removalDateEnd)) &&
+          !settings.didAsk) ||
+      !isAdmin ||
+      oldAppos.isEmpty) {
+    return;
+  }
+  UserSettings newSettings = UserSettings(
+      monthsOldToDelete: settings.monthsOldToDelete,
+      deleteWithoutAsking: settings.deleteWithoutAsking,
+      didAsk: true,
+      themeSeed: settings.themeSeed);
+
+  if (settings.deleteWithoutAsking) {
     context.read<ActionsAppointmentBloc>().add(
           DeleteAllAppointmentsEvent(appointments: oldAppos),
+        );
+
+    context.read<SettingsBloc>().add(
+          UpdateSettings(settings: newSettings),
         );
 
     print('DELETED ALL withoutAsking');
@@ -65,9 +96,15 @@ void deleteOldAppos(
                 context
                     .read<ActionsAppointmentBloc>()
                     .add(DeleteAllAppointmentsEvent(appointments: oldAppos));
+
                 print('DELETED ALL');
               },
-              monthsOldToDelete: monthsOldToDelete,
+              monthsOldToDelete: settings.monthsOldToDelete,
+              onChangeSettings: () {
+                context.read<SettingsBloc>().add(
+                      UpdateSettings(settings: newSettings),
+                    );
+              },
             ));
   }
 }

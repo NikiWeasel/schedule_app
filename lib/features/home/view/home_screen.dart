@@ -78,10 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               deleteOldAppos(
                                 isAdmin: userState.user.isAdmin,
                                 apposList: allAppontmentsState.appointments,
-                                monthsOldToDelete:
-                                    settingsState.settings.monthsOldToDelete,
-                                deleteWithoutAsking:
-                                    settingsState.settings.deleteWithoutAsking,
+                                settings: settingsState.settings,
                                 context: context,
                               );
                               renew();

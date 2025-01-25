@@ -12,7 +12,7 @@ import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 class SettingsContent extends StatefulWidget {
   const SettingsContent({super.key, required this.settings});
 
-  final Settings settings;
+  final UserSettings settings;
 
   @override
   State<SettingsContent> createState() => _SettingsContentState();
@@ -22,6 +22,7 @@ class _SettingsContentState extends State<SettingsContent> {
   final _formKey = GlobalKey<FormState>();
   late int monthsOldToDelete;
   late bool deleteWithoutAsking;
+  late bool didAsk;
   late int themeSeed;
   TextEditingController controller = TextEditingController();
 
@@ -30,6 +31,7 @@ class _SettingsContentState extends State<SettingsContent> {
     monthsOldToDelete = widget.settings.monthsOldToDelete;
     controller.text = widget.settings.monthsOldToDelete.toString();
     deleteWithoutAsking = widget.settings.deleteWithoutAsking;
+    didAsk = widget.settings.didAsk;
     themeSeed = widget.settings.themeSeed;
     super.initState();
   }
@@ -203,10 +205,11 @@ class _SettingsContentState extends State<SettingsContent> {
                 onPressed: () {
                   if (!_submit()) return;
 
-                  var s = Settings(
+                  var s = UserSettings(
                       monthsOldToDelete: monthsOldToDelete,
                       deleteWithoutAsking: deleteWithoutAsking,
-                      themeSeed: themeSeed);
+                      themeSeed: themeSeed,
+                      didAsk: didAsk);
                   context.read<SettingsBloc>().add(
                         UpdateSettings(settings: s),
                       );

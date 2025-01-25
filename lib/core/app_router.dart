@@ -14,7 +14,7 @@ import 'package:schedule_app/app.dart';
 import 'package:schedule_app/features/settings/view/settings_screen.dart';
 import 'package:schedule_app/features/profile/view/profile_screen.dart';
 import 'package:schedule_app/root_screen.dart';
-import 'bloc/actions_appointments/actions_appointment_bloc.dart';
+import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 
 class AppRouter {
   static bool redirected = false;

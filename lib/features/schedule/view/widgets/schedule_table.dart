@@ -101,7 +101,6 @@ class _ScheduleTableState extends State<ScheduleTable> {
     super.initState();
     activeUser = widget.allEmployees[0];
     allTableAppos = widget.allAppontments;
-    // print
   }
 
   @override

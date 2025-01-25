@@ -7,11 +7,8 @@ import 'package:schedule_app/features/settings/view/widgets/color_picker_dialog.
 import 'package:schedule_app/features/settings/view/widgets/color_tile.dart';
 import 'package:schedule_app/features/settings/view/widgets/labeled_switch.dart';
 import 'package:schedule_app/features/settings/bloc/settings_bloc.dart';
-
 import 'package:schedule_app/core/models/settings.dart';
 import 'package:schedule_app/features/settings/view/widgets/settings_content.dart';
-
-import '../../../core/utils/snackbar_utils.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

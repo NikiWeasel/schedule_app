@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:schedule_app/core/bloc/actions_appointments//actions_appointment_bloc.dart';
+import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.dart';
 import 'package:schedule_app/core/models/employee.dart';
@@ -15,8 +15,6 @@ import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/core/utils/functions.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
-
-import '../../portfolio/bloc/actions_portfolio_photos_bloc.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({

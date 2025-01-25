@@ -6,13 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
-import 'package:schedule_app/core/constants/saloon_services.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';
 import 'package:schedule_app/features/schedule/view/widgets/service_button.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/models/regulation.dart';
-import 'employee_drop_down_button.dart';
+import 'package:schedule_app/features/schedule/view/widgets/editing_dialog/employee_drop_down_button.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
 
 class EditingDialog extends StatefulWidget {

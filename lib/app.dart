@@ -2,13 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'core/app_router.dart';
-import 'core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
-import 'core/widgets/splash_screen.dart';
-import 'features/authentication/view/login_screen.dart';
-import 'features/home/bloc/user_bloc.dart';
-import 'features/home/view/home_screen.dart';
-import 'features/schedule/bloc/all_employees_bloc.dart';
+import 'package:schedule_app/core/widgets/splash_screen.dart';
+import 'package:schedule_app/features/authentication/view/login_screen.dart';
 
 class App extends StatefulWidget {
   const App({super.key});

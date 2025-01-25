@@ -184,7 +184,6 @@ class _HomeLineChartState extends State<HomeLineChart> {
           DateTime(appo.date.year, appo.date.month, appo.date.day);
 
       List<String> serviceNames = appo.serviceName.split(' + ');
-      print(serviceNames);
 
       int totalCost = 0;
       for (var serviceName in serviceNames) {
@@ -211,7 +210,6 @@ class _HomeLineChartState extends State<HomeLineChart> {
         maxEarnings = dailyMax;
       }
     }
-    print(maxEarnings);
 
     // Округляем до кратного 5, если требуется
     return (maxEarnings / 100) % 5 == 0
@@ -235,8 +233,6 @@ class _HomeLineChartState extends State<HomeLineChart> {
     var maxAppos = getMaxAppointmentsPerDay(apposInRange).toDouble();
     var maxMoney =
         getMaxMoneyPerDay(apposInRange, widget.allRegulations).toDouble();
-
-    print(maxMoney);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

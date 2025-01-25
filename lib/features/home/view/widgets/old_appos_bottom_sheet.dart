@@ -7,11 +7,13 @@ class OldApposBottomSheet extends StatelessWidget {
       {super.key,
       required this.oldAppos,
       required this.onDeleteAllAppos,
-      required this.monthsOldToDelete});
+      required this.monthsOldToDelete,
+      required this.onChangeSettings});
 
   final List<Appointment> oldAppos;
   final int monthsOldToDelete;
   final void Function() onDeleteAllAppos;
+  final void Function() onChangeSettings;
 
   @override
   Widget build(BuildContext context) {
@@ -65,12 +67,24 @@ class OldApposBottomSheet extends StatelessWidget {
           const SizedBox(
             height: 16,
           ),
-          ElevatedButton(
-              onPressed: () {
-                onDeleteAllAppos();
-                Navigator.pop(context);
-              },
-              child: const Text('Удалить'))
+          Row(
+            children: [
+              ElevatedButton(
+                  onPressed: () {
+                    onDeleteAllAppos();
+                    onChangeSettings();
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Удалить')),
+              const Spacer(),
+              TextButton(
+                  onPressed: () {
+                    onChangeSettings();
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Не удалять в этом месяце'))
+            ],
+          ),
         ],
       ),
     );

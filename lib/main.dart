@@ -7,11 +7,11 @@ import 'package:schedule_app/core/bloc/fetch_regulations/fetch_regulations_bloc.
 import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'core/bloc/fetch_appointments/fetch_appointments_bloc.dart';
-import 'features/home/bloc/user_bloc.dart';
-import 'features/portfolio/bloc/actions_portfolio_photos_bloc.dart';
-import 'features/regulations/bloc/actions_regulations_bloc.dart';
-import 'features/schedule/bloc/all_employees_bloc.dart';
-import 'features/settings/bloc/settings_bloc.dart';
+import 'package:schedule_app/features/home/bloc/user_bloc.dart';
+import 'package:schedule_app/features/portfolio/bloc/actions_portfolio_photos_bloc.dart';
+import 'package:schedule_app/features/regulations/bloc/actions_regulations_bloc.dart';
+import 'package:schedule_app/features/schedule/bloc/all_employees_bloc.dart';
+import 'package:schedule_app/features/settings/bloc/settings_bloc.dart';
 import 'firebase_options.dart';
 import 'package:schedule_app/core/theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';

@@ -17,7 +17,7 @@ class FetchRegulationsBloc
 
   Future<void> _onFetchRegulationsData(
       FetchRegulationsData event, Emitter<FetchRegulationsState> emit) async {
-    print('bloc triggered');
+    // print('bloc triggered');
 
     emit(FetchRegulationsLoadingState());
 

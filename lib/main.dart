@@ -59,10 +59,7 @@ void main() async {
     ],
     child: BlocBuilder<SettingsBloc, SettingsState>(
       builder: (context, state) {
-        print('BlocBuilder');
         if (state is SettingsLoaded) {
-          print('BlocBuilder2');
-
           return MaterialApp.router(
             localizationsDelegates: const [
               GlobalMaterialLocalizations.delegate,

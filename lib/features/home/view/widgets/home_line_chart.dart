@@ -33,6 +33,7 @@ class _HomeLineChartState extends State<HomeLineChart> {
   List<Employee> selectedEmployee = [];
 
   bool isMoneyGraph = false;
+  bool isExpanded = false;
 
   // late List<Color> employeeColors;
   late Map<String, Color> colorsMap;
@@ -63,6 +64,12 @@ class _HomeLineChartState extends State<HomeLineChart> {
     selectedEmployee = allEmps;
 
     // super.initState();
+  }
+
+  void toggleExpansion() {
+    setState(() {
+      isExpanded = !isExpanded;
+    });
   }
 
   void toggleGraph() {
@@ -131,57 +138,82 @@ class _HomeLineChartState extends State<HomeLineChart> {
   }
 
   int getMaxAppointmentsPerDay(List<Appointment> appointments) {
-    Map<DateTime, int> appointmentsCountByDay = {};
+    Map<DateTime, List<String>> appointmentsByDay = {};
 
     for (var appo in appointments) {
       DateTime dateOnly =
           DateTime(appo.date.year, appo.date.month, appo.date.day);
-      if (!appointmentsCountByDay.containsKey(dateOnly)) {
-        appointmentsCountByDay[dateOnly] = 1;
-      } else {
-        appointmentsCountByDay[dateOnly] =
-            appointmentsCountByDay[dateOnly]! + 1;
+
+      // Если дата ещё не добавлена, создаём запись.
+      if (!appointmentsByDay.containsKey(dateOnly)) {
+        appointmentsByDay[dateOnly] = [];
       }
+      // Добавляем ID мастера для текущей даты.
+      appointmentsByDay[dateOnly]!.add(appo.masterId);
     }
-    return appointmentsCountByDay.values.isEmpty
-        ? 0
-        : appointmentsCountByDay.values.reduce((a, b) => a > b ? a : b);
+
+    // Считаем максимальное количество уникальных мастеров за день.
+
+    return appointmentsByDay.values
+        .map((list) => list.length) // Преобразуем списки в их длины
+        .reduce((a, b) => a > b ? a : b);
   }
 
   int nextMultipleOfFive(int value) {
     return (value + 4) ~/ 5 * 5;
   }
 
+  int getRegCost(String serviceName, List<Regulation> regs) {
+    for (var reg in regs) {
+      if (serviceName == reg.name) {
+        return reg.cost;
+      }
+    }
+    return 0;
+  }
+
   int getMaxMoneyPerDay(
       List<Appointment> appointments, List<Regulation> regList) {
-    Map<DateTime, int> appointmentsCountByDay = {};
+    Map<DateTime, Map<String, int>> earningsByDayAndMaster = {};
 
     for (var appo in appointments) {
       DateTime dateOnly =
           DateTime(appo.date.year, appo.date.month, appo.date.day);
-      if (!appointmentsCountByDay.containsKey(dateOnly)) {
-        appointmentsCountByDay[dateOnly] = regList
-            .where((element) => element.name == appo.serviceName)
-            .toList()
-            .single
-            .cost;
-      } else {
-        appointmentsCountByDay[dateOnly] = appointmentsCountByDay[dateOnly]! +
-            regList
-                .where((element) => element.name == appo.serviceName)
-                .toList()
-                .single
-                .cost;
+
+      List<String> serviceNames = appo.serviceName.split(' + ');
+      print(serviceNames);
+
+      int totalCost = 0;
+      for (var serviceName in serviceNames) {
+        totalCost = totalCost + getRegCost(serviceName, regList);
+      }
+
+      if (totalCost == 0) continue;
+
+      earningsByDayAndMaster.putIfAbsent(dateOnly, () => {});
+
+      earningsByDayAndMaster[dateOnly]!.update(
+        appo.masterId,
+        (value) => value + totalCost,
+        ifAbsent: () => totalCost,
+      );
+    }
+
+    int maxEarnings = 0;
+
+    for (var dailyEarnings in earningsByDayAndMaster.values) {
+      int dailyMax = dailyEarnings.values
+          .reduce((a, b) => a > b ? a : b); // Максимум среди мастеров за день
+      if (dailyMax > maxEarnings) {
+        maxEarnings = dailyMax;
       }
     }
-    var maxValue = appointmentsCountByDay.values.isEmpty
-        ? 0
-        : appointmentsCountByDay.values.reduce((a, b) => a > b ? a : b);
-    if ((maxValue / 100) % 5 == 0) {
-      return maxValue;
-    } else {
-      return nextMultipleOfFive(maxValue ~/ 100).toInt() * 100;
-    }
+    print(maxEarnings);
+
+    // Округляем до кратного 5, если требуется
+    return (maxEarnings / 100) % 5 == 0
+        ? maxEarnings
+        : nextMultipleOfFive(maxEarnings ~/ 100) * 100;
   }
 
   @override
@@ -201,8 +233,11 @@ class _HomeLineChartState extends State<HomeLineChart> {
     var maxMoney =
         getMaxMoneyPerDay(apposInRange, widget.allRegulations).toDouble();
 
+    print(maxMoney);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         Row(
           children: [
@@ -221,50 +256,63 @@ class _HomeLineChartState extends State<HomeLineChart> {
             ),
           ],
         ),
-        Stack(
-          children: [
-            Container(
-              // margin: const EdgeInsets.all(16.0),
-              height: 200,
+        Container(
+          // margin: const EdgeInsets.all(16.0),
+          height: isExpanded ? 470 : 270,
 
-              decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .primaryContainer
-                    .withOpacity(0.5),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16.0, right: 8, bottom: 8),
-                child: LineChart(
-                  isMoneyGraph
-                      ? getMoneyGraphData(
-                          apposInRange,
-                          selectedEmpList,
-                          widget.allRegulations,
-                          colorsMap,
-                          getDaysCount(dateTimeRange).toDouble(),
-                          maxMoney == 0 ? 3 : maxMoney)
-                      : getAppoGraphData(
-                          apposInRange,
-                          selectedEmpList,
-                          colorsMap,
-                          getDaysCount(dateTimeRange).toDouble(),
-                          maxAppos == 0 ? 3 : maxAppos + 1),
-                  duration: const Duration(milliseconds: 250),
+          decoration: BoxDecoration(
+            color:
+                Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 50,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: isMoneyGraph
+                            ? const Icon(Icons.monetization_on)
+                            : const Icon(Icons.production_quantity_limits),
+                        onPressed: toggleGraph,
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: isExpanded
+                            ? const Icon(Icons.keyboard_arrow_up_rounded)
+                            : const Icon(Icons.keyboard_arrow_down_rounded),
+                        onPressed: toggleExpansion,
+                      )
+                    ],
+                  ),
                 ),
-              ),
+                SizedBox(
+                  height: isExpanded ? 400 : 200,
+                  child: LineChart(
+                    isMoneyGraph
+                        ? getMoneyGraphData(
+                            apposInRange,
+                            selectedEmpList,
+                            widget.allRegulations,
+                            colorsMap,
+                            getDaysCount(dateTimeRange).toDouble(),
+                            maxMoney == 0 ? 3 : maxMoney)
+                        : getAppoGraphData(
+                            apposInRange,
+                            selectedEmpList,
+                            colorsMap,
+                            getDaysCount(dateTimeRange).toDouble(),
+                            maxAppos == 0 ? 3 : maxAppos + 1),
+                    duration: const Duration(milliseconds: 250),
+                  ),
+                ),
+              ],
             ),
-            Positioned(
-                top: 0,
-                right: 0,
-                child: IconButton(
-                  icon: isMoneyGraph
-                      ? const Icon(Icons.monetization_on)
-                      : const Icon(Icons.production_quantity_limits),
-                  onPressed: toggleGraph,
-                ))
-          ],
+          ),
         ),
         for (int i = 0; i < selectedEmployee.length; i++)
           ChartEmployeeTile(
@@ -384,11 +432,12 @@ class _HomeLineChartState extends State<HomeLineChart> {
   }
 
   List<LineChartBarData> getLineBarsData2(
-      List<Appointment> appos,
-      List<Employee> empList,
-      List<Regulation> regList,
-      Map<String, Color> colorsMap,
-      int length) {
+    List<Appointment> appos,
+    List<Employee> empList,
+    List<Regulation> regList,
+    Map<String, Color> colorsMap,
+    int length,
+  ) {
     Map<String, List<Appointment>> appointmentsByEmployee = {};
 
     for (var appo in appos) {
@@ -407,25 +456,33 @@ class _HomeLineChartState extends State<HomeLineChart> {
       List<FlSpot> spots = [];
       for (int i = 0; i < length; i++) {
         DateTime currentDay = dateTimeRange.start.add(Duration(days: i));
+
+        // Фильтруем `Appointment` для текущего дня
         var list = entry.value
             .where((a) =>
                 a.date.year == currentDay.year &&
                 a.date.month == currentDay.month &&
                 a.date.day == currentDay.day)
             .toList();
-        int count = 0;
-        for (var e in list) {
-          final sum = regList
-              .where((item) => item.name == e.serviceName) // Фильтруем элементы
-              .map((item) => item.cost) // Получаем список значений
-              .fold(0, (prev, value) => prev + value); //
-          print(sum);
-          // Складываем значения
-          count += sum;
-        }
-        // print(count);
 
-        spots.add(FlSpot(i.toDouble(), count.toDouble()));
+        int totalEarnings = 0;
+
+        for (var e in list) {
+          // Разделяем `serviceName` на отдельные услуги
+          List<String> serviceNames = e.serviceName.split(' + ');
+
+          // Считаем стоимость всех услуг для текущего `Appointment`
+          int sum = serviceNames.fold(0, (sum, serviceName) {
+            var regulation = regList.firstWhere(
+              (item) => item.name == serviceName,
+            );
+            return sum + regulation.cost;
+          });
+
+          totalEarnings += sum; // Добавляем стоимость текущего `Appointment`
+        }
+
+        spots.add(FlSpot(i.toDouble(), totalEarnings.toDouble()));
       }
 
       lineBars.add(LineChartBarData(

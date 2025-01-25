@@ -45,12 +45,12 @@ class RootScreen extends StatelessWidget {
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.business),
-          icon: Badge(child: Icon(Icons.business_outlined)),
+          icon: Icon(Icons.business_outlined),
           label: 'Услуги',
         ),
         NavigationDestination(
           selectedIcon: Icon(Icons.insert_drive_file),
-          icon: Badge(child: Icon(Icons.insert_drive_file_outlined)),
+          icon: Icon(Icons.insert_drive_file_outlined),
           label: 'Портфолио',
         ),
         NavigationDestination(

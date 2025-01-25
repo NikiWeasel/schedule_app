@@ -84,7 +84,6 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
                   appointment: Appointment(
                       clientName: appointment.clientName,
                       clientNumber: appointment.clientNumber,
-                      startTime: appointment.startTime,
                       duration: appointment.duration,
                       masterId: appointment.masterId,
                       appointmentId: appointment.appointmentId,

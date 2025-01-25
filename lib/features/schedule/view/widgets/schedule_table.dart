@@ -302,9 +302,8 @@ class _ScheduleTableState extends State<ScheduleTable> {
     return appointments
         .where((appointment) => appointment.masterId == masterId)
         .map((appointment) {
-      final startMinutes = (appointment.getStartTimeHours() - 10) * 60 +
-          appointment.getStartTimeMinutes() +
-          15;
+      final startMinutes =
+          (appointment.date.hour - 10) * 60 + appointment.date.minute + 15;
       final topOffset = startMinutes / 30 * timeSlotHeight;
       final height = appointment.duration / 30 * timeSlotHeight;
 

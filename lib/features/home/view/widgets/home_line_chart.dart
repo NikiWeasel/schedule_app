@@ -153,6 +153,9 @@ class _HomeLineChartState extends State<HomeLineChart> {
     }
 
     // Считаем максимальное количество уникальных мастеров за день.
+    if (appointments.isEmpty) {
+      return 0;
+    }
 
     return appointmentsByDay.values
         .map((list) => list.length) // Преобразуем списки в их длины

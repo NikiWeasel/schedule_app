@@ -5,7 +5,6 @@ class Appointment {
     required this.clientName,
     required this.clientNumber,
     required this.serviceName,
-    required this.startTime,
     required this.duration,
     required this.date,
   });
@@ -15,51 +14,36 @@ class Appointment {
   final String clientName;
   final String clientNumber;
   final String serviceName;
-  final int startTime;
   final int duration;
   final DateTime date;
 
-  int getStartTimeMinutes() {
-    double time = startTime / 60;
-    int hours = time.toInt();
-    int minutes = ((time - hours) * 60).round();
-    return minutes;
-  }
-
-  int getStartTimeHours() {
-    double time = startTime / 60;
-    int hours = time.toInt();
-    return hours;
-  }
-
   String getFormattedStartTime() {
-    double time = startTime.toDouble();
-    if (time >= 60) {
-      time = time / 60;
-    }
-
-    int hours = time.toInt();
-    int minutes = ((time - hours) * 60).toInt();
+    int hours = date.hour;
+    int minutes = date.minute;
 
     String formattedHours = hours.toString();
     String formattedMinutes = minutes.toString();
+
     if (formattedHours.length == 1) {
       formattedHours = '0$formattedHours';
     }
     if (formattedMinutes.length == 1) {
       formattedMinutes = '0$formattedMinutes';
     }
+
     return '$formattedHours:$formattedMinutes';
   }
 
   String getFormattedEndTime() {
-    double time = (startTime + duration).toDouble();
+    double time = duration.toDouble();
     if (time >= 60) {
       time = time / 60;
     }
+    Duration _duration = Duration(minutes: duration);
+    var endTime = date.add(_duration);
 
-    int hours = time.toInt();
-    int minutes = ((time - hours) * 60).toInt();
+    int hours = endTime.hour;
+    int minutes = endTime.minute;
 
     String formattedHours = hours.toString();
     String formattedMinutes = minutes.toString();

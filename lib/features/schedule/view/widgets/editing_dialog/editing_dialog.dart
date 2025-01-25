@@ -71,8 +71,8 @@ class _EditingDialogState extends State<EditingDialog> {
       numberController.text = widget.appointment!.clientNumber;
       nameController.text = widget.appointment!.clientName;
       selectedTime = TimeOfDay(
-          hour: widget.appointment!.getStartTimeHours(),
-          minute: widget.appointment!.getStartTimeMinutes());
+          hour: widget.appointment!.date.hour,
+          minute: widget.appointment!.date.minute);
       selectedDate = widget.appointment!.date;
       selectedServices = widget.appointment!.serviceName.split(' + ');
 
@@ -106,11 +106,14 @@ class _EditingDialogState extends State<EditingDialog> {
 
   bool isOverlapping(
       Appointment newAppointment, List<Appointment> appointments) {
-    var newEnd = newAppointment.startTime + newAppointment.duration;
-    var newStart = newAppointment.startTime;
+    var startTime =
+        (newAppointment.date.hour * 60) + newAppointment.date.minute;
+
+    var newEnd = startTime + newAppointment.duration;
+    var newStart = startTime;
 
     for (var appo in appointments) {
-      var start = appo.startTime;
+      var start = startTime;
       var end = start + appo.duration;
       // Проверка на пересечение
       if ((newStart > start && newStart < end) ||
@@ -124,8 +127,11 @@ class _EditingDialogState extends State<EditingDialog> {
   }
 
   bool isOverWorkingTime(Appointment newAppointment) {
-    var newEnd = newAppointment.startTime + newAppointment.duration;
-    var newStart = newAppointment.startTime;
+    var startTime =
+        (newAppointment.date.hour * 60) + newAppointment.date.minute;
+
+    var newEnd = startTime + newAppointment.duration;
+    var newStart = startTime;
     var start = 600;
     var end = 1200;
 
@@ -164,9 +170,8 @@ class _EditingDialogState extends State<EditingDialog> {
       clientName: enteredName,
       clientNumber: enteredNumber,
       serviceName: selectedServices.join(' + '),
-      startTime: timeToMin(selectedTime),
       duration: timeCounter,
-      date: selectedDate,
+      date: getDateTime(selectedDate, selectedTime),
     );
 
     if (widget.appointment == null) {
@@ -286,8 +291,10 @@ class _EditingDialogState extends State<EditingDialog> {
     }
   }
 
-  int timeToMin(TimeOfDay timeOfDay) {
-    return timeOfDay.hour * 60 + timeOfDay.minute;
+  DateTime getDateTime(DateTime date, TimeOfDay time) {
+    var newDate =
+        DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    return newDate;
   }
 
   void onEmpDropButtonChange(Employee emp) {

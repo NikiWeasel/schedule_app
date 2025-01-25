@@ -64,7 +64,6 @@ class ActionsAppointmentBloc
       'clientName': event.appointment.clientName,
       'clientNumber': event.appointment.clientNumber,
       'serviceName': event.appointment.serviceName,
-      'startTime': event.appointment.startTime,
       'duration': event.appointment.duration,
       'date': Timestamp.fromDate(event.appointment.date),
     });
@@ -80,7 +79,6 @@ class ActionsAppointmentBloc
       'clientName': event.appointment.clientName,
       'clientNumber': event.appointment.clientNumber,
       'serviceName': event.appointment.serviceName,
-      'startTime': event.appointment.startTime,
       'duration': event.appointment.duration,
       'date': Timestamp.fromDate(event.appointment.date),
     }).then((_) {

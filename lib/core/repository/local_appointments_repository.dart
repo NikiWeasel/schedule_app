@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/models/regulation.dart';
@@ -32,5 +33,31 @@ class LocalAppointmentsRepository {
           appointmentId: doc.id);
     }).toList();
     return allAppointments;
+  }
+
+  List<Appointment> addLocalAppointment(
+    List<Appointment> appos,
+    Appointment appointment,
+  ) {
+    return [...appos, appointment];
+  }
+
+  List<Appointment> deleteLocalAppointment(
+      List<Appointment> appos, Appointment appointment) {
+    return appos
+        .where(
+          (element) => element.appointmentId != appointment.appointmentId,
+        )
+        .toList();
+  }
+
+  List<Appointment> updateLocalAppointment(
+      List<Appointment> appos, Appointment appointment) {
+    var newAppos = appos
+        .where(
+          (element) => element.appointmentId != appointment.appointmentId,
+        )
+        .toList();
+    return [...newAppos, appointment];
   }
 }

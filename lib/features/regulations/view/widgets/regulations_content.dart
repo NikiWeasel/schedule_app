@@ -23,9 +23,6 @@ class RegulationsContent extends StatefulWidget {
 class _RegulationsContentState extends State<RegulationsContent> {
   late List<Regulation> regulationsList;
 
-  Regulation? _oldReg;
-  late Regulation _newReg;
-
   @override
   void initState() {
     regulationsList = widget.regList;
@@ -42,7 +39,6 @@ class _RegulationsContentState extends State<RegulationsContent> {
           context: context,
           builder: (context) => RegulationDialog(
                 regulation: reg,
-                editRegTable: setRegTableValues,
               ));
     } else {
       showTopSnackBar(context, 'Нельзя редактировать услуги');
@@ -61,35 +57,9 @@ class _RegulationsContentState extends State<RegulationsContent> {
               context
                   .read<ActionsRegulationsBloc>()
                   .add(DeleteRegulationEvent(regulation: reg));
-              deleteRegTable(reg);
               wasDismissed = false;
             }));
     return wasDismissed;
-  }
-
-  void editRegTable({Regulation? oldReg, required Regulation newReg}) {
-    if (oldReg == null) {
-      setState(() {
-        regulationsList.add(newReg);
-      });
-    } else {
-      setState(() {
-        var index = regulationsList.indexOf(oldReg);
-        regulationsList.removeAt(index);
-        regulationsList.insert(index, newReg);
-      });
-    }
-  }
-
-  void deleteRegTable(Regulation appo) {
-    setState(() {
-      regulationsList.remove(appo);
-    });
-  }
-
-  void setRegTableValues({Regulation? oldReg, required Regulation newReg}) {
-    _newReg = newReg;
-    _oldReg = oldReg;
   }
 
   @override
@@ -102,12 +72,10 @@ class _RegulationsContentState extends State<RegulationsContent> {
         }
         if (state is ActionsRegulationsLoadedState) {
           ScaffoldMessenger.of(context).clearSnackBars();
-          editRegTable(newReg: _newReg, oldReg: null);
           showTopSnackBar(context, 'Услуга загружена!');
         }
         if (state is ActionsRegulationsUpdatedState) {
           ScaffoldMessenger.of(context).clearSnackBars();
-          editRegTable(newReg: _newReg, oldReg: _oldReg);
           showTopSnackBar(context, 'Услуга обновлена!');
         }
         if (state is ActionsRegulationsDeletedState) {
@@ -174,7 +142,8 @@ class _RegulationsContentState extends State<RegulationsContent> {
                   showModalBottomSheet(
                       context: context,
                       builder: (context) => RegulationDialog(
-                          regulation: null, editRegTable: setRegTableValues));
+                            regulation: null,
+                          ));
                 },
                 child: const Icon(Icons.add),
               )

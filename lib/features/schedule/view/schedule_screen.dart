@@ -32,8 +32,6 @@ class ScheduleScreen extends StatefulWidget {
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
   DateTime currentDate = DateTime.now();
-  late void Function({Appointment? oldAppo, required Appointment newAppo})
-      editAppoTable;
 
   bool wasDialogCalled = false;
 
@@ -48,7 +46,6 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           return EditingDialog(
             curentDate: currentDate,
             appointment: null,
-            editAppoTable: (editAppoTable),
             employees: user.isAdmin ? employees : null,
             services: services,
           );
@@ -82,91 +79,105 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
   @override
   Widget build(BuildContext context) {
     // print(widget.value);
-    return BlocBuilder<LocalEmployeesBloc, LocalEmployeesState>(
-      builder: (context, allEmployeesState) {
-        return BlocBuilder<LocalRegulationsBloc, FetchRegulationsState>(
-          builder: (context, regulationsState) {
-            return BlocBuilder<LocalAppointmentsBloc, LocalAppointmentsState>(
-              builder: (context, allAppontmentsState) {
-                if ((allEmployeesState is LocalEmployeesLoaded &&
-                    allAppontmentsState is LocalAppointmentsLoaded &&
-                    regulationsState is LocalRegulationsLoadedState)) {
-                  var allMasters = allEmployeesState.employees;
-                  var masters = allMasters
-                      .where((e) => widget.user.employeeId != e.employeeId)
-                      .toList();
-                  masters.insert(0, widget.user);
+    return BlocListener<ActionsAppointmentBloc, ActionsAppointmentState>(
+      listener: (context, state) {
+        if (state is ActionsAppointmentLoadingState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Загрузка...');
+        }
+        if (state is ActionsAppointmentLoadedState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Запись сделана!');
 
-                  return Scaffold(
-                    appBar: AppBar(
-                      title: Text(formatDate(currentDate)),
-                      actions: [
-                        IconButton(
-                            onPressed: chooseDate,
-                            icon: const Icon(Icons.calendar_month_rounded)),
-                        IconButton(
-                          icon: const Icon(Icons.autorenew),
-                          onPressed: () {
-                            renew();
-                            print('renewed');
-                          },
-                        ),
-                      ],
-                    ),
-                    floatingActionButton: FloatingActionButton(
-                      onPressed: () {
-                        openCreateNewDialog(
-                            masters, widget.user, regulationsState.regulations);
-                      },
-                      child: const Icon(Icons.add),
-                    ),
-                    body: ScheduleTable(
-                      curentDate: currentDate,
-                      allEmployees: masters,
-                      allAppontments: allAppontmentsState.appointments,
-                      setEditAppoTable: (callback) {
-                        setState(() {
-                          editAppoTable = callback;
-                        });
-                        if (widget.showDialogImidiatly && !wasDialogCalled) {
-                          // WidgetsBinding.instance.addPostFrameCallback((_) {
+          context
+              .read<LocalAppointmentsBloc>()
+              .add(AddLocalAppointment(appointment: state.appo));
+        }
+        if (state is ActionsAppointmentUpdatedState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Запись обновлена!');
+
+          context
+              .read<LocalAppointmentsBloc>()
+              .add(UpdateLocalAppointment(appointment: state.appo));
+        }
+        if (state is ActionsAppointmentDeletedState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Запись удалена!');
+
+          context
+              .read<LocalAppointmentsBloc>()
+              .add(DeleteLocalAppointment(appointment: state.appos.single));
+        }
+
+        if (state is ActionsAppointmentErrorState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Произошла ошибка: ${state.error}');
+        }
+      },
+      child: BlocBuilder<LocalEmployeesBloc, LocalEmployeesState>(
+        builder: (context, allEmployeesState) {
+          return BlocBuilder<LocalRegulationsBloc, FetchRegulationsState>(
+            builder: (context, regulationsState) {
+              return BlocBuilder<LocalAppointmentsBloc, LocalAppointmentsState>(
+                builder: (context, allAppontmentsState) {
+                  if ((allEmployeesState is LocalEmployeesLoaded &&
+                      allAppontmentsState is LocalAppointmentsLoaded &&
+                      regulationsState is LocalRegulationsLoadedState)) {
+                    var allMasters = allEmployeesState.employees;
+                    var masters = allMasters
+                        .where((e) => widget.user.employeeId != e.employeeId)
+                        .toList();
+                    masters.insert(0, widget.user);
+
+                    return Scaffold(
+                      appBar: AppBar(
+                        title: Text(formatDate(currentDate)),
+                        actions: [
+                          IconButton(
+                              onPressed: chooseDate,
+                              icon: const Icon(Icons.calendar_month_rounded)),
+                          IconButton(
+                            icon: const Icon(Icons.autorenew),
+                            onPressed: () {
+                              renew();
+                              print('renewed');
+                            },
+                          ),
+                        ],
+                      ),
+                      floatingActionButton: FloatingActionButton(
+                        onPressed: () {
                           openCreateNewDialog(masters, widget.user,
                               regulationsState.regulations);
-                          setState(() {
-                            wasDialogCalled = true;
-                          });
-                          // });
-                        }
-                      },
+                        },
+                        child: const Icon(Icons.add),
+                      ),
+                      body: ScheduleTable(
+                        curentDate: currentDate,
+                        allEmployees: masters,
+                        allAppontments: allAppontmentsState.appointments,
+                      ),
+                    );
+                  }
+                  return Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Загрузка...'),
+                    ),
+                    floatingActionButton: FloatingActionButton(
+                      onPressed: () {},
+                      child: const Icon(Icons.add),
+                    ),
+                    body: const Center(
+                      child: CardCircularProgressIndicator(),
                     ),
                   );
-                }
-                return Scaffold(
-                  appBar: AppBar(
-                    title: Text(formatDate(currentDate)),
-                    actions: [
-                      IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.calendar_month_rounded)),
-                      IconButton(
-                        icon: const Icon(Icons.autorenew),
-                        onPressed: () {},
-                      ),
-                    ],
-                  ),
-                  floatingActionButton: FloatingActionButton(
-                    onPressed: () {},
-                    child: const Icon(Icons.add),
-                  ),
-                  body: const Center(
-                    child: CardCircularProgressIndicator(),
-                  ),
-                );
-              },
-            );
-          },
-        );
-      },
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

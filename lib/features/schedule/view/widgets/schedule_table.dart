@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/core/widgets/appo_dialog.dart';
 import 'package:schedule_app/core/widgets/employee_profile_widget.dart';
 import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart';
@@ -13,36 +14,28 @@ import 'package:schedule_app/core/utils/vibration.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 
 class ScheduleTable extends StatefulWidget {
-  const ScheduleTable(
-      {super.key,
-      required this.curentDate,
-      required this.allEmployees,
-      required this.allAppontments,
-      required this.setEditAppoTable});
+  const ScheduleTable({
+    super.key,
+    required this.curentDate,
+    required this.allEmployees,
+    required this.allAppontments,
+  });
 
   final DateTime curentDate;
   final List<Employee> allEmployees;
   final List<Appointment> allAppontments;
-  final void Function(
-          void Function({Appointment? oldAppo, required Appointment newAppo}))
-      setEditAppoTable;
 
   @override
   State<ScheduleTable> createState() => _ScheduleTableState();
 }
 
 class _ScheduleTableState extends State<ScheduleTable> {
-  Appointment? _oldAppo;
-  late Appointment _newAppo;
-  late Appointment _appoToDelete;
-
   final double timeSlotHeight =
       60.0; // Высота одного временного интервала (30 минут)
 
   final double timeSlotWidth = 210;
 
   late List<Appointment> tableAppos;
-  late List<Appointment> allTableAppos;
 
   late Employee activeUser;
 
@@ -53,40 +46,8 @@ class _ScheduleTableState extends State<ScheduleTable> {
           return OnHoldDialog(
             curentDate: widget.curentDate,
             appointment: appointment,
-            deleteAppoTable: setToDeleteAppoTableValue,
-            editAppoTable: setAppoTableValues,
           );
         });
-  }
-
-  void setToDeleteAppoTableValue(Appointment appo) {
-    _appoToDelete = appo;
-  }
-
-  void deleteAppoTable(Appointment appo) {
-    setState(() {
-      allTableAppos.remove(appo);
-    });
-  }
-
-  void setAppoTableValues(
-      {Appointment? oldAppo, required Appointment newAppo}) {
-    _newAppo = newAppo;
-    _oldAppo = oldAppo;
-  }
-
-  void editAppoTable({Appointment? oldAppo, required Appointment newAppo}) {
-    if (oldAppo == null) {
-      setState(() {
-        allTableAppos.add(newAppo);
-      });
-    } else {
-      setState(() {
-        var index = allTableAppos.indexOf(oldAppo);
-        allTableAppos.removeAt(index);
-        allTableAppos.insert(index, newAppo);
-      });
-    }
   }
 
   void showAppoDialog(Appointment appointment) {
@@ -100,85 +61,46 @@ class _ScheduleTableState extends State<ScheduleTable> {
   void initState() {
     super.initState();
     activeUser = widget.allEmployees[0];
-    allTableAppos = widget.allAppontments;
   }
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.setEditAppoTable(setAppoTableValues);
-    });
-
     var masters = widget.allEmployees;
-    // var masters = allMasters
-    //     .where((e) => widget.user.employeeId != e.employeeId)
-    //     .toList();
-    // masters.insert(0, widget.user);
 
-    tableAppos = allTableAppos
+    tableAppos = widget.allAppontments
         .where((appo) => (appo.date.year == widget.curentDate.year &&
             appo.date.month == widget.curentDate.month &&
             appo.date.day == widget.curentDate.day))
         .toList();
 
-    return BlocListener<ActionsAppointmentBloc, ActionsAppointmentState>(
-      listener: (context, state) {
-        if (state is ActionsAppointmentLoadingState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Загрузка...');
-        }
-        if (state is ActionsAppointmentLoadedState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Запись сделана!');
-          print(_newAppo);
-          editAppoTable(newAppo: _newAppo, oldAppo: null);
-        }
-        if (state is ActionsAppointmentUpdatedState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Запись обновлена!');
-          print(_newAppo);
-          editAppoTable(newAppo: _newAppo, oldAppo: _oldAppo);
-        }
-        if (state is ActionsAppointmentDeletedState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Запись удалена!');
-          deleteAppoTable(_appoToDelete);
-        }
-
-        if (state is ActionsAppointmentErrorState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Произошла ошибка: ${state.error}');
-        }
-      },
-      child: SingleChildScrollView(
-        child: IntrinsicHeight(
-          child: Row(
-            children: [
-              Row(
+    return SingleChildScrollView(
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            Row(
+              children: [
+                _buildTimeColumn(),
+                // ...masters.map((master) => _buildMasterColumn(master)),
+              ],
+            ),
+            Expanded(
+                child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Column(
                 children: [
-                  _buildTimeColumn(),
-                  // ...masters.map((master) => _buildMasterColumn(master)),
+                  IntrinsicWidth(child: _buildHeader(masters)),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        ...masters.map((masterName) => _buildMasterColumn(
+                            masterName.employeeId, tableAppos)),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-              Expanded(
-                  child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Column(
-                  children: [
-                    IntrinsicWidth(child: _buildHeader(masters)),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          ...masters.map((masterName) => _buildMasterColumn(
-                              masterName.employeeId, tableAppos)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ))
-            ],
-          ),
+            ))
+          ],
         ),
       ),
     );

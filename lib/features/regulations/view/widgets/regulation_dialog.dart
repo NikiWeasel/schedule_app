@@ -6,13 +6,12 @@ import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/features/regulations/bloc/actions_regulations_bloc.dart';
 
 class RegulationDialog extends StatefulWidget {
-  const RegulationDialog(
-      {super.key, required this.regulation, required this.editRegTable});
+  const RegulationDialog({
+    super.key,
+    required this.regulation,
+  });
 
   final Regulation? regulation;
-
-  final void Function({Regulation? oldReg, required Regulation newReg})
-      editRegTable;
 
   @override
   State<RegulationDialog> createState() => _RegulationDialogState();
@@ -222,12 +221,9 @@ class _RegulationDialogState extends State<RegulationDialog> {
                             completeEditing((newReg) {
                               context.read<ActionsRegulationsBloc>().add(
                                   UpdateRegulationEvent(regulation: newReg));
-                              widget.editRegTable(
-                                  newReg: newReg, oldReg: widget.regulation);
                             }, (newReg) {
                               context.read<ActionsRegulationsBloc>().add(
                                   CreateRegulationEvent(regulation: newReg));
-                              widget.editRegTable(newReg: newReg, oldReg: null);
                             });
                           },
                           child: const Text('Подтвердить'))

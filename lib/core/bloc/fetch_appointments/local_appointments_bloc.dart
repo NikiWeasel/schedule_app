@@ -16,6 +16,7 @@ part 'local_appointments_state.dart';
 class LocalAppointmentsBloc
     extends Bloc<LocalAppointmentsEvent, LocalAppointmentsState> {
   final LocalAppointmentsRepository localAppointmentsRepository;
+  List<Appointment> localAppos = [];
 
   LocalAppointmentsBloc(this.localAppointmentsRepository)
       : super(FetchAppointmentsInitial()) {
@@ -23,6 +24,46 @@ class LocalAppointmentsBloc
       emit(LocalAppointmentsLoading());
       try {
         var appos = await localAppointmentsRepository.fetchAppointmentsData();
+        localAppos = appos;
+        emit(LocalAppointmentsLoaded(appointments: appos));
+      } catch (e) {
+        emit(LocalAppointmentsError(errorMessage: e.toString()));
+      }
+    });
+
+    on<AddLocalAppointment>((event, emit) async {
+      emit(LocalAppointmentsLoading());
+      try {
+        var appos = localAppointmentsRepository.addLocalAppointment(
+            localAppos, event.appointment);
+        localAppos = appos;
+
+        emit(LocalAppointmentsLoaded(appointments: appos));
+      } catch (e) {
+        emit(LocalAppointmentsError(errorMessage: e.toString()));
+      }
+    });
+
+    on<UpdateLocalAppointment>((event, emit) async {
+      emit(LocalAppointmentsLoading());
+      try {
+        var appos = localAppointmentsRepository.updateLocalAppointment(
+            localAppos, event.appointment);
+        localAppos = appos;
+
+        emit(LocalAppointmentsLoaded(appointments: appos));
+      } catch (e) {
+        emit(LocalAppointmentsError(errorMessage: e.toString()));
+      }
+    });
+
+    on<DeleteLocalAppointment>((event, emit) async {
+      emit(LocalAppointmentsLoading());
+      try {
+        var appos = localAppointmentsRepository.deleteLocalAppointment(
+            localAppos, event.appointment);
+        localAppos = appos;
+        
         emit(LocalAppointmentsLoaded(appointments: appos));
       } catch (e) {
         emit(LocalAppointmentsError(errorMessage: e.toString()));

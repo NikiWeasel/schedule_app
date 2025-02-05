@@ -43,15 +43,18 @@ void main() async {
   final LocalPortfolioPhotosRepository fetchDataRepository =
       LocalPortfolioPhotosRepository(
           firebaseAuth: firebaseAuth, firebaseStorage: firebaseStorage);
+
   final LocalEmployeesRepository localEmployeesRepository =
       LocalEmployeesRepository(
     firebaseFirestore: firebaseFirestore,
   );
+
   final LocalAppointmentsRepository localAppointmentsRepository =
       LocalAppointmentsRepository(
           firebaseFirestore: firebaseFirestore,
           firebaseAuth: firebaseAuth,
           firebaseStorage: firebaseStorage);
+
   final LocalRegulationsRepository localRegulationsRepository =
       LocalRegulationsRepository(
     firebaseFirestore: firebaseFirestore,
@@ -59,14 +62,18 @@ void main() async {
 
   final userRepository = UserRepository(
       firebaseFirestore: firebaseFirestore, firebaseAuth: firebaseAuth);
+
   final actionsRegulationsRepository = ActionsRegulationsRepository(
     firebaseFirestore: firebaseFirestore,
   );
+
   final actionsAppointmentRepository = ActionsAppointmentRepository(
     firebaseFirestore: firebaseFirestore,
   );
+
   final actionsPortfolioPhotosRepository = ActionsPortfolioPhotosRepository(
       firebaseAuth: firebaseAuth, firebaseStorage: firebaseStorage);
+
   final settingsRepository = SettingsRepository();
 
   runApp(MultiBlocProvider(

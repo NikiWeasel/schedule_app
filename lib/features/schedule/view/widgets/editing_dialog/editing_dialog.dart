@@ -19,14 +19,12 @@ class EditingDialog extends StatefulWidget {
       {super.key,
       this.appointment,
       required this.curentDate,
-      required this.editAppoTable,
       required this.employees,
       required this.services});
 
   // final bool isEditing;
   final DateTime curentDate;
-  final void Function({Appointment? oldAppo, required Appointment newAppo})
-      editAppoTable;
+
   Appointment? appointment;
   final Map<String, int> services;
   final List<Employee>? employees;
@@ -194,7 +192,6 @@ class _EditingDialogState extends State<EditingDialog> {
       }
 
       createAppo(appointment);
-      widget.editAppoTable(newAppo: appointment);
       Navigator.pop(context);
     } else {
       appointment.appointmentId = widget.appointment!.appointmentId;
@@ -217,7 +214,6 @@ class _EditingDialogState extends State<EditingDialog> {
       }
 
       updateAppo(appointment);
-      widget.editAppoTable(oldAppo: widget.appointment!, newAppo: appointment);
       Navigator.pop(context);
     }
   }

@@ -20,8 +20,8 @@ import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/utils/old_appo_removal.dart';
 import 'package:schedule_app/features/settings/bloc/settings_bloc.dart';
-
 import 'package:schedule_app/main.dart';
+import 'package:schedule_app/core/utils/snackbar_utils.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

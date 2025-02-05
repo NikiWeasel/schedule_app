@@ -21,7 +21,7 @@ class ActionsAppointmentBloc
       emit(ActionsAppointmentLoadingState());
       try {
         await actionsAppointmentRepository.createAppointment(event);
-        emit(ActionsAppointmentLoadedState());
+        emit(ActionsAppointmentLoadedState(appo: event.appointment));
       } catch (e) {
         emit(ActionsAppointmentErrorState(error: e.toString()));
       }
@@ -32,7 +32,7 @@ class ActionsAppointmentBloc
       emit(ActionsAppointmentLoadingState());
       try {
         await actionsAppointmentRepository.deleteAppointment(event);
-        emit(ActionsAppointmentDeletedState());
+        emit(ActionsAppointmentDeletedState(appos: [event.appointment]));
       } catch (e) {
         emit(ActionsAppointmentErrorState(error: e.toString()));
       }
@@ -42,7 +42,7 @@ class ActionsAppointmentBloc
       emit(ActionsAppointmentLoadingState());
       try {
         await actionsAppointmentRepository.deleteAllAppointments(event);
-        emit(ActionsAppointmentDeletedState());
+        emit(ActionsAppointmentDeletedState(appos: event.appointments));
       } catch (e) {
         emit(ActionsAppointmentErrorState(error: e.toString()));
       }
@@ -52,7 +52,7 @@ class ActionsAppointmentBloc
       emit(ActionsAppointmentLoadingState());
       try {
         await actionsAppointmentRepository.updateAppointment(event);
-        emit(ActionsAppointmentUpdatedState());
+        emit(ActionsAppointmentUpdatedState(appo: event.appointment));
       } catch (e) {
         emit(ActionsAppointmentErrorState(error: e.toString()));
       }

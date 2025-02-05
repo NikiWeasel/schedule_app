@@ -18,15 +18,10 @@ class OnHoldDialog extends StatelessWidget {
     super.key,
     required this.appointment,
     required this.curentDate,
-    required this.deleteAppoTable,
-    required this.editAppoTable,
   });
 
   final Appointment appointment;
   final DateTime curentDate;
-  final void Function(Appointment appo) deleteAppoTable;
-  final void Function({Appointment? oldAppo, required Appointment newAppo})
-      editAppoTable;
 
   void onEdit(
       BuildContext context, Appointment appointment, List<Regulation> regList) {
@@ -41,7 +36,6 @@ class OnHoldDialog extends StatelessWidget {
           return EditingDialog(
             curentDate: curentDate,
             appointment: appointment,
-            editAppoTable: editAppoTable,
             employees: null,
             services: services,
           );
@@ -56,7 +50,6 @@ class OnHoldDialog extends StatelessWidget {
             content: 'Запись будет удалена навсегда.',
             onConfirm: () {
               deleteAppointment();
-              deleteAppoTable(appointment);
             }));
   }
 

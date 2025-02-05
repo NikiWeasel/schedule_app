@@ -20,17 +20,6 @@ class PortfolioContent extends StatefulWidget {
 }
 
 class _PortfolioContentState extends State<PortfolioContent> {
-  late List<String> imageUrlList;
-
-  late String _newUrl;
-  late String _urlToDelete;
-
-  @override
-  void initState() {
-    imageUrlList = widget.imageUrlList;
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     final _key = GlobalKey<ExpandableFabState>();
@@ -42,26 +31,6 @@ class _PortfolioContentState extends State<PortfolioContent> {
         debugPrint('isOpen:${state.isOpen}');
         state.toggle();
       }
-    }
-
-    setNewUrlValue(String url) {
-      _newUrl = url;
-    }
-
-    setUrlToDeleteValue(String url) {
-      _urlToDelete = url;
-    }
-
-    addUrl(String url) {
-      setState(() {
-        imageUrlList.add(url);
-      });
-    }
-
-    void deleteUrl(String url) {
-      setState(() {
-        imageUrlList.remove(url);
-      });
     }
 
     void pickImageFromCam(void Function(File imageFile) addImage) async {
@@ -131,7 +100,6 @@ class _PortfolioContentState extends State<PortfolioContent> {
                         onLongPress: () {
                           showConfirmDialog(() {
                             deleteImage(item);
-                            setUrlToDeleteValue(item);
                           });
                         },
                         child: Image.network(
@@ -169,87 +137,62 @@ class _PortfolioContentState extends State<PortfolioContent> {
           .toList();
     }
 
-    return BlocListener<ActionsPortfolioPhotosBloc,
-        ActionsPortfolioPhotosState>(
-      listener: (context, state) {
-        if (state is ActionsPortfolioPhotosLoadingState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Загрузка...');
-        }
-        if (state is ActionsPortfolioPhotosLoadedState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Фото сохранено!');
-          addUrl(state.url);
-        }
-        if (state is ActionsPortfolioPhotosDeletedState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Фото удалено!');
-          deleteUrl(_urlToDelete);
-        }
-
-        if (state is ActionsPortfolioPhotosErrorState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Произошла ошибка: ${state.error}');
-        }
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Портфолио'),
-            actions: [
-              IconButton(onPressed: renew, icon: const Icon(Icons.autorenew))
-            ],
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Портфолио'),
+          actions: [
+            IconButton(onPressed: renew, icon: const Icon(Icons.autorenew))
+          ],
+        ),
+        body: widget.imageUrlList.isNotEmpty
+            ? SingleChildScrollView(
+                child: CarouselWidget(
+                  imageSliders:
+                      getWidgetImageList(widget.imageUrlList, (imageUrl) {
+                    context
+                        .read<ActionsPortfolioPhotosBloc>()
+                        .add(DeletePortfolioPhotoEvent(imageUrl: imageUrl));
+                  }),
+                  autoPlay: autoPlay,
+                ),
+              )
+            : const Center(child: Text('Пока ничего.')),
+        floatingActionButtonLocation: ExpandableFab.location,
+        floatingActionButton: ExpandableFab(
+          key: _key,
+          type: ExpandableFabType.up,
+          childrenAnimation: ExpandableFabAnimation.none,
+          distance: 70,
+          overlayStyle: ExpandableFabOverlayStyle(
+            color: Colors.black.withOpacity(0.5),
           ),
-          body: imageUrlList.isNotEmpty
-              ? SingleChildScrollView(
-                  child: CarouselWidget(
-                    imageSliders: getWidgetImageList(imageUrlList, (imageUrl) {
-                      context
-                          .read<ActionsPortfolioPhotosBloc>()
-                          .add(DeletePortfolioPhotoEvent(imageUrl: imageUrl));
-                    }),
-                    autoPlay: autoPlay,
-                  ),
-                )
-              : const Center(child: Text('Пока ничего.')),
-          floatingActionButtonLocation: ExpandableFab.location,
-          floatingActionButton: ExpandableFab(
-            key: _key,
-            type: ExpandableFabType.up,
-            childrenAnimation: ExpandableFabAnimation.none,
-            distance: 70,
-            overlayStyle: ExpandableFabOverlayStyle(
-              color: Colors.black.withOpacity(0.5),
+          openButtonBuilder: RotateFloatingActionButtonBuilder(
+            child: const Icon(Icons.add),
+          ),
+          children: [
+            FloatingActionButton.small(
+              heroTag: null,
+              child: const Icon(Icons.photo_sharp),
+              onPressed: () {
+                pickImageFromGal((File imageFile) {
+                  context
+                      .read<ActionsPortfolioPhotosBloc>()
+                      .add(CreatePortfolioPhotoEvent(imageFile: imageFile));
+                });
+              },
             ),
-            openButtonBuilder: RotateFloatingActionButtonBuilder(
-              child: const Icon(Icons.add),
+            FloatingActionButton.small(
+              heroTag: null,
+              child: const Icon(Icons.camera),
+              onPressed: () {
+                pickImageFromCam((File imageFile) {
+                  context
+                      .read<ActionsPortfolioPhotosBloc>()
+                      .add(CreatePortfolioPhotoEvent(imageFile: imageFile));
+                });
+              },
             ),
-            children: [
-              FloatingActionButton.small(
-                heroTag: null,
-                child: const Icon(Icons.photo_sharp),
-                onPressed: () {
-                  pickImageFromGal((File imageFile) {
-                    context
-                        .read<ActionsPortfolioPhotosBloc>()
-                        .add(CreatePortfolioPhotoEvent(imageFile: imageFile));
-                    setNewUrlValue(imageFile.path);
-                  });
-                },
-              ),
-              FloatingActionButton.small(
-                heroTag: null,
-                child: const Icon(Icons.camera),
-                onPressed: () {
-                  pickImageFromCam((File imageFile) {
-                    context
-                        .read<ActionsPortfolioPhotosBloc>()
-                        .add(CreatePortfolioPhotoEvent(imageFile: imageFile));
-                    setNewUrlValue(imageFile.path);
-                  });
-                },
-              ),
-            ],
-          )),
-    );
+          ],
+        ));
   }
 }

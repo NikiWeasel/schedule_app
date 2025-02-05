@@ -31,7 +31,7 @@ class ActionsPortfolioPhotosBloc
       emit(ActionsPortfolioPhotosLoadingState());
       try {
         await actionsPortfolioPhotosRepository.deletePhoto(event);
-        emit(ActionsPortfolioPhotosDeletedState());
+        emit(ActionsPortfolioPhotosDeletedState(url: event.imageUrl));
       } catch (e) {
         emit(ActionsPortfolioPhotosErrorState(error: e.toString()));
       }

@@ -23,9 +23,8 @@ class LocalAppointmentsBloc
     on<FetchAppointmentsData>((event, emit) async {
       emit(LocalAppointmentsLoading());
       try {
-        var appos = await localAppointmentsRepository.fetchAppointmentsData();
-        localAppos = appos;
-        emit(LocalAppointmentsLoaded(appointments: appos));
+        localAppos = await localAppointmentsRepository.fetchAppointmentsData();
+        emit(LocalAppointmentsLoaded(appointments: localAppos));
       } catch (e) {
         emit(LocalAppointmentsError(errorMessage: e.toString()));
       }
@@ -34,11 +33,10 @@ class LocalAppointmentsBloc
     on<AddLocalAppointment>((event, emit) async {
       emit(LocalAppointmentsLoading());
       try {
-        var appos = localAppointmentsRepository.addLocalAppointment(
+        localAppos = localAppointmentsRepository.addLocalAppointment(
             localAppos, event.appointment);
-        localAppos = appos;
 
-        emit(LocalAppointmentsLoaded(appointments: appos));
+        emit(LocalAppointmentsLoaded(appointments: localAppos));
       } catch (e) {
         emit(LocalAppointmentsError(errorMessage: e.toString()));
       }
@@ -47,11 +45,10 @@ class LocalAppointmentsBloc
     on<UpdateLocalAppointment>((event, emit) async {
       emit(LocalAppointmentsLoading());
       try {
-        var appos = localAppointmentsRepository.updateLocalAppointment(
+        localAppos = localAppointmentsRepository.updateLocalAppointment(
             localAppos, event.appointment);
-        localAppos = appos;
 
-        emit(LocalAppointmentsLoaded(appointments: appos));
+        emit(LocalAppointmentsLoaded(appointments: localAppos));
       } catch (e) {
         emit(LocalAppointmentsError(errorMessage: e.toString()));
       }
@@ -60,11 +57,10 @@ class LocalAppointmentsBloc
     on<DeleteLocalAppointment>((event, emit) async {
       emit(LocalAppointmentsLoading());
       try {
-        var appos = localAppointmentsRepository.deleteLocalAppointment(
+        localAppos = localAppointmentsRepository.deleteLocalAppointment(
             localAppos, event.appointment);
-        localAppos = appos;
-        
-        emit(LocalAppointmentsLoaded(appointments: appos));
+
+        emit(LocalAppointmentsLoaded(appointments: localAppos));
       } catch (e) {
         emit(LocalAppointmentsError(errorMessage: e.toString()));
       }

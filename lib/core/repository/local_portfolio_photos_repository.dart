@@ -28,4 +28,19 @@ class LocalPortfolioPhotosRepository {
       listResult.items.map((item) async => await item.getDownloadURL()),
     );
   }
+
+  List<String> addLocalPortfolioPhoto(
+    List<String> urls,
+    String imageUrl,
+  ) {
+    return [...urls, imageUrl];
+  }
+
+  List<String> deleteLocalPortfolioPhoto(
+    List<String> urls,
+    String imageUrl,
+  ) {
+    urls.remove(imageUrl);
+    return urls;
+  }
 }

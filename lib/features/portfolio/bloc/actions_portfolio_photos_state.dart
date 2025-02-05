@@ -16,7 +16,11 @@ final class ActionsPortfolioPhotosLoadedState
 }
 
 final class ActionsPortfolioPhotosDeletedState
-    extends ActionsPortfolioPhotosState {}
+    extends ActionsPortfolioPhotosState {
+  final String url;
+
+  ActionsPortfolioPhotosDeletedState({required this.url});
+}
 
 final class ActionsPortfolioPhotosErrorState
     extends ActionsPortfolioPhotosState {

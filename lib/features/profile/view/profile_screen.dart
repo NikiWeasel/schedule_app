@@ -37,7 +37,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       listener: (context, state) {
         if (state is UserLoading) {
           ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Загрузка...');
+          showTopSnackBar(context, 'Загрузка...',
+              duration: const Duration(seconds: 60));
         }
         if (state is UserLoaded && state.isUpdated) {
           ScaffoldMessenger.of(context).clearSnackBars();
@@ -53,17 +54,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return BlocBuilder<LocalEmployeesBloc, LocalEmployeesState>(
               builder: (context, allEmployeesState) {
             {
-              // final allEmployeesState = context.read<AllEmployeesBloc>().state;
               List<Employee> emps = [];
               if (userState is UserLoaded) {
-                // emps = allEmployeesState.employees;
-
-                // final currentUser = emps
-                //     .where((e) =>
-                // e.employeeId == _instance.currentUser!.uid)
-                //     .toList()
-                //     .first;
-
                 Employee currentUser = (userState).user;
 
                 _content = EmployeeProfile(

@@ -56,7 +56,9 @@ class _EditingDialogState extends State<EditingDialog> {
 
   @override
   void initState() {
-    context.read<LocalAppointmentsBloc>().add(FetchAppointmentsData());
+    // context
+    //     .read<LocalAppointmentsBloc>()
+    //     .add(FetchAppointmentsData()); //TODO придумать что-нибудь получше
 
     selectedDate = widget.curentDate;
     selectedEmployee = widget.employees?[0];
@@ -77,6 +79,7 @@ class _EditingDialogState extends State<EditingDialog> {
 
       for (var element in selectedServices) {
         // addService(element);
+
         int numToAdd = widget.services[element]!;
         selectedServicesDuration.add(numToAdd);
         sum = sum + numToAdd;
@@ -103,18 +106,16 @@ class _EditingDialogState extends State<EditingDialog> {
 
   bool isOverlapping(
       Appointment newAppointment, List<Appointment> appointments) {
-    var startTime =
-        (newAppointment.date.hour * 60) + newAppointment.date.minute;
-
-    var newEnd = startTime + newAppointment.duration;
-    var newStart = startTime;
+    var newStart = (newAppointment.date.hour * 60) + newAppointment.date.minute;
+    var newEnd = newStart + newAppointment.duration;
 
     for (var appo in appointments) {
-      var start = startTime;
+      var start = (appo.date.hour * 60) + appo.date.minute;
       var end = start + appo.duration;
+
       // Проверка на пересечение
-      if ((newStart > start && newStart < end) ||
-          (newEnd > start && newEnd < end)) {
+      if ((newStart < end && newEnd > start) ||
+          (newStart == start && newEnd == end)) {
         if (appo.appointmentId != newAppointment.appointmentId) {
           return true; // Пересечение найдено
         }
@@ -179,9 +180,10 @@ class _EditingDialogState extends State<EditingDialog> {
       var activeUserAppos = appointments
           .where((appo) => appo.masterId == appointment.masterId)
           .toList();
-
       if (isOverlapping(appointment, activeUserAppos)) {
         print('overlap1');
+        print(appointment.date);
+        print(appointment.duration);
         showTopSnackBar(context, 'Пересечение с другой записью');
         return;
       }

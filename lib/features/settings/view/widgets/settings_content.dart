@@ -62,7 +62,7 @@ class _SettingsContentState extends State<SettingsContent> {
     var color = await showDialog(
         context: context,
         builder: (context) => ColorPickerDialog(
-              aciveColor: themeSeed,
+              activeColor: themeSeed,
             ));
     if (color == null) return;
     setState(() {

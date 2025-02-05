@@ -232,21 +232,33 @@ class _ScheduleTableState extends State<ScheduleTable> {
           top: topOffset,
           left: 0,
           right: 0,
-          child: AppointmentWidget(
-            height: height - 8,
-            appointment: appointment,
-            onHold: (holdAppointment) {
-              onHoldVibrate();
-              if (activeUser.isAdmin ||
-                  activeUser.employeeId == appointment.masterId) {
-                openEditingDialog(holdAppointment);
-              } else {
-                showTopSnackBar(context, 'Нельзя редактировать чужие записи');
-              }
-            },
-            onTap: (tapAppo) {
-              showAppoDialog(tapAppo);
-            },
+          child: Stack(
+            children: [
+              AppointmentWidget(
+                height: height - 8,
+                width: timeSlotWidth,
+                appointment: appointment,
+                onHold: (holdAppointment) {
+                  onHoldVibrate();
+                  if (activeUser.isAdmin ||
+                      activeUser.employeeId == appointment.masterId) {
+                    openEditingDialog(holdAppointment);
+                  } else {
+                    showTopSnackBar(
+                        context, 'Нельзя редактировать чужие записи');
+                  }
+                },
+                onTap: (tapAppo) {
+                  showAppoDialog(tapAppo);
+                },
+              ),
+              Positioned(
+                  top: 7,
+                  right: 7,
+                  child: Transform.scale(
+                      scale: 0.9,
+                      child: const IgnorePointer(child: Icon(Icons.zoom_in))))
+            ],
           ));
     }).toList();
   }

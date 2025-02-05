@@ -156,7 +156,11 @@ class _PortfolioContentState extends State<PortfolioContent> {
                   autoPlay: autoPlay,
                 ),
               )
-            : const Center(child: Text('Пока ничего.')),
+            : Center(
+                child: Text(
+                'Пока ничего.',
+                style: Theme.of(context).textTheme.titleLarge!,
+              )),
         floatingActionButtonLocation: ExpandableFab.location,
         floatingActionButton: ExpandableFab(
           key: _key,

@@ -83,7 +83,8 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
       listener: (context, state) {
         if (state is ActionsAppointmentLoadingState) {
           ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Загрузка...');
+          showTopSnackBar(context, 'Загрузка...',
+              duration: const Duration(seconds: 60));
         }
         if (state is ActionsAppointmentLoadedState) {
           ScaffoldMessenger.of(context).clearSnackBars();

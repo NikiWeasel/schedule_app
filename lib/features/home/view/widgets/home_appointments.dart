@@ -75,23 +75,19 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
           children: [
             const Padding(padding: EdgeInsets.only(left: 8)),
             for (var appointment in sortedAppointments)
-              ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: 200,
-                ),
-                child: AppointmentWidget(
-                  height: 100,
-                  appointment: Appointment(
-                      clientName: appointment.clientName,
-                      clientNumber: appointment.clientNumber,
-                      duration: appointment.duration,
-                      masterId: appointment.masterId,
-                      appointmentId: appointment.appointmentId,
-                      serviceName: appointment.serviceName,
-                      date: appointment.date),
-                  onHold: (appo) {},
-                  onTap: (appo) {},
-                ),
+              AppointmentWidget(
+                height: 100,
+                appointment: Appointment(
+                    clientName: appointment.clientName,
+                    clientNumber: appointment.clientNumber,
+                    duration: appointment.duration,
+                    masterId: appointment.masterId,
+                    appointmentId: appointment.appointmentId,
+                    serviceName: appointment.serviceName,
+                    date: appointment.date),
+                onHold: (appo) {},
+                onTap: (appo) {},
+                width: 200,
               ),
             const Padding(padding: EdgeInsets.only(left: 8)),
             Container(

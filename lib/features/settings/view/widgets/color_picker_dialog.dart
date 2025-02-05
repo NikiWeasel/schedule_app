@@ -9,9 +9,9 @@ final _colorList = [
 ];
 
 class ColorPickerDialog extends StatefulWidget {
-  const ColorPickerDialog({super.key, required this.aciveColor});
+  const ColorPickerDialog({super.key, required this.activeColor});
 
-  final int aciveColor;
+  final int activeColor;
 
   @override
   State<ColorPickerDialog> createState() => _ColorPickerDialogState();
@@ -31,14 +31,12 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
     // localIndex = widget.aciveIndex;
 
     boolList = List.generate(
-      3,
-      (index) {
-        if (index == localIndex) {
-          return true;
-        }
-        return false;
-      },
+      _colorList.length,
+      (index) => false,
     );
+    int index = _colorList.indexOf(widget.activeColor);
+    boolList[index] = true;
+
     super.initState();
   }
 

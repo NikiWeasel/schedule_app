@@ -9,9 +9,11 @@ class AppointmentWidget extends StatelessWidget {
       required this.height,
       required this.appointment,
       required this.onTap,
-      required this.onHold});
+      required this.onHold,
+      required this.width});
 
   final double height;
+  final double width;
   final Appointment appointment;
   final void Function(Appointment appointment) onHold;
   final void Function(Appointment appointment) onTap;
@@ -29,6 +31,7 @@ class AppointmentWidget extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.all(4.0),
         height: height,
+        width: width,
         decoration: BoxDecoration(
           color:
               Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
@@ -36,28 +39,17 @@ class AppointmentWidget extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(6.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${appointment.getFormattedStartTime()} — ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}',
-                overflow: TextOverflow.fade,
-              ),
-              height >= 60
-                  ? Text(
-                      '${appointment.clientName} ${appointment.clientNumber} \n${appointment.serviceName}',
-                      overflow: TextOverflow.fade,
-                      maxLines: 2,
-                    )
-                  : Text(
-                      '${appointment.clientName} ${appointment.clientNumber} ${appointment.serviceName}',
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
-                    ),
-              // Text(appointment.clientNumber, overflow: TextOverflow.fade),
-              // Text(appointment.serviceName, overflow: TextOverflow.fade),
-            ],
-          ),
+          child: height >= 60
+              ? Text(
+                  '${appointment.getFormattedStartTime()} — ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}\n${appointment.clientName} ${appointment.clientNumber} \n${appointment.serviceName}',
+                  overflow: TextOverflow.fade,
+                  maxLines: 3,
+                )
+              : Text(
+                  '${appointment.getFormattedStartTime()} — ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}\n${appointment.clientName} ${appointment.clientNumber} ${appointment.serviceName}',
+                  overflow: TextOverflow.fade,
+                  maxLines: 2,
+                ),
         ),
       ),
     );

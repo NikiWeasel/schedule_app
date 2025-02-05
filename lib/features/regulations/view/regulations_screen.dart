@@ -23,7 +23,8 @@ class RegulationsScreen extends StatelessWidget {
       listener: (context, state) {
         if (state is ActionsRegulationsLoadingState) {
           ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Загрузка...');
+          showTopSnackBar(context, 'Загрузка...',
+              duration: const Duration(seconds: 60));
         }
         if (state is ActionsRegulationsLoadedState) {
           ScaffoldMessenger.of(context).clearSnackBars();

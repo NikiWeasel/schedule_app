@@ -16,7 +16,7 @@ void showTopSnackBar(
   _vibrate();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      dismissDirection: DismissDirection.horizontal,
+      dismissDirection: DismissDirection.up,
       duration: duration ?? const Duration(milliseconds: 1500),
       backgroundColor: Theme.of(context).colorScheme.secondary,
       margin: EdgeInsets.only(

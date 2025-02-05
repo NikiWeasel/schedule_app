@@ -24,7 +24,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       listener: (context, state) {
         if (state is ActionsPortfolioPhotosLoadingState) {
           ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Загрузка...');
+          showTopSnackBar(context, 'Загрузка...',
+              duration: const Duration(seconds: 60));
         }
         if (state is ActionsPortfolioPhotosLoadedState) {
           ScaffoldMessenger.of(context).clearSnackBars();

@@ -21,14 +21,6 @@ class RegulationsContent extends StatefulWidget {
 }
 
 class _RegulationsContentState extends State<RegulationsContent> {
-  late List<Regulation> regulationsList;
-
-  @override
-  void initState() {
-    regulationsList = widget.regList;
-    super.initState();
-  }
-
   void renew() {
     context.read<LocalRegulationsBloc>().add(FetchRegulationsData());
   }
@@ -53,7 +45,6 @@ class _RegulationsContentState extends State<RegulationsContent> {
             title: 'Удалить услугу?',
             content: 'Услуга будет удалена навсегда.',
             onConfirm: () {
-              // delete();
               context
                   .read<ActionsRegulationsBloc>()
                   .add(DeleteRegulationEvent(regulation: reg));
@@ -64,91 +55,66 @@ class _RegulationsContentState extends State<RegulationsContent> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ActionsRegulationsBloc, ActionsRegulationsState>(
-      listener: (context, state) {
-        if (state is ActionsRegulationsLoadingState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Загрузка...');
-        }
-        if (state is ActionsRegulationsLoadedState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Услуга загружена!');
-        }
-        if (state is ActionsRegulationsUpdatedState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Услуга обновлена!');
-        }
-        if (state is ActionsRegulationsDeletedState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Услуга удалена!');
-        }
-        if (state is ActionsRegulationsErrorState) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Произошла ошибка: ${state.error}');
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Услуги'),
-          actions: [
-            IconButton(onPressed: renew, icon: const Icon(Icons.autorenew))
-          ],
-        ),
-        body: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          children: [
-            for (var reg in regulationsList)
-              Dismissible(
-                direction: DismissDirection.endToStart,
-                dismissThresholds: const {DismissDirection.endToStart: 0.5},
-                confirmDismiss: (dis) {
-                  return confirmDismiss(reg);
-                },
-                key: ValueKey<int>(regulationsList.indexOf(reg)),
-                background: Container(
-                  alignment: Alignment.centerRight,
-                  color: Theme.of(context).colorScheme.surface,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: Icon(
-                      Icons.delete_outline,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Услуги'),
+        actions: [
+          IconButton(onPressed: renew, icon: const Icon(Icons.autorenew))
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        children: [
+          for (var reg in widget.regList)
+            Dismissible(
+              direction: DismissDirection.endToStart,
+              dismissThresholds: const {DismissDirection.endToStart: 0.5},
+              confirmDismiss: (dis) {
+                return confirmDismiss(reg);
+              },
+              key: ValueKey<int>(widget.regList.indexOf(reg)),
+              background: Container(
+                alignment: Alignment.centerRight,
+                color: Theme.of(context).colorScheme.surface,
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: Icon(
+                    Icons.delete_outline,
+                    color: Theme.of(context).colorScheme.error,
                   ),
                 ),
-                onDismissed: (DismissDirection direction) {
-                  // context
-                  //     .read<ActionsRegulationsBloc>()
-                  //     .add(DeleteRegulationEvent(regulation: reg));
-                  // regulationsList.remove(reg);
+              ),
+              onDismissed: (DismissDirection direction) {
+                // context
+                //     .read<ActionsRegulationsBloc>()
+                //     .add(DeleteRegulationEvent(regulation: reg));
+              },
+              child: RegulationTile(
+                isAdmin: widget.isAdmin,
+                onLongPress: () {
+                  onLongPress(reg, widget.isAdmin);
                 },
-                child: RegulationTile(
-                  isAdmin: widget.isAdmin,
-                  onLongPress: () {
-                    onLongPress(reg, widget.isAdmin);
-                  },
-                  // onDelete: () {
-                  //   context.read<ActionsRegulationsBloc>().add(
-                  //       DeleteRegulationEvent(regulation: reg));
-                  // },
-                  regulation: reg,
-                ),
-              )
-          ],
-        ),
-        floatingActionButton: widget.isAdmin
-            ? FloatingActionButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                      context: context,
-                      builder: (context) => RegulationDialog(
-                            regulation: null,
-                          ));
-                },
-                child: const Icon(Icons.add),
-              )
-            : null,
+                // onDelete: () {
+                //   context.read<ActionsRegulationsBloc>().add(
+                //       DeleteRegulationEvent(regulation: reg));
+                // },
+                regulation: reg,
+              ),
+            )
+        ],
       ),
+      floatingActionButton: widget.isAdmin
+          ? FloatingActionButton(
+              onPressed: () {
+                showModalBottomSheet(
+                    context: context,
+                    builder: (context) => const RegulationDialog(
+                          regulation: null,
+                        ));
+              },
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }

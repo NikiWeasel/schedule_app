@@ -7,11 +7,23 @@ final class ActionsRegulationsInitialState extends ActionsRegulationsState {}
 
 final class ActionsRegulationsLoadingState extends ActionsRegulationsState {}
 
-final class ActionsRegulationsLoadedState extends ActionsRegulationsState {}
+final class ActionsRegulationsLoadedState extends ActionsRegulationsState {
+  final Regulation reg;
 
-final class ActionsRegulationsUpdatedState extends ActionsRegulationsState {}
+  ActionsRegulationsLoadedState({required this.reg});
+}
 
-final class ActionsRegulationsDeletedState extends ActionsRegulationsState {}
+final class ActionsRegulationsUpdatedState extends ActionsRegulationsState {
+  final Regulation reg;
+
+  ActionsRegulationsUpdatedState({required this.reg});
+}
+
+final class ActionsRegulationsDeletedState extends ActionsRegulationsState {
+  final Regulation reg;
+
+  ActionsRegulationsDeletedState({required this.reg});
+}
 
 final class ActionsRegulationsErrorState extends ActionsRegulationsState {
   final String error;

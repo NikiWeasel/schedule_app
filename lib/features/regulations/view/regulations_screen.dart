@@ -19,46 +19,80 @@ class RegulationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
-      builder: (context, userState) {
-        return BlocBuilder<ActionsRegulationsBloc, ActionsRegulationsState>(
-          builder: (context, actionsState) {
-            return BlocBuilder<LocalRegulationsBloc, FetchRegulationsState>(
-              builder: (context, regulationsState) {
-                if (regulationsState is LocalRegulationsLoadingState) {
+    return BlocListener<ActionsRegulationsBloc, ActionsRegulationsState>(
+      listener: (context, state) {
+        if (state is ActionsRegulationsLoadingState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Загрузка...');
+        }
+        if (state is ActionsRegulationsLoadedState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Услуга загружена!');
+
+          context
+              .read<LocalRegulationsBloc>()
+              .add(AddLocalRegulation(regulation: state.reg));
+        }
+        if (state is ActionsRegulationsUpdatedState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Услуга обновлена!');
+
+          context
+              .read<LocalRegulationsBloc>()
+              .add(UpdateLocalRegulation(regulation: state.reg));
+        }
+        if (state is ActionsRegulationsDeletedState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Услуга удалена!');
+
+          context
+              .read<LocalRegulationsBloc>()
+              .add(DeleteLocalRegulation(regulation: state.reg));
+        }
+        if (state is ActionsRegulationsErrorState) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          showTopSnackBar(context, 'Произошла ошибка: ${state.error}');
+        }
+      },
+      child: BlocBuilder<UserBloc, UserState>(
+        builder: (context, userState) {
+          return BlocBuilder<ActionsRegulationsBloc, ActionsRegulationsState>(
+            builder: (context, actionsState) {
+              return BlocBuilder<LocalRegulationsBloc, FetchRegulationsState>(
+                builder: (context, regulationsState) {
+                  if (regulationsState is LocalRegulationsLoadingState) {
+                    return const Center(
+                      child: CardCircularProgressIndicator(),
+                    );
+                  }
+                  if (regulationsState is LocalRegulationsLoadedState &&
+                      userState is UserLoaded) {
+                    var regList = regulationsState.regulations;
+                    bool isAdmin = userState.user.isAdmin;
+                    return RegulationsContent(
+                      regList: regList,
+                      isAdmin: isAdmin,
+                    );
+                  }
+                  if (regulationsState is LocalRegulationsErrorState) {
+                    return Center(
+                      child: Center(
+                          child: Text(
+                        'Error: ${regulationsState.errorMessage}',
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.error),
+                      )),
+                    );
+                  }
                   return const Center(
                     child: CardCircularProgressIndicator(),
                   );
-                }
-                if (regulationsState is LocalRegulationsLoadedState &&
-                    userState is UserLoaded) {
-                  var regList = regulationsState.regulations;
-                  bool isAdmin = userState.user.isAdmin;
-                  return RegulationsContent(
-                    regList: regList,
-                    isAdmin: isAdmin,
-                  );
-                }
-                if (regulationsState is LocalRegulationsErrorState) {
-                  return Center(
-                    child: Center(
-                        child: Text(
-                      'Error: ${regulationsState.errorMessage}',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge!
-                          .copyWith(color: Theme.of(context).colorScheme.error),
-                    )),
-                  );
-                }
-                return const Center(
-                  child: CardCircularProgressIndicator(),
-                );
-              },
-            );
-          },
-        );
-      },
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

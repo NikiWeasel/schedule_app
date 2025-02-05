@@ -27,4 +27,34 @@ class LocalRegulationsRepository {
     }).toList();
     return allRegs;
   }
+
+  List<Regulation> addLocalRegulation(
+    List<Regulation> regs,
+    Regulation regulation,
+  ) {
+    return [...regs, regulation];
+  }
+
+  List<Regulation> deleteLocalRegulation(
+    List<Regulation> regs,
+    Regulation regulation,
+  ) {
+    return regs
+        .where(
+          (element) => element.id != regulation.id,
+        )
+        .toList();
+  }
+
+  List<Regulation> updateLocalRegulation(
+    List<Regulation> regs,
+    Regulation regulation,
+  ) {
+    var newRegs = regs
+        .where(
+          (element) => element.id != regulation.id,
+        )
+        .toList();
+    return [...newRegs, regulation];
+  }
 }

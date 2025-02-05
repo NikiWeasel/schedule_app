@@ -19,7 +19,7 @@ class ActionsRegulationsBloc
       emit(ActionsRegulationsLoadingState());
       try {
         await actionsRegulationsRepository.createAppointment(event);
-        emit(ActionsRegulationsLoadedState());
+        emit(ActionsRegulationsLoadedState(reg: event.regulation));
       } catch (e) {
         emit(ActionsRegulationsErrorState(error: e.toString()));
       }
@@ -29,7 +29,7 @@ class ActionsRegulationsBloc
       emit(ActionsRegulationsLoadingState());
       try {
         await actionsRegulationsRepository.deleteAppointment(event);
-        emit(ActionsRegulationsDeletedState());
+        emit(ActionsRegulationsDeletedState(reg: event.regulation));
       } catch (e) {
         emit(ActionsRegulationsErrorState(error: e.toString()));
       }
@@ -39,7 +39,7 @@ class ActionsRegulationsBloc
       emit(ActionsRegulationsLoadingState());
       try {
         await actionsRegulationsRepository.updateAppointment(event);
-        emit(ActionsRegulationsUpdatedState());
+        emit(ActionsRegulationsUpdatedState(reg: event.regulation));
       } catch (e) {
         emit(ActionsRegulationsErrorState(error: e.toString()));
       }

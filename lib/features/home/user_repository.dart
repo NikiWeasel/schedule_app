@@ -54,33 +54,24 @@ class UserRepository {
     return fetchedUser;
   }
 
-  Future<void> updateUserData(UpdateUserData event) async {
-    // emit(UserLoading());
-    // try {
-    // Получаем текущего пользователя
+  Future<void> updateUserData(Employee employee) async {
     final user = firebaseAuth.currentUser;
     if (user == null) {
-      // emit(UserError(error: 'Пользователь не авторизован'));
       return;
     }
 
-    var id = event.employee.employeeId;
+    var id = employee.employeeId;
     // _firebaseFirestore.clearPersistence();
     firebaseFirestore.collection('users').doc(id).update({
-      'name': event.employee.name,
-      'surname': event.employee.surname,
-      'number': event.employee.number,
-      'description': event.employee.description,
-      'image_url': event.employee.imageUrl,
+      'name': employee.name,
+      'surname': employee.surname,
+      'number': employee.number,
+      'description': employee.description,
+      'image_url': employee.imageUrl,
     }).then((_) {
       debugPrint("Document successfully updated!");
     }).catchError((error) {
       debugPrint("Error updating document: $error");
     });
-
-    // emit(UserLoaded(user: fetchedUser));
-    // } catch (e) {
-    //   emit(UserError(error: e.toString()));
-    // }
   }
 }

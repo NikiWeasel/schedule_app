@@ -18,7 +18,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       emit(UserLoading());
       try {
         var employee = await userRepository.fetchUserData(event);
-        emit(UserLoaded(user: employee));
+        emit(UserLoaded(user: employee, isUpdated: false));
       } catch (e) {
         emit(UserError(error: e.toString()));
       }
@@ -27,8 +27,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<UpdateUserData>((event, emit) async {
       emit(UserLoading());
       try {
-        await userRepository.updateUserData(event);
-        emit(UserUpdated());
+        await userRepository.updateUserData(event.employee);
+        emit(UserLoaded(user: event.employee, isUpdated: true));
       } catch (e) {
         emit(UserError(error: e.toString()));
       }

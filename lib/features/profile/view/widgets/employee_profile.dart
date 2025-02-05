@@ -44,6 +44,10 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
         numberController.text == enteredNumber &&
         descriptionController.text == enteredDescription &&
         _selectedImage == null) {
+      print('Данные такие же');
+      setState(() {
+        _isReadOnly = true;
+      });
       return;
     }
 
@@ -89,10 +93,6 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
     descriptionController = TextEditingController()
       ..text = widget.employee.description;
 
-    enteredName = widget.employee.name;
-    enteredSurname = widget.employee.surname;
-    enteredNumber = widget.employee.number;
-    enteredDescription = widget.employee.description;
     super.initState();
   }
 
@@ -107,204 +107,185 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UserBloc, UserState>(
-      listener: (context, state) {
-        if (state is UserLoading) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Загрузка...');
-        }
-        // if (state is UserLoaded) {
-        //   ScaffoldMessenger.of(context).clearSnackBars();
-        //   showTopSnackBar(context, 'Запись сделана!');
-        // }
-        if (state is UserUpdated) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Профиль обновлен!');
-        }
-        // if (state is ActionsAppointmentDeletedState) {
-        //   ScaffoldMessenger.of(context).clearSnackBars();
-        //   showTopSnackBar(context, 'Запись удалена!');
-        // }
-        if (state is UserError) {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Произошла ошибка: ${state.error}');
-        }
-      },
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
+    enteredName = widget.employee.name;
+    enteredSurname = widget.employee.surname;
+    enteredNumber = widget.employee.number;
+    enteredDescription = widget.employee.description;
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      if (!_isReadOnly)
+                        UserImagePicker(
+                          child: NetworkImage(widget.employee.imageUrl),
+                          onPickedImage: (File pickedImage) {
+                            _selectedImage = pickedImage;
+                          },
+                        )
+                      else
+                        CircleAvatar(
+                          radius: 40,
+                          foregroundImage:
+                              NetworkImage(widget.employee.imageUrl),
+                          child: const Icon(
+                            Icons.person,
+                            size: 40,
+                          ),
+                        ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        readOnly: _isReadOnly,
+                        controller: nameController,
+                        decoration: InputDecoration(
+                            labelText: 'Имя',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            )),
+                        enableSuggestions: false,
+                        validator: (value) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              value.trim().length < 2 ||
+                              value.trim().length > 12) {
+                            return 'Некорректное имя';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          // _enteredName = value!;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        readOnly: _isReadOnly,
+                        controller: surnameController,
+                        decoration: InputDecoration(
+                            labelText: 'Фамилия',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            )),
+                        enableSuggestions: false,
+                        validator: (value) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              value.trim().length < 2 ||
+                              value.trim().length > 12) {
+                            return 'Некорректная фамилия';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          // _enteredSurname = value!;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        readOnly: _isReadOnly,
+                        controller: numberController,
+                        decoration: InputDecoration(
+                            labelText: 'Номер телефона',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            )),
+                        keyboardType: TextInputType.phone,
+                        maxLines: 1,
+                        validator: (value) {
+                          RegExp regex = RegExp(r'''''');
+                          if (value != null &&
+                              regex.hasMatch(value) &&
+                              value != '') {
+                            return null;
+                          }
+                          return 'Некорректный номер телефона';
+                        },
+                        onSaved: (value) {
+                          // _enteredNumber = value!;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      TextFormField(
+                        readOnly: _isReadOnly,
+                        controller: descriptionController,
+                        maxLines: 5,
+                        decoration: InputDecoration(
+                            labelText: 'Описание',
+                            alignLabelWithHint: true,
+                            // label: Align(
+                            //   child: Text('data'),
+                            // ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            )),
+                        validator: (value) {
+                          if (value == null || value.length > 150) {
+                            return 'Некорректное описание';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          // _enteredPassword = value!;
+                        },
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      if (widget.isAlwaysReadOnly == false)
                         if (!_isReadOnly)
-                          UserImagePicker(
-                            child: NetworkImage(widget.employee.imageUrl),
-                            onPickedImage: (File pickedImage) {
-                              _selectedImage = pickedImage;
+                          BlocBuilder<UserBloc, UserState>(
+                            builder: (context, state) {
+                              return state is UserLoading
+                                  ? ElevatedButton.icon(
+                                      label: const Text('Загрузка'),
+                                      onPressed: null,
+                                      icon: const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator()),
+                                    )
+                                  : ElevatedButton.icon(
+                                      icon: const Icon(Icons.save),
+                                      onPressed: () {
+                                        _submit((Employee employee) {
+                                          context.read<UserBloc>().add(
+                                                UpdateUserData(
+                                                    employee: employee),
+                                              );
+                                        });
+                                      },
+                                      label: const Text('Сохранить'));
                             },
                           )
                         else
-                          CircleAvatar(
-                            radius: 40,
-                            foregroundImage:
-                                NetworkImage(widget.employee.imageUrl),
-                            child: const Icon(
-                              Icons.person,
-                              size: 40,
-                            ),
-                          ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        TextFormField(
-                          readOnly: _isReadOnly,
-                          controller: nameController,
-                          decoration: InputDecoration(
-                              labelText: 'Имя',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              )),
-                          enableSuggestions: false,
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                value.trim().length < 2 ||
-                                value.trim().length > 12) {
-                              return 'Некорректное имя';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            // _enteredName = value!;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        TextFormField(
-                          readOnly: _isReadOnly,
-                          controller: surnameController,
-                          decoration: InputDecoration(
-                              labelText: 'Фамилия',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              )),
-                          enableSuggestions: false,
-                          validator: (value) {
-                            if (value == null ||
-                                value.isEmpty ||
-                                value.trim().length < 2 ||
-                                value.trim().length > 12) {
-                              return 'Некорректная фамилия';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            // _enteredSurname = value!;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        TextFormField(
-                          readOnly: _isReadOnly,
-                          controller: numberController,
-                          decoration: InputDecoration(
-                              labelText: 'Номер телефона',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              )),
-                          keyboardType: TextInputType.phone,
-                          maxLines: 1,
-                          validator: (value) {
-                            RegExp regex = RegExp(r'''''');
-                            if (value != null &&
-                                regex.hasMatch(value) &&
-                                value != '') {
-                              return null;
-                            }
-                            return 'Некорректный номер телефона';
-                          },
-                          onSaved: (value) {
-                            // _enteredNumber = value!;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        TextFormField(
-                          readOnly: _isReadOnly,
-                          controller: descriptionController,
-                          maxLines: 5,
-                          decoration: InputDecoration(
-                              labelText: 'Описание',
-                              alignLabelWithHint: true,
-                              // label: Align(
-                              //   child: Text('data'),
-                              // ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              )),
-                          validator: (value) {
-                            if (value == null || value.length > 150) {
-                              return 'Некорректное описание';
-                            }
-                            return null;
-                          },
-                          onSaved: (value) {
-                            // _enteredPassword = value!;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 15,
-                        ),
-                        if (widget.isAlwaysReadOnly == false)
-                          if (!_isReadOnly)
-                            BlocBuilder<UserBloc, UserState>(
-                              builder: (context, state) {
-                                return state is UserLoading
-                                    ? ElevatedButton.icon(
-                                        label: const Text('Загрузка'),
-                                        onPressed: null,
-                                        icon: const SizedBox(
-                                            height: 20,
-                                            width: 20,
-                                            child: CircularProgressIndicator()),
-                                      )
-                                    : ElevatedButton.icon(
-                                        icon: const Icon(Icons.save),
-                                        onPressed: () {
-                                          _submit((Employee employee) {
-                                            context.read<UserBloc>().add(
-                                                  UpdateUserData(
-                                                      employee: employee),
-                                                );
-                                          });
-                                        },
-                                        label: const Text('Сохранить'));
-                              },
-                            )
-                          else
-                            ElevatedButton.icon(
-                              icon: const Icon(Icons.edit),
-                              onPressed: _toggleReadOnly,
-                              label: const Text('Изменить'),
-                            )
-                      ],
-                    ),
+                          ElevatedButton.icon(
+                            icon: const Icon(Icons.edit),
+                            onPressed: _toggleReadOnly,
+                            label: const Text('Изменить'),
+                          )
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

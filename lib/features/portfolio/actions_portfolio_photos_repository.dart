@@ -23,8 +23,8 @@ class ActionsPortfolioPhotosRepository {
     final storageRef = FirebaseStorage.instance
         .ref()
         .child('employee_portfolio_images')
-        .child(employeeId!)
-        .child('$name.jpg');
+        // .child(employeeId!)
+        .child('$employeeId $name.jpg');
 
     await storageRef.putFile(event.imageFile);
 

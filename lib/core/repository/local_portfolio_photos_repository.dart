@@ -18,15 +18,18 @@ class LocalPortfolioPhotosRepository {
       throw Exception('User: null');
     }
 
-    final storageRef = firebaseStorage
-        .ref()
-        .child('employee_portfolio_images')
-        .child(employeeId);
+    final storageRef = firebaseStorage.ref().child('employee_portfolio_images');
+    // .child(employeeId);
     final listResult = await storageRef.listAll();
 
-    return await Future.wait(
+    var allUrls = await Future.wait(
       listResult.items.map((item) async => await item.getDownloadURL()),
     );
+    return allUrls
+        .where(
+          (element) => element.contains(employeeId),
+        )
+        .toList();
   }
 
   List<String> addLocalPortfolioPhoto(

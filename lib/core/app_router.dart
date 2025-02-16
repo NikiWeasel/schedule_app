@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'package:schedule_app/features/authentication/view/login_screen.dart';
+import 'package:schedule_app/features/categories/view/categories_screen.dart';
 import 'package:schedule_app/features/home/view/home_screen.dart';
 import 'package:schedule_app/features/notifications/view/notifications_screen.dart';
 import 'package:schedule_app/features/portfolio/view/portfolio_screen.dart';
@@ -58,6 +59,12 @@ class AppRouter {
           path: '/app',
           builder: (context, state) {
             return const App();
+          },
+        ),
+        GoRoute(
+          path: '/categories',
+          builder: (context, state) {
+            return const CategoriesScreen();
           },
         ),
         GoRoute(

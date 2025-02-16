@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/features/regulations/view/widgets/regulation_dialog.dart';
 import 'package:schedule_app/features/regulations/view/widgets/regulation_tile.dart';
@@ -29,6 +30,7 @@ class _RegulationsContentState extends State<RegulationsContent> {
     if (isAdmin) {
       showModalBottomSheet(
           context: context,
+          isScrollControlled: true,
           builder: (context) => RegulationDialog(
                 regulation: reg,
               ));
@@ -59,6 +61,11 @@ class _RegulationsContentState extends State<RegulationsContent> {
       appBar: AppBar(
         title: const Text('Услуги'),
         actions: [
+          IconButton(
+              onPressed: () {
+                context.push('/categories');
+              },
+              icon: const Icon(Icons.category)),
           IconButton(onPressed: renew, icon: const Icon(Icons.autorenew))
         ],
       ),
@@ -108,6 +115,7 @@ class _RegulationsContentState extends State<RegulationsContent> {
               onPressed: () {
                 showModalBottomSheet(
                     context: context,
+                    isScrollControlled: true,
                     builder: (context) => const RegulationDialog(
                           regulation: null,
                         ));

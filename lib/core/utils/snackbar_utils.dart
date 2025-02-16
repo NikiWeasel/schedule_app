@@ -14,6 +14,11 @@ void showTopSnackBar(
   Duration? duration,
 }) {
   _vibrate();
+  print(
+    MediaQuery.of(context).size.height -
+        170 -
+        MediaQuery.of(context).viewInsets.bottom,
+  );
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       dismissDirection: DismissDirection.up,

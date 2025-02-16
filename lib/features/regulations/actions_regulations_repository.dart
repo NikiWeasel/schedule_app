@@ -7,7 +7,7 @@ class ActionsRegulationsRepository {
 
   final FirebaseFirestore firebaseFirestore;
 
-  Future<void> createAppointment(CreateRegulationEvent event) async {
+  Future<void> createRegulation(CreateRegulationEvent event) async {
     debugPrint('create');
     await firebaseFirestore.collection('regulations').add({
       'name': event.regulation.name,
@@ -17,7 +17,7 @@ class ActionsRegulationsRepository {
     debugPrint('added regulation');
   }
 
-  Future<void> updateAppointment(UpdateRegulationEvent event) async {
+  Future<void> updateRegulation(UpdateRegulationEvent event) async {
     debugPrint('update');
 
     var id = event.regulation.id;
@@ -32,7 +32,7 @@ class ActionsRegulationsRepository {
     });
   }
 
-  Future<void> deleteAppointment(DeleteRegulationEvent event) async {
+  Future<void> deleteRegulation(DeleteRegulationEvent event) async {
     await firebaseFirestore
         .collection('regulations')
         .doc(event.regulation.id)

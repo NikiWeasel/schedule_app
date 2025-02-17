@@ -23,7 +23,9 @@ class LocalCategoriesRepository {
       return RegCategory(
           description: data['description'],
           name: data['name'],
-          regulationIds: data['regulationIds'],
+          regulationIds: (data['regulationIds'] as List<dynamic>)
+              .map((e) => e.toString())
+              .toList(),
           id: doc.id);
     }).toList();
     return allCats;

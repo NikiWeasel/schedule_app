@@ -93,7 +93,7 @@ class _CategoriesContentState extends State<CategoriesContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Услуги'),
+        title: const Text('Категории'),
         actions: [
           IconButton(onPressed: renew, icon: const Icon(Icons.autorenew))
         ],

@@ -35,7 +35,7 @@ class CategoryTile extends StatelessWidget {
           1,
         ),
         title: Text(category.name),
-        subtitle: Text('${category.description.toString()} мин'),
+        subtitle: Text(category.description.toString()),
         // trailing: Text('${category.cost.toString()} руб'),
         onLongPress: () {
           onHoldVibrate();

@@ -160,11 +160,24 @@ class _EmployeeProfileCategoriesState extends State<EmployeeProfileCategories> {
                               : Wrap(
                                   spacing: 8.0,
                                   children: [
-                                    for (var c in filteredCategories)
+                                    for (int i = 0;
+                                        i < filteredCategories.length;
+                                        i++)
                                       Chip(
-                                        label: Text(c.name),
-                                        onDeleted:
-                                            widget.isReadOnly ? null : () {},
+                                        label: Text(filteredCategories[i].name),
+                                        onDeleted: widget.isReadOnly
+                                            ? null
+                                            : () {
+                                                int index = widget.allCategories
+                                                    .indexOf(
+                                                        filteredCategories[i]);
+
+                                                setState(() {
+                                                  catBoolList[index] = false;
+                                                });
+                                                setBoolValue(index,
+                                                    widget.allCategories);
+                                              },
                                       ),
                                   ],
                                 ),

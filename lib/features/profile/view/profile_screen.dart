@@ -11,6 +11,7 @@ import 'package:schedule_app/features/profile/view/widgets/log_out_alert.dart';
 import 'package:schedule_app/features/schedule/bloc/local_employees_bloc.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
 import 'package:schedule_app/features/home/bloc/user_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_categories/local_categories_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
@@ -53,41 +54,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (context, userState) {
           return BlocBuilder<LocalEmployeesBloc, LocalEmployeesState>(
               builder: (context, allEmployeesState) {
-            {
-              List<Employee> emps = [];
-              if (userState is UserLoaded) {
-                Employee currentUser = (userState).user;
+            List<Employee> emps = [];
+            if (userState is UserLoaded) {
+              Employee currentUser = (userState).user;
 
-                _content = EmployeeProfile(
-                  employee: currentUser,
-                  isAlwaysReadOnly: false,
-                );
-              } else {
-                _content = const Center(
-                  child: CardCircularProgressIndicator(),
-                );
-              }
-
-              return Scaffold(
-                  appBar: AppBar(
-                    actions: [
-                      IconButton(
-                        onPressed: onLogout,
-                        // label: const Text('Выйти'),
-                        icon: const Icon(Icons.logout),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          context.push('/settings');
-                        },
-                        // label: const Text('Настройки'),
-                        icon: const Icon(Icons.settings),
-                      ),
-                    ],
-                    title: const Text('Профиль Vteme'),
-                  ),
-                  body: _content);
+              _content = EmployeeProfile(
+                employee: currentUser,
+                isAlwaysReadOnly: false,
+              );
+            } else {
+              _content = const Center(
+                child: CardCircularProgressIndicator(),
+              );
             }
+
+            return Scaffold(
+                appBar: AppBar(
+                  actions: [
+                    IconButton(
+                      onPressed: onLogout,
+                      // label: const Text('Выйти'),
+                      icon: const Icon(Icons.logout),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        context.push('/settings');
+                      },
+                      // label: const Text('Настройки'),
+                      icon: const Icon(Icons.settings),
+                    ),
+                  ],
+                  title: const Text('Профиль Vteme'),
+                ),
+                body: _content);
           });
         },
       ),

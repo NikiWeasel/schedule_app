@@ -8,9 +8,9 @@ final class LocalCategoriesInitialState extends FetchCategoriesState {}
 class LocalCategoriesLoadingState extends FetchCategoriesState {}
 
 class LocalCategoriesLoadedState extends FetchCategoriesState {
-  final List<RegCategory> categorys;
+  final List<RegCategory> categories;
 
-  LocalCategoriesLoadedState({required this.categorys});
+  LocalCategoriesLoadedState({required this.categories});
 }
 
 class LocalCategoriesErrorState extends FetchCategoriesState {

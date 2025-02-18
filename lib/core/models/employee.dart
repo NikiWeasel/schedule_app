@@ -1,14 +1,14 @@
 class Employee {
-  const Employee({
-    required this.employeeId,
-    required this.name,
-    required this.surname,
-    required this.isAdmin,
-    required this.description,
-    required this.email,
-    required this.number,
-    required this.imageUrl,
-  });
+  const Employee(
+      {required this.employeeId,
+      required this.name,
+      required this.surname,
+      required this.isAdmin,
+      required this.description,
+      required this.email,
+      required this.number,
+      required this.imageUrl,
+      required this.categoryIds});
 
   final String employeeId;
   final String name;
@@ -18,4 +18,5 @@ class Employee {
   final String email;
   final String number;
   final String imageUrl;
+  final List<String> categoryIds;
 }

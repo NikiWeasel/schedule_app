@@ -95,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
           'number': _enteredNumber,
           'image_url': imageUrl,
           'description': '',
+          'categoriesIds': [],
         });
         // widget.renew();
       }

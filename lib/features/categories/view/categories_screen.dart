@@ -11,9 +11,19 @@ import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart'
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
 import 'package:schedule_app/features/categories/view/widgets/categories_content.dart';
 import 'package:schedule_app/features/home/bloc/user_bloc.dart';
+import 'package:schedule_app/core/models/regulation.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
+
+  bool isAnyRegIdNull(List<Regulation> regs) {
+    if (regs.any(
+      (element) => element.id == null,
+    )) {
+      return true;
+    }
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +77,7 @@ class CategoriesScreen extends StatelessWidget {
                             regsState is LocalRegulationsLoadedState)
                         ? null
                         : AppBar(
-                            title: const Text('Услуги'),
+                            title: const Text('Категории'),
                           ),
                     body: Builder(
                       builder: (context) {
@@ -84,8 +94,18 @@ class CategoriesScreen extends StatelessWidget {
                         if (localCatsState is LocalCategoriesLoadedState &&
                             userState is UserLoaded &&
                             regsState is LocalRegulationsLoadedState) {
+                          WidgetsBinding.instance.addPostFrameCallback(
+                            (timeStamp) {
+                              if (isAnyRegIdNull(regsState.regulations)) {
+                                context
+                                    .read<LocalRegulationsBloc>()
+                                    .add(FetchRegulationsData());
+                              }
+                            },
+                          );
+
                           return CategoriesContent(
-                              catList: localCatsState.categorys,
+                              catList: localCatsState.categories,
                               isAdmin: userState.user.isAdmin,
                               allRegs: regsState.regulations);
                         }

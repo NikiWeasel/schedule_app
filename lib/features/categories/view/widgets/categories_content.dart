@@ -69,7 +69,7 @@ class _CategoriesContentState extends State<CategoriesContent> {
                 category: cat,
               ));
     } else {
-      showTopSnackBar(context, 'Нельзя редактировать услуги');
+      showTopSnackBar(context, 'Нельзя редактировать категории');
     }
   }
 
@@ -78,8 +78,8 @@ class _CategoriesContentState extends State<CategoriesContent> {
     await showDialog(
         context: context,
         builder: (ctx) => AlertConfirmDialog(
-            title: 'Удалить услугу?',
-            content: 'Услуга будет удалена навсегда.',
+            title: 'Удалить категорию?',
+            content: 'Категория будет удалена навсегда.',
             onConfirm: () {
               context
                   .read<ActionsCategoriesBloc>()

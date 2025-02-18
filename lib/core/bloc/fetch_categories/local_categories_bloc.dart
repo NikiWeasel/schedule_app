@@ -21,7 +21,7 @@ class LocalCategoriesBloc
       emit(LocalCategoriesLoadingState());
       try {
         localCats = await localCategoriesRepository.fetchCategoriesData();
-        emit(LocalCategoriesLoadedState(categorys: localCats));
+        emit(LocalCategoriesLoadedState(categories: localCats));
       } catch (e) {
         emit(LocalCategoriesErrorState(errorMessage: e.toString()));
       }
@@ -33,7 +33,7 @@ class LocalCategoriesBloc
         localCats = localCategoriesRepository.addLocalCategory(
             localCats, event.regulation);
 
-        emit(LocalCategoriesLoadedState(categorys: localCats));
+        emit(LocalCategoriesLoadedState(categories: localCats));
       } catch (e) {
         emit(LocalCategoriesErrorState(errorMessage: e.toString()));
       }
@@ -45,7 +45,7 @@ class LocalCategoriesBloc
         localCats = localCategoriesRepository.updateLocalCategory(
             localCats, event.regulation);
 
-        emit(LocalCategoriesLoadedState(categorys: localCats));
+        emit(LocalCategoriesLoadedState(categories: localCats));
       } catch (e) {
         emit(LocalCategoriesErrorState(errorMessage: e.toString()));
       }
@@ -57,7 +57,7 @@ class LocalCategoriesBloc
         localCats = localCategoriesRepository.deleteLocalCategory(
             localCats, event.regulation);
 
-        emit(LocalCategoriesLoadedState(categorys: localCats));
+        emit(LocalCategoriesLoadedState(categories: localCats));
       } catch (e) {
         emit(LocalCategoriesErrorState(errorMessage: e.toString()));
       }

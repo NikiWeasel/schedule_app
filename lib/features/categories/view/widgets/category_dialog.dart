@@ -90,13 +90,13 @@ class _CategoryDialogState extends State<CategoryDialog> {
   }
 
   void openRegsSelection() async {
-    List<String> regs = await showDialog(
-          context: context,
-          builder: (context) =>
-              RegsDialog(regsList: widget.regsList, regsBoolList: regsBoolList),
-        ) ??
-        [];
+    List<String>? regs = await showDialog(
+      context: context,
+      builder: (context) =>
+          RegsDialog(regsList: widget.regsList, regsBoolList: regsBoolList),
+    );
     setState(() {
+      if (regs == null) return;
       selectedRegsIds = regs;
     });
   }

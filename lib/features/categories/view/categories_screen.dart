@@ -31,12 +31,12 @@ class CategoriesScreen extends StatelessWidget {
       listener: (context, state) {
         if (state is ActionsCategoriesLoadingState) {
           ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Загрузка...',
+          showSnackBar(context, 'Загрузка...',
               duration: const Duration(seconds: 60));
         }
         if (state is ActionsCategoriesLoadedState) {
           ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Категория загружена!');
+          showSnackBar(context, 'Категория загружена!');
 
           context
               .read<LocalCategoriesBloc>()
@@ -44,7 +44,7 @@ class CategoriesScreen extends StatelessWidget {
         }
         if (state is ActionsCategoriesUpdatedState) {
           ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Категория обновлена!');
+          showSnackBar(context, 'Категория обновлена!');
 
           context
               .read<LocalCategoriesBloc>()
@@ -52,7 +52,7 @@ class CategoriesScreen extends StatelessWidget {
         }
         if (state is ActionsCategoriesDeletedState) {
           ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Категория удалена!');
+          showSnackBar(context, 'Категория удалена!');
 
           context
               .read<LocalCategoriesBloc>()
@@ -60,7 +60,7 @@ class CategoriesScreen extends StatelessWidget {
         }
         if (state is ActionsCategoriesErrorState) {
           ScaffoldMessenger.of(context).clearSnackBars();
-          showTopSnackBar(context, 'Произошла ошибка: ${state.error}');
+          showSnackBar(context, 'Произошла ошибка: ${state.error}');
         }
       },
       child: BlocBuilder<UserBloc, UserState>(

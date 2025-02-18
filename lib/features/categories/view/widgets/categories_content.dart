@@ -69,7 +69,7 @@ class _CategoriesContentState extends State<CategoriesContent> {
                 category: cat,
               ));
     } else {
-      showTopSnackBar(context, 'Нельзя редактировать категории');
+      showSnackBar(context, 'Нельзя редактировать категории');
     }
   }
 
@@ -106,41 +106,47 @@ class _CategoriesContentState extends State<CategoriesContent> {
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
               children: [
                 for (var reg in widget.catList)
-                  Dismissible(
-                    direction: DismissDirection.endToStart,
-                    dismissThresholds: const {DismissDirection.endToStart: 0.5},
-                    confirmDismiss: (dis) {
-                      return confirmDismiss(reg);
-                    },
-                    key: ValueKey<int>(widget.catList.indexOf(reg)),
-                    background: Container(
-                      alignment: Alignment.centerRight,
-                      color: Theme.of(context).colorScheme.surface,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: Icon(
-                          Icons.delete_outline,
-                          color: Theme.of(context).colorScheme.error,
+                  widget.isAdmin
+                      ? Dismissible(
+                          direction: DismissDirection.endToStart,
+                          dismissThresholds: const {
+                            DismissDirection.endToStart: 0.5
+                          },
+                          confirmDismiss: (dis) {
+                            return confirmDismiss(reg);
+                          },
+                          key: ValueKey<int>(widget.catList.indexOf(reg)),
+                          background: Container(
+                            alignment: Alignment.centerRight,
+                            color: Theme.of(context).colorScheme.surface,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 16.0),
+                              child: Icon(
+                                Icons.delete_outline,
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                            ),
+                          ),
+                          onDismissed: (DismissDirection direction) {
+                            // context
+                            //     .read<ActionsRegulationsBloc>()
+                            //     .add(DeleteRegulationEvent(regulation: reg));
+                          },
+                          child: CategoryTile(
+                            isAdmin: widget.isAdmin,
+                            onLongPress: () {
+                              onLongPress(reg, widget.isAdmin);
+                            },
+                            category: reg,
+                          ),
+                        )
+                      : CategoryTile(
+                          isAdmin: widget.isAdmin,
+                          onLongPress: () {
+                            onLongPress(reg, widget.isAdmin);
+                          },
+                          category: reg,
                         ),
-                      ),
-                    ),
-                    onDismissed: (DismissDirection direction) {
-                      // context
-                      //     .read<ActionsRegulationsBloc>()
-                      //     .add(DeleteRegulationEvent(regulation: reg));
-                    },
-                    child: CategoryTile(
-                      isAdmin: widget.isAdmin,
-                      onLongPress: () {
-                        onLongPress(reg, widget.isAdmin);
-                      },
-                      // onDelete: () {
-                      //   context.read<ActionsRegulationsBloc>().add(
-                      //       DeleteRegulationEvent(regulation: reg));
-                      // },
-                      category: reg,
-                    ),
-                  )
               ],
             ),
       floatingActionButton: widget.isAdmin

@@ -1,27 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
-import 'package:schedule_app/core/models/regulation.dart';
-import 'package:schedule_app/core/models/regulation.dart';
+import 'package:schedule_app/core/utils/old_appo_removal.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
-import 'package:schedule_app/core/widgets/splash_screen.dart';
+import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 import 'package:schedule_app/features/home/view/widgets/home_appointments.dart';
 import 'package:schedule_app/features/home/view/widgets/home_line_chart.dart';
-import 'package:schedule_app/features/home/bloc/user_bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:schedule_app/features/schedule/bloc/local_employees_bloc.dart';
-import 'package:schedule_app/core/app_router.dart';
-import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
-import 'package:schedule_app/core/models/appointment.dart';
-import 'package:schedule_app/core/utils/old_appo_removal.dart';
 import 'package:schedule_app/features/settings/bloc/settings_bloc.dart';
-import 'package:schedule_app/main.dart';
-import 'package:schedule_app/core/utils/snackbar_utils.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -149,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             rootContext.push('/schedule',
                                                 extra: {
                                                   'user': userState.user,
-                                                  'showDialogImidiatly': false
+                                                  'showDialogImmediately': false
                                                 });
                                           },
                                           child:

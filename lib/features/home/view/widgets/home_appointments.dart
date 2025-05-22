@@ -1,16 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
-import 'package:schedule_app/core/widgets/appointment_widget.dart';
-import 'package:schedule_app/features/home/view/widgets/no_appointments_widget.dart';
-
-import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
-import 'package:schedule_app/features/schedule/view/schedule_screen.dart';
-
 import 'package:schedule_app/core/models/employee.dart';
+import 'package:schedule_app/core/widgets/appointment_widget.dart';
+import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
+import 'package:schedule_app/features/home/view/widgets/no_appointments_widget.dart';
 
 class HomeAppointments extends StatefulWidget {
   const HomeAppointments(
@@ -24,6 +19,15 @@ class HomeAppointments extends StatefulWidget {
 }
 
 class _HomeAppointmentsState extends State<HomeAppointments> {
+  List<Appointment> getUpcomingAppointments(
+      List<Appointment> allAppointments, DateTime currentDateTime) {
+    return allAppointments
+        .where((appointment) =>
+            appointment.date.isAtSameMomentAs(currentDateTime) ||
+            appointment.date.isAfter(currentDateTime))
+        .toList();
+  }
+
   List<Appointment> sortAppointments(List<Appointment> appointments) {
     return appointments
         .where((a) => a.masterId == widget.emlpoyee.employeeId)
@@ -54,18 +58,21 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
     }
 
     if (widget.appointmentsState is LocalAppointmentsLoaded) {
-      DateTime curentDate = DateTime.now();
+      DateTime currentDate = DateTime.now();
       var appointments = (widget.appointmentsState as LocalAppointmentsLoaded)
           .appointments
-          .where((appo) => (appo.date.year == curentDate.year &&
-              appo.date.month == curentDate.month &&
-              appo.date.day == curentDate.day))
+          .where((appo) => (appo.date.year == currentDate.year &&
+              appo.date.month == currentDate.month &&
+              appo.date.day == currentDate.day))
           .toList();
+
+      appointments = getUpcomingAppointments(appointments, currentDate);
+
       var sortedAppointments = sortAppointments(appointments);
       if (sortedAppointments.isEmpty) {
         return NoAppointmentsWidget(onTap: () {
           context.push('/schedule',
-              extra: {'user': widget.emlpoyee, 'showDialogImidiatly': true});
+              extra: {'user': widget.emlpoyee, 'showDialogImmediately': true});
         });
       }
 
@@ -99,7 +106,7 @@ class _HomeAppointmentsState extends State<HomeAppointments> {
                 onPressed: () {
                   context.push('/schedule', extra: {
                     'user': widget.emlpoyee,
-                    'showDialogImidiatly': false
+                    'showDialogImmediately': false
                   });
                   // Navigator.of(context).push(MaterialPageRoute(
                   //     builder: (ctx) => ScheduleScreen(

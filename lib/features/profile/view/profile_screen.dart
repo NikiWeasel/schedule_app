@@ -1,17 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:schedule_app/core/models/employee.dart';
+import 'package:schedule_app/core/utils/snackbar_utils.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
+import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 import 'package:schedule_app/features/profile/view/widgets/employee_profile.dart';
 import 'package:schedule_app/features/profile/view/widgets/log_out_alert.dart';
 import 'package:schedule_app/features/schedule/bloc/local_employees_bloc.dart';
-import 'package:schedule_app/core/utils/snackbar_utils.dart';
-import 'package:schedule_app/features/home/bloc/user_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_categories/local_categories_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({

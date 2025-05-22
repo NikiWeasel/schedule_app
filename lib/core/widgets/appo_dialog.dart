@@ -23,7 +23,7 @@ class AppoDialog extends StatelessWidget {
             '${appointment.clientName} ${appointment.clientNumber} \n${appointment.serviceName}',
             overflow: TextOverflow.fade,
             style: Theme.of(context).textTheme.titleLarge,
-            maxLines: 2,
+            // maxLines: 4,
           )
           // Text(appointment.clientNumber, overflow: TextOverflow.fade),
           // Text(appointment.serviceName, overflow: TextOverflow.fade),

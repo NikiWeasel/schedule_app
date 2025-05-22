@@ -1,17 +1,15 @@
 import 'dart:io';
+
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_categories/local_categories_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_categories/local_categories_bloc.dart';
+import 'package:schedule_app/core/models/category.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/features/authentication/view/widgets/user_image_picker.dart';
 import 'package:schedule_app/features/home/bloc/user_bloc.dart';
-import 'package:schedule_app/core/utils/snackbar_utils.dart';
 import 'package:schedule_app/features/profile/view/widgets/employee_profile_categories.dart';
-import 'package:schedule_app/core/models/category.dart';
 
 class EmployeeProfile extends StatefulWidget {
   EmployeeProfile({super.key, required this.employee, this.isAlwaysReadOnly});
@@ -105,6 +103,16 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
     selectedCategories = cats;
   }
 
+  List<RegCategory> getRegCats(List<RegCategory> allCats, List<String> ids) {
+    List<RegCategory> regs = [];
+    regs = allCats
+        .where(
+          (element) => ids.contains(element.id),
+        )
+        .toList();
+    return regs;
+  }
+
   @override
   void initState() {
     nameController = TextEditingController()..text = widget.employee.name;
@@ -135,6 +143,9 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
     return BlocBuilder<LocalCategoriesBloc, FetchCategoriesState>(
       builder: (context, state) {
         if (state is LocalCategoriesLoadedState) {
+          selectedCategories =
+              getRegCats(state.categories, widget.employee.categoryIds);
+
           return SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,

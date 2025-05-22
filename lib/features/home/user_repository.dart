@@ -41,15 +41,17 @@ class UserRepository {
 
     // Создаем экземпляр класса User
     final fetchedUser = Employee(
-      name: data['name'],
-      surname: data['surname'],
-      isAdmin: data['is_admin'],
-      description: data['description'],
-      email: data['email'],
-      number: data['number'],
-      imageUrl: data['image_url'],
-      employeeId: user.uid,
-    );
+        name: data['name'],
+        surname: data['surname'],
+        isAdmin: data['is_admin'],
+        description: data['description'],
+        email: data['email'],
+        number: data['number'],
+        imageUrl: data['image_url'],
+        employeeId: user.uid,
+        categoryIds: (data['categoriesIds'] as List<dynamic>)
+            .map((e) => e.toString())
+            .toList());
 
     return fetchedUser;
   }
@@ -68,6 +70,7 @@ class UserRepository {
       'number': employee.number,
       'description': employee.description,
       'image_url': employee.imageUrl,
+      'categoriesIds': employee.categoryIds,
     }).then((_) {
       debugPrint("Document successfully updated!");
     }).catchError((error) {

@@ -18,7 +18,7 @@ class ActionsRegulationsBloc
     on<CreateRegulationEvent>((event, emit) async {
       emit(ActionsRegulationsLoadingState());
       try {
-        await actionsRegulationsRepository.createAppointment(event);
+        await actionsRegulationsRepository.createRegulation(event);
         emit(ActionsRegulationsLoadedState(reg: event.regulation));
       } catch (e) {
         emit(ActionsRegulationsErrorState(error: e.toString()));
@@ -28,7 +28,7 @@ class ActionsRegulationsBloc
     on<DeleteRegulationEvent>((event, emit) async {
       emit(ActionsRegulationsLoadingState());
       try {
-        await actionsRegulationsRepository.deleteAppointment(event);
+        await actionsRegulationsRepository.deleteRegulation(event);
         emit(ActionsRegulationsDeletedState(reg: event.regulation));
       } catch (e) {
         emit(ActionsRegulationsErrorState(error: e.toString()));
@@ -38,7 +38,7 @@ class ActionsRegulationsBloc
     on<UpdateRegulationEvent>((event, emit) async {
       emit(ActionsRegulationsLoadingState());
       try {
-        await actionsRegulationsRepository.updateAppointment(event);
+        await actionsRegulationsRepository.updateRegulation(event);
         emit(ActionsRegulationsUpdatedState(reg: event.regulation));
       } catch (e) {
         emit(ActionsRegulationsErrorState(error: e.toString()));

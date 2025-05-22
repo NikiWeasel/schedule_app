@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
-import 'package:schedule_app/core/models/employee.dart';
-import 'package:schedule_app/core/models/regulation.dart';
+import 'package:uuid/uuid.dart';
+
+var uuid = const Uuid();
 
 class LocalAppointmentsRepository {
   LocalAppointmentsRepository(
@@ -39,6 +39,7 @@ class LocalAppointmentsRepository {
     List<Appointment> appos,
     Appointment appointment,
   ) {
+    appointment.appointmentId ??= uuid.v6();
     return [...appos, appointment];
   }
 

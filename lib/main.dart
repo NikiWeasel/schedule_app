@@ -5,13 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:schedule_app/core/bloc/fetch_categories/local_categories_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_portfolio_photos/local_portfolio_photos_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
 import 'package:schedule_app/core/repository/local_appointments_repository.dart';
+import 'package:schedule_app/core/repository/local_categories_repository.dart';
 import 'package:schedule_app/core/repository/local_regulations_repository.dart';
 import 'package:schedule_app/core/widgets/splash_screen.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
+import 'package:schedule_app/features/categories/bloc/actions_categories_bloc.dart';
 import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 import 'package:schedule_app/features/home/user_repository.dart';
 import 'package:schedule_app/features/portfolio/bloc/actions_portfolio_photos_bloc.dart';
@@ -28,6 +31,7 @@ import 'package:schedule_app/core/app_router.dart';
 import 'package:schedule_app/core/repository/local_portfolio_photos_repository.dart';
 import 'package:schedule_app/core/repository/actions_appointment_repository.dart';
 import 'package:schedule_app/features/portfolio/actions_portfolio_photos_repository.dart';
+import 'package:schedule_app/features/categories/actions_categories_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,6 +71,14 @@ void main() async {
     firebaseFirestore: firebaseFirestore,
   );
 
+  final actionsCategoriesRepository = ActionsCategoriesRepository(
+    firebaseFirestore: firebaseFirestore,
+  );
+
+  final localCategoriesRepository = LocalCategoriesRepository(
+    firebaseFirestore: firebaseFirestore,
+  );
+
   final actionsAppointmentRepository = ActionsAppointmentRepository(
     firebaseFirestore: firebaseFirestore,
   );
@@ -93,6 +105,10 @@ void main() async {
         create: (context) => LocalRegulationsBloc(localRegulationsRepository)
           ..add(FetchRegulationsData()),
       ),
+      BlocProvider<LocalCategoriesBloc>(
+        create: (context) => LocalCategoriesBloc(localCategoriesRepository)
+          ..add(FetchCategoriesData()),
+      ),
       BlocProvider<LocalPortfolioPhotosBloc>(
         create: (context) => LocalPortfolioPhotosBloc(fetchDataRepository)
           ..add(FetchPortfolioPhotosData()),
@@ -108,6 +124,9 @@ void main() async {
       BlocProvider<ActionsRegulationsBloc>(
         create: (context) =>
             ActionsRegulationsBloc(actionsRegulationsRepository),
+      ),
+      BlocProvider<ActionsCategoriesBloc>(
+        create: (context) => ActionsCategoriesBloc(actionsCategoriesRepository),
       ),
       BlocProvider<SettingsBloc>(
         create: (context) =>

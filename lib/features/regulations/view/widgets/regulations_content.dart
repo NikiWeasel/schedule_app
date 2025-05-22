@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/features/regulations/view/widgets/regulation_dialog.dart';
 import 'package:schedule_app/features/regulations/view/widgets/regulation_tile.dart';
@@ -29,6 +30,7 @@ class _RegulationsContentState extends State<RegulationsContent> {
     if (isAdmin) {
       showModalBottomSheet(
           context: context,
+          isScrollControlled: true,
           builder: (context) => RegulationDialog(
                 regulation: reg,
               ));
@@ -59,6 +61,11 @@ class _RegulationsContentState extends State<RegulationsContent> {
       appBar: AppBar(
         title: const Text('Услуги'),
         actions: [
+          IconButton(
+              onPressed: () {
+                context.push('/categories');
+              },
+              icon: const Icon(Icons.category)),
           IconButton(onPressed: renew, icon: const Icon(Icons.autorenew))
         ],
       ),
@@ -66,41 +73,41 @@ class _RegulationsContentState extends State<RegulationsContent> {
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         children: [
           for (var reg in widget.regList)
-            Dismissible(
-              direction: DismissDirection.endToStart,
-              dismissThresholds: const {DismissDirection.endToStart: 0.5},
-              confirmDismiss: (dis) {
-                return confirmDismiss(reg);
-              },
-              key: ValueKey<int>(widget.regList.indexOf(reg)),
-              background: Container(
-                alignment: Alignment.centerRight,
-                color: Theme.of(context).colorScheme.surface,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: Icon(
-                    Icons.delete_outline,
-                    color: Theme.of(context).colorScheme.error,
+            widget.isAdmin
+                ? Dismissible(
+                    direction: DismissDirection.endToStart,
+                    dismissThresholds: const {DismissDirection.endToStart: 0.5},
+                    confirmDismiss: (dis) {
+                      return confirmDismiss(reg);
+                    },
+                    key: ValueKey<int>(widget.regList.indexOf(reg)),
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      color: Theme.of(context).colorScheme.surface,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
+                    onDismissed: (DismissDirection direction) {},
+                    child: RegulationTile(
+                      isAdmin: widget.isAdmin,
+                      onLongPress: () {
+                        onLongPress(reg, widget.isAdmin);
+                      },
+                      regulation: reg,
+                    ),
+                  )
+                : RegulationTile(
+                    isAdmin: widget.isAdmin,
+                    onLongPress: () {
+                      onLongPress(reg, widget.isAdmin);
+                    },
+                    regulation: reg,
                   ),
-                ),
-              ),
-              onDismissed: (DismissDirection direction) {
-                // context
-                //     .read<ActionsRegulationsBloc>()
-                //     .add(DeleteRegulationEvent(regulation: reg));
-              },
-              child: RegulationTile(
-                isAdmin: widget.isAdmin,
-                onLongPress: () {
-                  onLongPress(reg, widget.isAdmin);
-                },
-                // onDelete: () {
-                //   context.read<ActionsRegulationsBloc>().add(
-                //       DeleteRegulationEvent(regulation: reg));
-                // },
-                regulation: reg,
-              ),
-            )
         ],
       ),
       floatingActionButton: widget.isAdmin
@@ -108,6 +115,7 @@ class _RegulationsContentState extends State<RegulationsContent> {
               onPressed: () {
                 showModalBottomSheet(
                     context: context,
+                    isScrollControlled: true,
                     builder: (context) => const RegulationDialog(
                           regulation: null,
                         ));

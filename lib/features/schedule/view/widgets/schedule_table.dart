@@ -1,29 +1,25 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
-import 'package:schedule_app/core/widgets/appo_dialog.dart';
-import 'package:schedule_app/core/widgets/employee_profile_widget.dart';
-import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart';
-import 'package:schedule_app/core/widgets/appointment_widget.dart';
 import 'package:schedule_app/core/models/appointment.dart';
-import 'package:schedule_app/core/widgets/person_header_widget.dart';
 import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
 import 'package:schedule_app/core/utils/vibration.dart';
-import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
+import 'package:schedule_app/core/widgets/appo_dialog.dart';
+import 'package:schedule_app/core/widgets/appointment_widget.dart';
+import 'package:schedule_app/core/widgets/employee_profile_widget.dart';
+import 'package:schedule_app/core/widgets/person_header_widget.dart';
+import 'package:schedule_app/features/schedule/view/widgets/on_hold_dialog.dart';
 
 class ScheduleTable extends StatefulWidget {
   const ScheduleTable({
     super.key,
-    required this.curentDate,
+    required this.currentDate,
     required this.allEmployees,
-    required this.allAppontments,
+    required this.allAppointments,
   });
 
-  final DateTime curentDate;
+  final DateTime currentDate;
   final List<Employee> allEmployees;
-  final List<Appointment> allAppontments;
+  final List<Appointment> allAppointments;
 
   @override
   State<ScheduleTable> createState() => _ScheduleTableState();
@@ -44,7 +40,7 @@ class _ScheduleTableState extends State<ScheduleTable> {
         context: context,
         builder: (ctx) {
           return OnHoldDialog(
-            curentDate: widget.curentDate,
+            curentDate: widget.currentDate,
             appointment: appointment,
           );
         });
@@ -67,10 +63,10 @@ class _ScheduleTableState extends State<ScheduleTable> {
   Widget build(BuildContext context) {
     var masters = widget.allEmployees;
 
-    tableAppos = widget.allAppontments
-        .where((appo) => (appo.date.year == widget.curentDate.year &&
-            appo.date.month == widget.curentDate.month &&
-            appo.date.day == widget.curentDate.day))
+    tableAppos = widget.allAppointments
+        .where((appo) => (appo.date.year == widget.currentDate.year &&
+            appo.date.month == widget.currentDate.month &&
+            appo.date.day == widget.currentDate.day))
         .toList();
 
     return SingleChildScrollView(

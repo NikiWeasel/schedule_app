@@ -1,30 +1,27 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
-import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
+import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
 import 'package:schedule_app/core/models/employee.dart';
-import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
-import 'package:schedule_app/features/schedule/view/widgets/editing_dialog/editing_dialog.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
-import 'package:schedule_app/features/schedule/bloc/local_employees_bloc.dart';
-import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
-import 'package:schedule_app/core/models/appointment.dart';
 import 'package:schedule_app/core/models/regulation.dart';
 import 'package:schedule_app/core/utils/functions.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
+import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
+import 'package:schedule_app/features/schedule/bloc/local_employees_bloc.dart';
+import 'package:schedule_app/features/schedule/view/widgets/editing_dialog/editing_dialog.dart';
+import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
 
 class ScheduleScreen extends StatefulWidget {
   const ScheduleScreen({
     super.key,
     required this.user,
-    required this.showDialogImidiatly,
+    required this.showDialogImmediately,
   });
 
   final Employee user;
-  final bool showDialogImidiatly;
+  final bool showDialogImmediately;
 
   @override
   State<ScheduleScreen> createState() => _ScheduleScreenState();
@@ -131,6 +128,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                         .toList();
                     masters.insert(0, widget.user);
 
+                    if (widget.showDialogImmediately && !wasDialogCalled) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        openCreateNewDialog(
+                            masters, widget.user, regulationsState.regulations);
+                        wasDialogCalled = true;
+                      });
+                    }
+
                     return Scaffold(
                       appBar: AppBar(
                         title: Text(formatDate(currentDate)),
@@ -155,9 +160,9 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                         child: const Icon(Icons.add),
                       ),
                       body: ScheduleTable(
-                        curentDate: currentDate,
+                        currentDate: currentDate,
                         allEmployees: masters,
-                        allAppontments: allAppontmentsState.appointments,
+                        allAppointments: allAppontmentsState.appointments,
                       ),
                     );
                   }

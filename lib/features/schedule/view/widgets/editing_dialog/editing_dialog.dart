@@ -1,18 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
-import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';
-import 'package:schedule_app/features/schedule/view/widgets/service_button.dart';
 import 'package:schedule_app/core/models/employee.dart';
-import 'package:schedule_app/core/models/regulation.dart';
-import 'package:schedule_app/features/schedule/view/widgets/editing_dialog/employee_drop_down_button.dart';
 import 'package:schedule_app/core/utils/snackbar_utils.dart';
+import 'package:schedule_app/features/schedule/view/widgets/editing_dialog/employee_drop_down_button.dart';
+import 'package:schedule_app/features/schedule/view/widgets/service_button.dart';
 
 class EditingDialog extends StatefulWidget {
   EditingDialog(
@@ -115,6 +111,7 @@ class _EditingDialogState extends State<EditingDialog> {
 
       // Проверка на пересечение
       if ((newStart < end && newEnd > start) ||
+          (newStart > end && newEnd < start) ||
           (newStart == start && newEnd == end)) {
         if (appo.appointmentId != newAppointment.appointmentId) {
           return true; // Пересечение найдено
@@ -180,6 +177,7 @@ class _EditingDialogState extends State<EditingDialog> {
       var activeUserAppos = appointments
           .where((appo) => appo.masterId == appointment.masterId)
           .toList();
+
       if (isOverlapping(appointment, activeUserAppos)) {
         print('overlap1');
         print(appointment.date);
@@ -554,12 +552,12 @@ class _EditingDialogState extends State<EditingDialog> {
                   height: 16,
                 ),
                 BlocBuilder<LocalAppointmentsBloc, LocalAppointmentsState>(
-                    builder: (context, allAppontmentsState) {
+                    builder: (context, allAppointmentsState) {
                   List<Appointment> appointments = [];
 
-                  print(allAppontmentsState);
-                  if (allAppontmentsState is LocalAppointmentsLoaded) {
-                    appointments = allAppontmentsState.appointments;
+                  print(allAppointmentsState);
+                  if (allAppointmentsState is LocalAppointmentsLoaded) {
+                    appointments = allAppointmentsState.appointments;
                   }
                   appointments = appointments
                       .where((appo) =>

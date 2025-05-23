@@ -3,24 +3,12 @@ part of 'local_appointments_bloc.dart';
 @immutable
 sealed class LocalAppointmentsEvent {}
 
-class FetchAppointmentsData extends LocalAppointmentsEvent {}
+class SubscribeToAppointments extends LocalAppointmentsEvent {}
 
-class AddLocalAppointment extends LocalAppointmentsEvent {
-  final Appointment appointment;
+class UnsubscribeFromAppointments extends LocalAppointmentsEvent {}
 
-  AddLocalAppointment({required this.appointment});
-}
+class UpdateAppointments extends LocalAppointmentsEvent {
+  final List<Appointment> appointments;
 
-class UpdateLocalAppointment extends LocalAppointmentsEvent {
-  final Appointment appointment;
-
-  UpdateLocalAppointment({required this.appointment});
-}
-
-class DeleteLocalAppointment extends LocalAppointmentsEvent {
-  final Appointment appointment;
-
-  // final List<Appointment> appos;
-
-  DeleteLocalAppointment({required this.appointment});
+  UpdateAppointments({required this.appointments});
 }

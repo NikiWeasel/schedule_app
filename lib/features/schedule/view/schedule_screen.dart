@@ -41,7 +41,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         isScrollControlled: true,
         builder: (ctx) {
           return EditingDialog(
-            curentDate: currentDate,
+            currentDate: currentDate,
             appointment: null,
             employees: user.isAdmin ? employees : null,
             services: services,
@@ -69,7 +69,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
 
   void renew() {
     context.read<LocalEmployeesBloc>().add(FetchAllEmployeesData());
-    context.read<LocalAppointmentsBloc>().add(FetchAppointmentsData());
+    // context.read<LocalAppointmentsBloc>().add(FetchAppointmentsData());
     context.read<LocalRegulationsBloc>().add(FetchRegulationsData());
   }
 
@@ -87,25 +87,25 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           ScaffoldMessenger.of(context).clearSnackBars();
           showTopSnackBar(context, 'Запись сделана!');
 
-          context
-              .read<LocalAppointmentsBloc>()
-              .add(AddLocalAppointment(appointment: state.appo));
+          // context
+          //     .read<LocalAppointmentsBloc>()
+          //     .add(AddLocalAppointment(appointment: state.appo));
         }
         if (state is ActionsAppointmentUpdatedState) {
           ScaffoldMessenger.of(context).clearSnackBars();
           showTopSnackBar(context, 'Запись обновлена!');
 
-          context
-              .read<LocalAppointmentsBloc>()
-              .add(UpdateLocalAppointment(appointment: state.appo));
+          // context
+          //     .read<LocalAppointmentsBloc>()
+          //     .add(UpdateLocalAppointment(appointment: state.appo));
         }
         if (state is ActionsAppointmentDeletedState) {
           ScaffoldMessenger.of(context).clearSnackBars();
           showTopSnackBar(context, 'Запись удалена!');
 
-          context
-              .read<LocalAppointmentsBloc>()
-              .add(DeleteLocalAppointment(appointment: state.appos.single));
+          // context
+          //     .read<LocalAppointmentsBloc>()
+          //     .add(DeleteLocalAppointment(appointment: state.appos.single));
         }
 
         if (state is ActionsAppointmentErrorState) {

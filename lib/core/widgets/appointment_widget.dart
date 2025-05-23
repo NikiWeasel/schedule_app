@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:schedule_app/features/schedule/view/widgets/schedule_table.dart';
 import 'package:schedule_app/core/models/appointment.dart';
 
 class AppointmentWidget extends StatelessWidget {
@@ -33,17 +31,19 @@ class AppointmentWidget extends StatelessWidget {
         height: height,
         width: width,
         decoration: BoxDecoration(
-          color:
-              Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5),
+          color: Theme.of(context)
+              .colorScheme
+              .primaryContainer
+              .withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(5),
         ),
         child: Padding(
           padding: const EdgeInsets.all(6.0),
           child: height >= 60
               ? Text(
-                  '${appointment.getFormattedStartTime()} — ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}\n${appointment.clientName} ${appointment.clientNumber} \n${appointment.serviceName}',
+                  '${appointment.getFormattedStartTime()} — ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}\n${appointment.clientName}\n${appointment.clientNumber} \n${appointment.serviceName}',
                   overflow: TextOverflow.fade,
-                  maxLines: 3,
+                  maxLines: 4,
                 )
               : Text(
                   '${appointment.getFormattedStartTime()} — ${appointment.getFormattedEndTime()}   ${appointment.getFormattedDuration()}\n${appointment.clientName} ${appointment.clientNumber} ${appointment.serviceName}',

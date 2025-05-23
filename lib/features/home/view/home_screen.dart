@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void renew() {
     //TODO мб засунуть еще для UserBloc
     context.read<LocalEmployeesBloc>().add(FetchAllEmployeesData());
-    context.read<LocalAppointmentsBloc>().add(FetchAppointmentsData());
+    // context.read<LocalAppointmentsBloc>().add(FetchAppointmentsData());
   }
 
   @override
@@ -44,6 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (context2, allEmployeesState) {
                     return BlocBuilder<UserBloc, UserState>(
                       builder: (context3, userState) {
+                        print('allAppontmentsState');
+                        print(allAppontmentsState);
                         if (userState is UserError) {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             ScaffoldMessenger.of(rootContext).clearSnackBars();
@@ -213,7 +215,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       color: Theme.of(context)
                                                           .colorScheme
                                                           .primaryContainer
-                                                          .withOpacity(0.5),
+                                                          .withValues(
+                                                              alpha: 0.5),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               5),

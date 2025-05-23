@@ -1,64 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:schedule_app/core/models/appointment.dart';
-import 'package:uuid/uuid.dart';
-
-var uuid = const Uuid();
 
 class LocalAppointmentsRepository {
-  LocalAppointmentsRepository(
-      {required this.firebaseFirestore,
-      required this.firebaseAuth,
-      required this.firebaseStorage});
+  LocalAppointmentsRepository({
+    required this.firebaseFirestore,
+  });
 
-  final FirebaseAuth firebaseAuth;
-  final FirebaseStorage firebaseStorage;
   final FirebaseFirestore firebaseFirestore;
 
-  Future<List<Appointment>> fetchAppointmentsData() async {
-    final QuerySnapshot snapshot =
-        await firebaseFirestore.collection('appointments').get();
-
-    final List<Appointment> allAppointments = snapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-
-      return Appointment(
-          masterId: data['masterId'],
-          clientName: data['clientName'],
-          clientNumber: data['clientNumber'],
-          serviceName: data['serviceName'],
-          duration: data['duration'],
-          date: data['date'].toDate(),
-          appointmentId: doc.id);
-    }).toList();
-    return allAppointments;
-  }
-
-  List<Appointment> addLocalAppointment(
-    List<Appointment> appos,
-    Appointment appointment,
-  ) {
-    appointment.appointmentId ??= uuid.v6();
-    return [...appos, appointment];
-  }
-
-  List<Appointment> deleteLocalAppointment(
-      List<Appointment> appos, Appointment appointment) {
-    return appos
-        .where(
-          (element) => element.appointmentId != appointment.appointmentId,
-        )
-        .toList();
-  }
-
-  List<Appointment> updateLocalAppointment(
-      List<Appointment> appos, Appointment appointment) {
-    var newAppos = appos
-        .where(
-          (element) => element.appointmentId != appointment.appointmentId,
-        )
-        .toList();
-    return [...newAppos, appointment];
+  Stream<List<Appointment>> subscribeToAppointments() {
+    return firebaseFirestore.collection('appointments').snapshots().map(
+      (snapshot) {
+        return snapshot.docs.map((doc) {
+          final data = doc.data();
+          return Appointment(
+            masterId: data['masterId'],
+            clientName: data['clientName'],
+            clientNumber: data['clientNumber'],
+            serviceName: data['serviceName'],
+            duration: data['duration'],
+            date: data['date'].toDate(),
+            appointmentId: doc.id,
+          );
+        }).toList();
+      },
+    );
   }
 }

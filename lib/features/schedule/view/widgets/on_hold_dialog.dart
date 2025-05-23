@@ -1,17 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_regulations/local_regulations_bloc.dart';
+import 'package:schedule_app/core/models/appointment.dart';
+import 'package:schedule_app/core/models/regulation.dart';
+import 'package:schedule_app/core/utils/functions.dart';
 import 'package:schedule_app/core/widgets/alert_confirm_dialog.dart';
 import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/features/schedule/view/widgets/editing_dialog/editing_dialog.dart';
-import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
-import 'package:schedule_app/core/models/appointment.dart';
-import 'package:schedule_app/core/models/employee.dart';
-import 'package:schedule_app/core/models/regulation.dart';
-
-import 'package:schedule_app/core/utils/functions.dart';
 
 class OnHoldDialog extends StatelessWidget {
   OnHoldDialog({
@@ -34,7 +30,7 @@ class OnHoldDialog extends StatelessWidget {
         isScrollControlled: true,
         builder: (ctx) {
           return EditingDialog(
-            curentDate: curentDate,
+            currentDate: curentDate,
             appointment: appointment,
             employees: null,
             services: services,

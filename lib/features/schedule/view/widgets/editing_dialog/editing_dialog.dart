@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:schedule_app/core/bloc/actions_appointments/actions_appointment_bloc.dart';
 import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
 import 'package:schedule_app/core/models/appointment.dart';
@@ -14,14 +15,14 @@ class EditingDialog extends StatefulWidget {
   EditingDialog(
       {super.key,
       this.appointment,
-      required this.curentDate,
+      required this.currentDate,
       required this.employees,
       required this.services});
 
   // final bool isEditing;
-  final DateTime curentDate;
+  final DateTime currentDate;
 
-  Appointment? appointment;
+  final Appointment? appointment;
   final Map<String, int> services;
   final List<Employee>? employees;
 
@@ -50,13 +51,19 @@ class _EditingDialogState extends State<EditingDialog> {
   String enteredNumber = '';
   String enteredName = '';
 
+  final phoneMaskFormatter = MaskTextInputFormatter(
+    mask: '+7 (###) ###-##-##',
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy,
+  );
+
   @override
   void initState() {
     // context
     //     .read<LocalAppointmentsBloc>()
     //     .add(FetchAppointmentsData()); //TODO придумать что-нибудь получше
 
-    selectedDate = widget.curentDate;
+    selectedDate = widget.currentDate;
     selectedEmployee = widget.employees?[0];
 
     nameController = TextEditingController();
@@ -275,8 +282,8 @@ class _EditingDialogState extends State<EditingDialog> {
   void pickDate() async {
     final DateTime? dateTime = await showDatePicker(
         context: context,
-        initialDate: widget.curentDate,
-        currentDate: widget.curentDate,
+        initialDate: widget.currentDate,
+        currentDate: widget.currentDate,
         firstDate: DateTime.now(),
         lastDate: DateTime(DateTime.now().year + 1));
     if (dateTime != null) {
@@ -367,15 +374,19 @@ class _EditingDialogState extends State<EditingDialog> {
                     Expanded(
                       child: TextFormField(
                         keyboardType: TextInputType.phone,
+                        inputFormatters: [phoneMaskFormatter],
                         controller: numberController,
                         decoration: InputDecoration(
                             label: const Text('Номер'),
+                            hintText: '+7 (___) ___-__-__',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                             )),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Незаполненное поле';
+                          } else if (!phoneMaskFormatter.isFill()) {
+                            return 'Введите полный номер';
                           }
                           return null;
                         },
@@ -561,9 +572,9 @@ class _EditingDialogState extends State<EditingDialog> {
                   }
                   appointments = appointments
                       .where((appo) =>
-                          (appo.date.year == widget.curentDate.year &&
-                              appo.date.month == widget.curentDate.month &&
-                              appo.date.day == widget.curentDate.day))
+                          (appo.date.year == widget.currentDate.year &&
+                              appo.date.month == widget.currentDate.month &&
+                              appo.date.day == widget.currentDate.day))
                       .toList();
 
                   return ElevatedButton(

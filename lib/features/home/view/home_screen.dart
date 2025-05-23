@@ -19,17 +19,46 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   bool isShowingMainData = true;
 
   int currentPageIndex = 0;
 
   bool didTryToDeleteAppos = false;
 
+  late LocalAppointmentsBloc bloc;
+
   void renew() {
     //TODO мб засунуть еще для UserBloc
     context.read<LocalEmployeesBloc>().add(FetchAllEmployeesData());
     // context.read<LocalAppointmentsBloc>().add(FetchAppointmentsData());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    bloc = context.read<LocalAppointmentsBloc>();
+    bloc.add(SubscribeToAppointments());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    bloc.add(UnsubscribeFromAppointments());
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // print('resumed');
+      bloc.add(SubscribeToAppointments());
+    } else if (state == AppLifecycleState.paused) {
+      // print('paused');
+      bloc.add(UnsubscribeFromAppointments());
+    }
   }
 
   @override

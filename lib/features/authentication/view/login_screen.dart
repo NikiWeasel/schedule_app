@@ -1,14 +1,11 @@
 import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:schedule_app/features/home/view/home_screen.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:schedule_app/features/authentication/view/widgets/user_image_picker.dart';
-import 'package:go_router/go_router.dart';
 
-import 'package:schedule_app/core/app_router.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:schedule_app/features/authentication/view/widgets/user_image_picker.dart';
 
 final _firebase = FirebaseAuth.instance;
 
@@ -34,6 +31,12 @@ class _LoginScreenState extends State<LoginScreen> {
   var _isAuthing = false;
 
   bool isPasswordObsecure = true;
+
+  final phoneMaskFormatter = MaskTextInputFormatter(
+    mask: '+7 (###) ###-##-##',
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy,
+  );
 
   void toggleRememberMe() {
     setState(() {
@@ -112,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(error.message ??
-                'Что-то пошло не так...\nAuthentification failed.')));
+                'Что-то пошло не так...\nAuthentication failed.')));
       }
 
       setState(() {
@@ -232,19 +235,20 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           if (!_isLogin)
                             TextFormField(
+                              inputFormatters: [phoneMaskFormatter],
                               decoration: InputDecoration(
                                   labelText: 'Номер телефона',
+                                  hintText: '+7 (___) ___-__-__',
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(16),
                                   )),
                               keyboardType: TextInputType.phone,
                               maxLines: 1,
                               validator: (value) {
-                                RegExp regex = RegExp(r'''''');
-                                if (value != null &&
-                                    regex.hasMatch(value) &&
-                                    value != '') {
+                                if (value != null && value != '') {
                                   return null;
+                                } else if (!phoneMaskFormatter.isFill()) {
+                                  return 'Введите полный номер';
                                 }
                                 return 'Некорректный номер телефона';
                               },

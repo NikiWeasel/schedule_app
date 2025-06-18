@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:schedule_app/core/bloc/fetch_categories/local_categories_bloc.dart';
 import 'package:schedule_app/core/models/category.dart';
 import 'package:schedule_app/core/models/employee.dart';
@@ -37,6 +38,12 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
   String enteredDescription = '';
   File? _selectedImage;
   List<RegCategory> selectedCategories = [];
+
+  var phoneMaskFormatter = MaskTextInputFormatter(
+    mask: '+7 (###) ###-##-##',
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy,
+  );
 
   void _submit(void Function(Employee employee) editUser) async {
     // await FirebaseAuth.instance.setPersistence(Persistence.NONE);
@@ -115,9 +122,18 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
 
   @override
   void initState() {
+    final rawPhone = widget.employee.number;
+    final formattedPhone = phoneMaskFormatter.maskText(rawPhone);
+
+    phoneMaskFormatter = MaskTextInputFormatter(
+        mask: '+7 (###) ###-##-##',
+        filter: {"#": RegExp(r'[0-9]')},
+        type: MaskAutoCompletionType.lazy,
+        initialText: formattedPhone);
+
     nameController = TextEditingController()..text = widget.employee.name;
     surnameController = TextEditingController()..text = widget.employee.surname;
-    numberController = TextEditingController()..text = widget.employee.number;
+    numberController = TextEditingController()..text = formattedPhone;
     descriptionController = TextEditingController()
       ..text = widget.employee.description;
 
@@ -230,6 +246,7 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
                               height: 15,
                             ),
                             TextFormField(
+                              inputFormatters: [phoneMaskFormatter],
                               readOnly: _isReadOnly,
                               controller: numberController,
                               decoration: InputDecoration(

@@ -1,14 +1,11 @@
 import 'dart:io';
+
 import 'package:bloc/bloc.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
-import 'package:uuid/uuid.dart';
 import 'package:schedule_app/features/portfolio/actions_portfolio_photos_repository.dart';
 
 part 'actions_portfolio_photos_event.dart';
-
 part 'actions_portfolio_photos_state.dart';
 
 class ActionsPortfolioPhotosBloc
@@ -33,6 +30,7 @@ class ActionsPortfolioPhotosBloc
         await actionsPortfolioPhotosRepository.deletePhoto(event);
         emit(ActionsPortfolioPhotosDeletedState(url: event.imageUrl));
       } catch (e) {
+        print(e.toString());
         emit(ActionsPortfolioPhotosErrorState(error: e.toString()));
       }
     });

@@ -1,14 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:schedule_app/core/bloc/fetch_appointments/local_appointments_bloc.dart';
+import 'package:schedule_app/core/models/appointment.dart';
+import 'package:schedule_app/core/models/employee.dart';
 import 'package:schedule_app/core/models/regulation.dart';
-import 'package:schedule_app/core/widgets/card_circular_progress_indicator.dart';
 import 'package:schedule_app/features/home/view/widgets/chart_employee_tile.dart';
 import 'package:schedule_app/features/home/view/widgets/employees_selection_dialog.dart';
-import 'package:schedule_app/features/schedule/bloc/local_employees_bloc.dart';
-import 'package:schedule_app/core/models/employee.dart';
-import 'package:schedule_app/core/models/appointment.dart';
 
 class HomeLineChart extends StatefulWidget {
   const HomeLineChart(
@@ -509,6 +506,15 @@ class _HomeLineChartState extends State<HomeLineChart> {
         style: style, textAlign: TextAlign.center);
   }
 
+  Widget leftTitleWidgets1(double value, TitleMeta meta) {
+    const style = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 12,
+    );
+    return Text(value.toInt().toString(),
+        style: style, textAlign: TextAlign.center);
+  }
+
   SideTitles leftAppoTitles() => SideTitles(
         getTitlesWidget: leftTitleWidgets,
         showTitles: true,
@@ -517,9 +523,9 @@ class _HomeLineChartState extends State<HomeLineChart> {
       );
 
   SideTitles leftMoneyTitles() => SideTitles(
-        getTitlesWidget: leftTitleWidgets,
+        getTitlesWidget: leftTitleWidgets1,
         showTitles: true,
-        interval: 500,
+        interval: 1500,
         reservedSize: 40,
       );
 

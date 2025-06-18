@@ -31,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void renew() {
     //TODO мб засунуть еще для UserBloc
     context.read<LocalEmployeesBloc>().add(FetchAllEmployeesData());
+    bloc.add(SubscribeToAppointments());
     // context.read<LocalAppointmentsBloc>().add(FetchAppointmentsData());
   }
 
@@ -73,8 +74,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   builder: (context2, allEmployeesState) {
                     return BlocBuilder<UserBloc, UserState>(
                       builder: (context3, userState) {
-                        print('allAppontmentsState');
-                        print(allAppontmentsState);
+                        // print(allAppontmentsState is LocalAppointmentsLoaded);
+                        // print(allEmployeesState is LocalEmployeesLoaded);
+                        // print(regulationsState is LocalRegulationsLoadedState);
                         if (userState is UserError) {
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             ScaffoldMessenger.of(rootContext).clearSnackBars();
@@ -266,6 +268,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                 ),
                               ));
                         }
+
                         return const Center(
                           child: CardCircularProgressIndicator(),
                         );

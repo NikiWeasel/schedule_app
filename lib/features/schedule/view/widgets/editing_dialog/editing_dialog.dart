@@ -51,7 +51,7 @@ class _EditingDialogState extends State<EditingDialog> {
   String enteredNumber = '';
   String enteredName = '';
 
-  final phoneMaskFormatter = MaskTextInputFormatter(
+  var phoneMaskFormatter = MaskTextInputFormatter(
     mask: '+7 (###) ###-##-##',
     filter: {"#": RegExp(r'[0-9]')},
     type: MaskAutoCompletionType.lazy,
@@ -70,8 +70,22 @@ class _EditingDialogState extends State<EditingDialog> {
     numberController = TextEditingController();
 
     if (widget.appointment != null) {
-      numberController.text = widget.appointment!.clientNumber;
+      final rawPhone = widget.appointment!.clientNumber;
+      final formattedPhone = phoneMaskFormatter.maskText(rawPhone);
+
+      phoneMaskFormatter = MaskTextInputFormatter(
+          mask: '+7 (###) ###-##-##',
+          filter: {"#": RegExp(r'[0-9]')},
+          type: MaskAutoCompletionType.lazy,
+          initialText: formattedPhone);
+      // print(rawPhone);
+      // print(formattedPhone);
+      numberController.text = formattedPhone;
       nameController.text = widget.appointment!.clientName;
+
+      // phoneMaskFormatter.
+      // setFormattedPhone(widget.appointment!.clientName);
+
       selectedTime = TimeOfDay(
           hour: widget.appointment!.date.hour,
           minute: widget.appointment!.date.minute);

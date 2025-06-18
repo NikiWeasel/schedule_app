@@ -144,9 +144,14 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.logo_dev,
-                    size: 100,
+                  Center(
+                    child: Text(
+                      (!_isLogin) ? 'Регистрация' : 'Вход',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge!
+                          .copyWith(fontSize: 40),
+                    ),
                   ),
                   Card(
                     child: Padding(
@@ -210,6 +215,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 8,
                             ),
                           TextFormField(
+                            key: const ValueKey('mail'),
                             decoration: InputDecoration(
                                 labelText: 'Эл. почта',
                                 border: OutlineInputBorder(
@@ -260,36 +266,30 @@ class _LoginScreenState extends State<LoginScreen> {
                             const SizedBox(
                               height: 8,
                             ),
-                          Stack(children: [
-                            TextFormField(
-                              obscureText: isPasswordObsecure,
-                              decoration: InputDecoration(
-                                  labelText: 'Пароль',
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  )),
-                              validator: (value) {
-                                if (value == null || value == '') {
-                                  return 'Некорректный пароль';
-                                }
-                                return null;
-                              },
-                              onSaved: (value) {
-                                _enteredPassword = value!;
-                              },
+                          TextFormField(
+                            key: const ValueKey('password'),
+                            obscureText: isPasswordObsecure,
+                            decoration: InputDecoration(
+                              labelText: 'Пароль',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              suffixIcon: IconButton(
+                                  onPressed: togglePasswordObsec,
+                                  icon: isPasswordObsecure
+                                      ? const Icon(Icons.visibility)
+                                      : const Icon(Icons.visibility_off)),
                             ),
-                            Positioned(
-                                right: 5,
-                                top: 3.5,
-                                child: Container(
-                                  color: cardColor,
-                                  child: IconButton(
-                                      onPressed: togglePasswordObsec,
-                                      icon: isPasswordObsecure
-                                          ? const Icon(Icons.visibility)
-                                          : const Icon(Icons.visibility_off)),
-                                ))
-                          ]),
+                            validator: (value) {
+                              if (value == null || value == '') {
+                                return 'Некорректный пароль';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _enteredPassword = value!;
+                            },
+                          ),
                           const SizedBox(
                             height: 8,
                           ),

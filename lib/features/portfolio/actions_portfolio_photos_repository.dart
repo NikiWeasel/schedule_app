@@ -45,10 +45,7 @@ class ActionsPortfolioPhotosRepository {
     final storageRef = FirebaseStorage.instance
         .ref()
         .child('employee_portfolio_images')
-        .child(employeeId!)
         .child(name);
-    print(name);
-    print(storageRef);
 
     await storageRef.delete();
   }

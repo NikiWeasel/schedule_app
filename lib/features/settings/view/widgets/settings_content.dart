@@ -1,13 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:schedule_app/core/models/settings.dart';
+import 'package:schedule_app/features/home/bloc/user_bloc.dart';
+import 'package:schedule_app/features/settings/bloc/settings_bloc.dart';
+import 'package:schedule_app/features/settings/view/widgets/color_picker_dialog.dart';
 import 'package:schedule_app/features/settings/view/widgets/color_tile.dart';
 import 'package:schedule_app/features/settings/view/widgets/labeled_switch.dart';
-import 'package:schedule_app/core/models/settings.dart';
-import 'package:schedule_app/features/settings/view/widgets/color_picker_dialog.dart';
-import 'package:schedule_app/features/settings/bloc/settings_bloc.dart';
 import 'package:vibration/vibration.dart';
-import 'package:schedule_app/features/home/bloc/user_bloc.dart';
 
 class SettingsContent extends StatefulWidget {
   const SettingsContent({super.key, required this.settings});
@@ -97,29 +96,30 @@ class _SettingsContentState extends State<SettingsContent> {
           isAdmin = userState.user.isAdmin;
         }
 
-        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          if (isAdmin) ...[
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-              child: Text(
-                'Статистика',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge!
-                    .copyWith(fontWeight: FontWeight.bold),
+        return Form(
+          key: _formKey,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            if (isAdmin) ...[
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                child: Text(
+                  'Статистика',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Form(
-                      key: _formKey,
+              const SizedBox(
+                height: 8,
+              ),
+              Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: TextFormField(
                         onChanged: (value) {
                           setState(() {
@@ -140,86 +140,88 @@ class _SettingsContentState extends State<SettingsContent> {
                         },
                       ),
                     ),
+                    LabeledSwitch(
+                      label: 'Удалять без спроса',
+                      value: deleteWithoutAsking,
+                      onChanged: onChangedDeleteWithoutAsking,
+                    ),
+                  ])),
+            ],
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+              child: Text(
+                'Персонализация',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Card(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              child: ColorTile(
+                activeColor: themeSeed,
+                onTap: openColorPicker,
+              ),
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+              child: Text(
+                'Уведомления',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(children: [
+                  LabeledSwitch(
+                    label: 'Уведомлять при новых отзывах',
+                    value: false,
+                    onChanged: (bool b) {},
                   ),
                   LabeledSwitch(
-                    label: 'Удалять без спроса',
-                    value: deleteWithoutAsking,
-                    onChanged: onChangedDeleteWithoutAsking,
+                    label: 'Уведомлять о сессиях заранее',
+                    value: false,
+                    onChanged: (bool b) {},
                   ),
                 ])),
-          ],
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-            child: Text(
-              'Персонализация',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
-                  .copyWith(fontWeight: FontWeight.bold),
+            const SizedBox(
+              height: 8,
             ),
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            child: ColorTile(
-              activeColor: themeSeed,
-              onTap: openColorPicker,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-            child: Text(
-              'Уведомления',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
-                  .copyWith(fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(
-            height: 8,
-          ),
-          Card(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(children: [
-                LabeledSwitch(
-                  label: 'Уведомлять при новых отзывах',
-                  value: false,
-                  onChanged: (bool b) {},
-                ),
-                LabeledSwitch(
-                  label: 'Уведомлять о сессиях заранее',
-                  value: false,
-                  onChanged: (bool b) {},
-                ),
-              ])),
-          const SizedBox(
-            height: 8,
-          ),
-          if (didChange())
-            Align(
-              alignment: Alignment.center,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  if (!_submit()) return;
+            if (didChange())
+              Align(
+                alignment: Alignment.center,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    if (!_submit()) return;
 
-                  var s = UserSettings(
-                      monthsOldToDelete: monthsOldToDelete,
-                      deleteWithoutAsking: deleteWithoutAsking,
-                      themeSeed: themeSeed,
-                      didAsk: didAsk);
-                  context.read<SettingsBloc>().add(
-                        UpdateSettings(settings: s),
-                      );
-                  _vibrate();
-                },
-                label: const Text('Сохранить'),
-                icon: const Icon(Icons.save),
-              ),
-            )
-        ]);
+                    var s = UserSettings(
+                        monthsOldToDelete: monthsOldToDelete,
+                        deleteWithoutAsking: deleteWithoutAsking,
+                        themeSeed: themeSeed,
+                        didAsk: didAsk);
+                    context.read<SettingsBloc>().add(
+                          UpdateSettings(settings: s),
+                        );
+                    _vibrate();
+                  },
+                  label: const Text('Сохранить'),
+                  icon: const Icon(Icons.save),
+                ),
+              )
+          ]),
+        );
       },
     );
   }

@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:schedule_app/core/app_router.dart';
 
 class LogOutAlert extends StatelessWidget {
   const LogOutAlert({super.key});
@@ -23,6 +21,9 @@ class LogOutAlert extends StatelessWidget {
         ElevatedButton(
             onPressed: () {
               FirebaseAuth.instance.signOut();
+              // context
+              //     .read<UserBloc>()
+              //     .add(FetchUserData());
               Navigator.pop(context);
               // AppRouter.hideNavigationBar.value = true;
               context.go('/app');

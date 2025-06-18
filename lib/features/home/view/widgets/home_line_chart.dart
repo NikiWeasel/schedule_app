@@ -32,6 +32,9 @@ class _HomeLineChartState extends State<HomeLineChart> {
   bool isMoneyGraph = false;
   bool isExpanded = false;
 
+  late Employee currentEmp;
+  late int currentEmpIndex;
+
   // late List<Color> employeeColors;
   late Map<String, Color> colorsMap;
 
@@ -44,7 +47,18 @@ class _HomeLineChartState extends State<HomeLineChart> {
     dateTimeRange = getCurrentWeekTimeRange();
     var allEmps = widget.allEmployees;
 
-    empBoolList = List.generate(allEmps.length, (int index) => true);
+    currentEmp = allEmps
+        .where(
+          (e) => e.employeeId == widget.currentEmployeeId,
+        )
+        .single;
+    if (currentEmp.isAdmin) {
+      empBoolList = List.generate(allEmps.length, (int index) => true);
+    } else {
+      currentEmpIndex = allEmps.indexOf(currentEmp);
+      empBoolList = List.generate(
+          allEmps.length, (int index) => index == currentEmpIndex);
+    }
 
     var employeeColors = List.generate(
       allEmps.length,
@@ -243,13 +257,14 @@ class _HomeLineChartState extends State<HomeLineChart> {
               icon: const Icon(Icons.calendar_month_rounded),
             ),
             const Spacer(),
-            TextButton.icon(
-              onPressed: () {
-                openEmployeesSelectionDialog(allEmployees, empBoolList);
-              },
-              label: const Text('Мастера'),
-              icon: const Icon(Icons.person),
-            ),
+            if (currentEmp.isAdmin)
+              TextButton.icon(
+                onPressed: () {
+                  openEmployeesSelectionDialog(allEmployees, empBoolList);
+                },
+                label: const Text('Мастера'),
+                icon: const Icon(Icons.person),
+              ),
           ],
         ),
         Container(
@@ -310,11 +325,17 @@ class _HomeLineChartState extends State<HomeLineChart> {
             ),
           ),
         ),
-        for (int i = 0; i < selectedEmployee.length; i++)
+        if (currentEmp.isAdmin) ...[
+          for (int i = 0; i < selectedEmployee.length; i++)
+            ChartEmployeeTile(
+                color: colorsMap[selectedEmployee[i].employeeId]!,
+                text:
+                    '${selectedEmployee[i].name} ${selectedEmployee[i].surname}'),
+        ] else
           ChartEmployeeTile(
-              color: colorsMap[selectedEmployee[i].employeeId]!,
+              color: colorsMap[selectedEmployee[currentEmpIndex].employeeId]!,
               text:
-                  '${selectedEmployee[i].name} ${selectedEmployee[i].surname}'),
+                  '${selectedEmployee[currentEmpIndex].name} ${selectedEmployee[currentEmpIndex].surname}'),
       ],
     );
   }

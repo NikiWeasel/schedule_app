@@ -4,31 +4,39 @@
 
 ## Средства разработки
 
-В проекте используются ключевые библиотеки и фреймворки:
+### Архитектура
 
-- [cupertino_icons](https://pub.dev/packages/cupertino_icons) — иконки в стиле iOS.
-- [google_fonts](https://pub.dev/packages/google_fonts) — подключение шрифтов Google.
-- [intl](https://pub.dev/packages/intl) — интернационализация и работа с датами/числами.
-
-- [firebase_core](https://pub.dev/packages/firebase_core),  
-  [firebase_auth](https://pub.dev/packages/firebase_auth),  
-  [firebase_storage](https://pub.dev/packages/firebase_storage),  
-  [cloud_firestore](https://pub.dev/packages/cloud_firestore) — интеграция с Firebase (core,
-  аутентификация, хранилище, база данных).
-
-- [image_picker](https://pub.dev/packages/image_picker) — выбор изображений из галереи и камеры.
 - [flutter_bloc](https://pub.dev/packages/flutter_bloc) — управление состоянием (BLoC/Cubit).
-- [fl_chart](https://pub.dev/packages/fl_chart) — визуализация данных (графики, диаграммы).
 - [go_router](https://pub.dev/packages/go_router) — современный маршрутизатор для Flutter.
-- [vibration](https://pub.dev/packages/vibration) — управление вибрацией устройства.
+- [uuid](https://pub.dev/packages/uuid) — генерация уникальных идентификаторов.
+
+### Firebase
+
+- [firebase_core](https://pub.dev/packages/firebase_core) — инициализация Firebase.
+- [firebase_auth](https://pub.dev/packages/firebase_auth) — аутентификация.
+- [firebase_storage](https://pub.dev/packages/firebase_storage) — облачное хранилище.
+- [cloud_firestore](https://pub.dev/packages/cloud_firestore) — база данных Firestore.
+
+### Работа с данными и вводом
+
+- [intl](https://pub.dev/packages/intl) — интернационализация и работа с датами/числами.
+- [mask_text_input_formatter](https://pub.dev/packages/mask_text_input_formatter) — маски для ввода
+  текста.
+- [shared_preferences](https://pub.dev/packages/shared_preferences) — хранение пользовательских
+  настроек.
+
+### UI и анимации
+
+- [google_fonts](https://pub.dev/packages/google_fonts) — подключение шрифтов Google.
 - [carousel_slider](https://pub.dev/packages/carousel_slider) — создание слайдеров и каруселей.
 - [flutter_expandable_fab](https://pub.dev/packages/flutter_expandable_fab) — расширяемая
   FloatingActionButton.
-- [uuid](https://pub.dev/packages/uuid) — генерация уникальных идентификаторов.
-- [shared_preferences](https://pub.dev/packages/shared_preferences) — хранение пользовательских
-  настроек локально.
-- [mask_text_input_formatter](https://pub.dev/packages/mask_text_input_formatter) — маски для ввода
-  текста.
+- [fl_chart](https://pub.dev/packages/fl_chart) — визуализация данных (графики, диаграммы).
+
+### Мультимедиа и устройство
+
+- [image_picker](https://pub.dev/packages/image_picker) — выбор изображений из галереи и камеры.
+- [vibration](https://pub.dev/packages/vibration) — управление вибрацией устройства.
 
 ## Авторизация и профиль специалиста
 

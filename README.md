@@ -8,7 +8,7 @@ BloC, FireBase, go_router, fl_chart и другие.
 
 ## Авторизация и профиль специалиста
 
-![1.gif](README_pics/1.gif)
+![1.gif](https://raw.githubusercontent.com/NikiWeasel/readme_pics/refs/heads/main/schedule_app/1.gif)
 
 ## Главный экран и статистика по записям
 
@@ -17,7 +17,7 @@ BloC, FireBase, go_router, fl_chart и другие.
 Для графиков используется fl_chart, с поддержкой анимаций и переключения между метриками (количество
 записей или выручка).
 
-![2.gif](<README_pics/2.gif>)
+![2.gif](https://raw.githubusercontent.com/NikiWeasel/readme_pics/refs/heads/main/schedule_app/2.gif)
 
 ## Расписание и управление услугами
 
@@ -27,7 +27,7 @@ BloC, FireBase, go_router, fl_chart и другие.
 Пользователь может добавлять, изменять и удалять только свои записи.
 Администратор имеет возможность добавлять, изменять и удалять записи всех специалистов.
 
-![3.gif](<README_pics/3.gif>)
+![3.gif](https://raw.githubusercontent.com/NikiWeasel/readme_pics/refs/heads/main/schedule_app/3.gif)
 
 ## Экраны и управление услугами и категориями услуг
 
@@ -37,7 +37,7 @@ BloC, FireBase, go_router, fl_chart и другие.
 Категории редактируются аналогично, с дополнительным выбором связанных услуг.
 Изменения доступны только администраторам.
 
-![4.gif](<README_pics/4.gif>)
+![4.gif](https://raw.githubusercontent.com/NikiWeasel/readme_pics/refs/heads/main/schedule_app/4.gif)
 
 ## Экран и управление портфолио
 
@@ -47,13 +47,13 @@ BloC, FireBase, go_router, fl_chart и другие.
 Удаление фото возможно через долгое нажатие с подтверждением через диалоговое окно. При активном
 диалоговом окне карусель временно приостанавливается.
 
-![5.gif](<README_pics/5.gif>)
+![5.gif](https://raw.githubusercontent.com/NikiWeasel/readme_pics/refs/heads/main/schedule_app/5.gif)
 
 ## Экран и управление профилем специалиста
 
 Экран профиля отображает данные специалиста в виде формы.
 
-| ![6-1.png](<README_pics/6.png>) | ![7.gif](<README_pics/7.png>) |
-|---------------------------------|-------------------------------|
+| ![6.png](https://raw.githubusercontent.com/NikiWeasel/readme_pics/refs/heads/main/schedule_app/6.png) | ![7.png](https://raw.githubusercontent.com/NikiWeasel/readme_pics/refs/heads/main/schedule_app/7.png) |
+|-------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
 
 

@@ -346,6 +346,8 @@ class _HomeLineChartState extends State<HomeLineChart> {
       Map<String, Color> colorsMap,
       double maxX,
       double maxY) {
+    // print('maxX');
+    // print(maxX);
     return LineChartData(
       lineTouchData: lineTouchData,
       gridData: gridAppoData,

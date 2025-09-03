@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
@@ -8,7 +8,6 @@ import 'package:schedule_app/core/bloc/fetch_portfolio_photos/local_portfolio_ph
 import 'package:schedule_app/core/widgets/alert_confirm_dialog.dart';
 import 'package:schedule_app/features/portfolio/bloc/actions_portfolio_photos_bloc.dart';
 import 'package:schedule_app/features/portfolio/view/widgets/carousel_widget.dart';
-import 'package:schedule_app/core/utils/snackbar_utils.dart';
 
 class PortfolioContent extends StatefulWidget {
   const PortfolioContent({super.key, required this.imageUrlList});
@@ -20,15 +19,15 @@ class PortfolioContent extends StatefulWidget {
 }
 
 class _PortfolioContentState extends State<PortfolioContent> {
+  final _key = GlobalKey<ExpandableFabState>();
+  bool autoPlay = true;
+
   @override
   Widget build(BuildContext context) {
-    final _key = GlobalKey<ExpandableFabState>();
-    bool autoPlay = true;
-
     void toggleFloatingButton() {
       final state = _key.currentState;
       if (state != null) {
-        debugPrint('isOpen:${state.isOpen}');
+        // debugPrint('isOpen:${state.isOpen}');
         state.toggle();
       }
     }
@@ -82,11 +81,11 @@ class _PortfolioContentState extends State<PortfolioContent> {
                 deleteImage();
               }));
 
-      if (mounted) {
-        setState(() {
-          autoPlay = true;
-        });
-      }
+      // if (mounted) {
+      setState(() {
+        autoPlay = true;
+      });
+      // }
     }
 
     List<Widget> getWidgetImageList(

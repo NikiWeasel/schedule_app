@@ -8,7 +8,7 @@ BloC, FireBase, go_router, fl_chart и другие.
 
 ## Авторизация и профиль специалиста
 
-![1.gif](<README_pics/1.gif>)
+![1.gif](README_pics/1.gif)
 
 ## Главный экран и статистика по записям
 
